@@ -68,7 +68,26 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)lib\include;$(SolutionDir)inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)src;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)lib\include;$(SolutionDir)inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)src;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)lib\include;$(SolutionDir)inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x32;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)src;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)lib\include;$(SolutionDir)inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x32;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)src;$(SourcePath)</SourcePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -110,10 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h" />
+    <ClInclude Include="inc\Component.h" />
+    <ClInclude Include="inc\GameObject.h" />
+    <ClInclude Include="inc\Engine.h" />
+    <ClInclude Include="inc\Main.h" />
+    <ClInclude Include="inc\Transform.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="src\Component.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
