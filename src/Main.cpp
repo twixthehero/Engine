@@ -1,8 +1,9 @@
-#include "Engine.h"
 #include "Main.h"
+#include "Engine.h"
 
 int main()
 {
 	Engine engine;
-	return engine.Run();
+
+	return 0;
 }
