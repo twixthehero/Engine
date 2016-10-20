@@ -2,6 +2,7 @@
 #include <vector>
 #include "Component.h"
 
+class Component;
 class GameObject
 {
 public:
@@ -9,7 +10,6 @@ public:
 	~GameObject();
 
 	void AddComponent(Component* component);
-	template<Component T> T* GetComponent();
 private:
 	std::vector<Component*> _components;
 };

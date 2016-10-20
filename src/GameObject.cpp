@@ -19,8 +19,3 @@ void GameObject::AddComponent(Component* component)
 	_components.push_back(component);
 }
 
-template<Component T>
-T GameObject::GetComponent()
-{
-
-}
