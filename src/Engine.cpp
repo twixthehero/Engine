@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Input.h"
 #include <iostream>
+#include "Camera.h"
 
 Engine::Engine()
 {
@@ -54,6 +55,12 @@ int Engine::Init()
 
 void Engine::Run()
 {
+	_scene = new Scene();
+	GameObject* camera = new GameObject("Camera");
+	camera->tag = "MainCamera";
+	camera->AddComponent(new Camera());
+	_scene->AddObject(camera);
+
 	while (!Input::GetKey(KeyCode::Escape))
 	{
 		Update();
@@ -74,9 +81,11 @@ void Engine::Shutdown()
 void Engine::Update()
 {
 	Input::Update();
+
+	_scene->Update();
 }
 
 void Engine::Render()
 {
-
+	_scene->Render();
 }

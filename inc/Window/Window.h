@@ -18,6 +18,8 @@ public:
 	~Window();
 
 	int GetID();
+	int GetWidth();
+	int GetHeight();
 
 	bool Create();
 	void Destroy();

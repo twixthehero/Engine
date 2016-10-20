@@ -29,6 +29,16 @@ int Window::GetID()
 	return _id;
 }
 
+int Window::GetWidth()
+{
+	return _width;
+}
+
+int Window::GetHeight()
+{
+	return _height;
+}
+
 bool Window::Create()
 {
 	if (_window != nullptr)

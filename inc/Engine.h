@@ -2,6 +2,7 @@
 #include <glew\glew.h>
 #include <Window\Window.h>
 #include "Window\WindowManager.h"
+#include "Scene.h"
 
 class Engine
 {
@@ -18,5 +19,7 @@ private:
 
 	WindowManager* _windowManager;
 	Window* _window;
+	
+	Scene* _scene;
 };
 

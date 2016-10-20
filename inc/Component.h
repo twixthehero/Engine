@@ -1,13 +1,19 @@
 #pragma once
 #include "GameObject.h"
 
-class GameObject;
 class Component
 {
 public:
 	Component();
-	~Component();
+	virtual ~Component();
+
+	virtual void Update();
+
+	bool IsEnabled();
+	void SetEnabled(bool active);
 
 	GameObject* gameObject;
+protected:
+	bool _enabled = true;
 };
 
