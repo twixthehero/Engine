@@ -1,6 +1,7 @@
 #pragma once
 #include <glew\glew.h>
-#include <GLFW\glfw3.h>
+#include <Window\Window.h>
+#include "Window\WindowManager.h"
 
 class Engine
 {
@@ -12,6 +13,10 @@ private:
 	void Run();
 	void Shutdown();
 
-	GLFWwindow* _window;
+	void Update();
+	void Render();
+
+	WindowManager* _windowManager;
+	Window* _window;
 };
 

@@ -97,6 +97,9 @@
     <Link>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x32\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -107,6 +110,9 @@
     <Link>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -121,6 +127,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x32\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -135,6 +144,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\Component.h" />
@@ -142,13 +154,25 @@
     <ClInclude Include="inc\Engine.h" />
     <ClInclude Include="inc\Main.h" />
     <ClInclude Include="inc\Transform.h" />
+    <ClInclude Include="inc\Draw\Mesh.h" />
+    <ClInclude Include="inc\Window\WindowManager.h" />
+    <ClInclude Include="inc\Draw\Model.h" />
+    <ClInclude Include="inc\Shader.h" />
+    <ClInclude Include="inc\Window\Window.h" />
+    <ClInclude Include="inc\Input.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Draw\Model.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Draw\Mesh.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Transform.cpp" />
+    <ClCompile Include="src\Window\WindowManager.cpp" />
+    <ClCompile Include="src\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\x32\glew32.lib" />
@@ -157,6 +181,12 @@
     <Library Include="lib\x64\glew32.lib" />
     <Library Include="lib\x64\glew32s.lib" />
     <Library Include="lib\x64\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\x32\glew32.dll" />
+    <None Include="lib\x32\glfw3.dll" />
+    <None Include="lib\x64\glew32.dll" />
+    <None Include="lib\x64\glfw3.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

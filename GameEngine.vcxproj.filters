@@ -30,6 +30,24 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Draw\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Window\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Window\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Draw\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Engine.h">
@@ -47,6 +65,24 @@
     <ClInclude Include="inc\Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Draw\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Window\WindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Window\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Draw\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\x32\glfw3.lib" />
@@ -55,5 +91,11 @@
     <Library Include="lib\x32\glew32s.lib" />
     <Library Include="lib\x64\glew32.lib" />
     <Library Include="lib\x64\glew32s.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\x32\glew32.dll" />
+    <None Include="lib\x64\glew32.dll" />
+    <None Include="lib\x64\glfw3.dll" />
+    <None Include="lib\x32\glfw3.dll" />
   </ItemGroup>
 </Project>
