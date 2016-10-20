@@ -48,4 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\x32\glfw3.lib" />
+    <Library Include="lib\x64\glfw3.lib" />
+    <Library Include="lib\x32\glew32.lib" />
+    <Library Include="lib\x32\glew32s.lib" />
+    <Library Include="lib\x64\glew32.lib" />
+    <Library Include="lib\x64\glew32s.lib" />
+  </ItemGroup>
 </Project>
