@@ -160,6 +160,7 @@
     <ClInclude Include="inc\Shader.h" />
     <ClInclude Include="inc\Window\Window.h" />
     <ClInclude Include="inc\Input.h" />
+    <ClInclude Include="inc\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="src\Transform.cpp" />
     <ClCompile Include="src\Window\WindowManager.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />
+    <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\x32\glew32.lib" />
