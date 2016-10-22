@@ -1,6 +1,6 @@
 #pragma once
 #include <glm\glm.hpp>
-#include "Component.h"
+#include "Core\Component.h"
 
 enum ECameraMode
 {

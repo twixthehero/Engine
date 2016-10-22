@@ -1,6 +1,7 @@
 #pragma once
-#include "GameObject.h"
 
+class RenderingEngine;
+class GameObject;
 class Component
 {
 public:
@@ -8,6 +9,7 @@ public:
 	virtual ~Component();
 
 	virtual void Update();
+	virtual void Render(RenderingEngine* renderingEngine);
 
 	bool IsEnabled();
 	void SetEnabled(bool active);

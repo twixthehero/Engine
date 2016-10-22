@@ -1,5 +1,6 @@
 #include "Input.h"
 #include "Window\WindowManager.h"
+#include "Window\Window.h"
 
 Input* Input::_instance = nullptr;
 Window* Input::_window = nullptr;

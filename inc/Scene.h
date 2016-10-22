@@ -1,7 +1,8 @@
 #pragma once
-#include "GameObject.h"
 #include <string>
 
+class GameObject;
+class RenderingEngine;
 class Scene
 {
 public:
@@ -14,7 +15,7 @@ public:
 	GameObject* Find(std::string name);
 
 	void Update();
-	void Render();
+	void Render(RenderingEngine* renderingEngine);
 private:
 	GameObject* root;
 };

@@ -1,6 +1,5 @@
 #pragma once
 #include <glfw\glfw3.h>
-#include "Window\Window.h"
 #include <map>
 
 enum KeyCode

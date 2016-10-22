@@ -1,4 +1,4 @@
-#include "Component.h"
+#include "Core\Component.h"
 
 
 
@@ -12,6 +12,11 @@ Component::~Component()
 }
 
 void Component::Update()
+{
+
+}
+
+void Component::Render(RenderingEngine* renderingEngine)
 {
 
 }

@@ -1,9 +1,10 @@
 #pragma once
 #include <glew\glew.h>
-#include <Window\Window.h>
-#include "Window\WindowManager.h"
-#include "Scene.h"
 
+class WindowManager;
+class Window;
+class RenderingEngine;
+class Scene;
 class Engine
 {
 public:
@@ -17,8 +18,12 @@ private:
 	void Update();
 	void Render();
 
+	bool _running;
+
 	WindowManager* _windowManager;
 	Window* _window;
+
+	RenderingEngine* _renderingEngine;
 	
 	Scene* _scene;
 };

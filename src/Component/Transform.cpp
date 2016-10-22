@@ -1,4 +1,4 @@
-#include "Transform.h"
+#include "Component\Transform.h"
 #include <glm\gtc\matrix_transform.hpp>
 
 

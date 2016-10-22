@@ -1,6 +1,6 @@
-#include "Camera.h"
-#include "GameObject.h"
-#include "Transform.h"
+#include "Component\Camera.h"
+#include "Component\Transform.h"
+#include "Core\GameObject.h"
 #include "Window\Window.h"
 #include "Window\WindowManager.h"
 #include <glm\gtc\matrix_transform.hpp>

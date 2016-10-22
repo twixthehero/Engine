@@ -1,7 +1,12 @@
 #include "Engine.h"
+#include "Window\Window.h"
+#include "Window\WindowManager.h"
 #include "Input.h"
+#include "Draw\RenderingEngine.h"
+#include "Scene.h"
+#include "Core\GameObject.h"
+#include "Component\Camera.h"
 #include <iostream>
-#include "Camera.h"
 
 Engine::Engine()
 {
@@ -41,6 +46,7 @@ int Engine::Init()
 	_window->MakeContextCurrent();
 
 	Input::Init();
+	RenderingEngine::Init();
 
 	glewExperimental = GL_TRUE;
 
@@ -55,13 +61,15 @@ int Engine::Init()
 
 void Engine::Run()
 {
+	_running = true;
+
 	_scene = new Scene();
 	GameObject* camera = new GameObject("Camera");
 	camera->tag = "MainCamera";
 	camera->AddComponent(new Camera());
 	_scene->AddObject(camera);
 
-	while (!Input::GetKey(KeyCode::Escape))
+	while (_running)
 	{
 		Update();
 		Render();
@@ -74,6 +82,7 @@ void Engine::Run()
 
 void Engine::Shutdown()
 {
+	RenderingEngine::Shutdown();
 	Input::Shutdown();
 	WindowManager::Shutdown();
 }
@@ -82,10 +91,13 @@ void Engine::Update()
 {
 	Input::Update();
 
+	if (_window->ShouldClose() || Input::GetKeyUp(KeyCode::Escape))
+		_running = false;
+
 	_scene->Update();
 }
 
 void Engine::Render()
 {
-	_scene->Render();
+	_scene->Render(_renderingEngine);
 }

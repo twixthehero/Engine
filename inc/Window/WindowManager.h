@@ -1,7 +1,8 @@
 #pragma once
 #include <map>
-#include "Window.h"
 
+enum EWindowMode;
+class Window;
 class WindowManager
 {
 public:

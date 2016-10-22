@@ -1,5 +1,7 @@
 #include "Window\WindowManager.h"
+#include <GLFW\glfw3.h>
 #include <iostream>
+#include "Window\Window.h"
 
 WindowManager* WindowManager::_instance = nullptr;
 

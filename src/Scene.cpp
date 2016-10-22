@@ -1,5 +1,6 @@
 #include "Scene.h"
-
+#include "Core\GameObject.h"
+#include "Draw\RenderingEngine.h"
 
 
 Scene::Scene()
@@ -30,10 +31,10 @@ GameObject* Scene::Find(std::string name)
 
 void Scene::Update()
 {
-
+	root->Update();
 }
 
-void Scene::Render()
+void Scene::Render(RenderingEngine* renderingEngine)
 {
-
+	renderingEngine->Render(root);
 }
