@@ -2,8 +2,9 @@
 
 
 
-Texture::Texture()
+Texture::Texture(GLuint id)
 {
+	_id = id;
 }
 
 

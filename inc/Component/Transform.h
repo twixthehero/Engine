@@ -16,6 +16,8 @@ public:
 
 	glm::mat4 GetModelMatrix();
 
+	void Rotate(glm::vec3 xyz, bool isRadians = false);
+
 	Transform* parent;
 	Transform* root;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Core\Component.h"
+#include <glew\glew.h>
 
 class Mesh;
 class Material;
@@ -7,13 +8,24 @@ class MeshRenderer :
 	public Component
 {
 public:
-	MeshRenderer();
 	MeshRenderer(Mesh* mesh, Material* material);
 	~MeshRenderer();
 
+	void Update() override;
 	void Render(RenderingEngine* renderingEngine) override;
+
+	void Reupload();
 private:
+	void CreateBuffers();
+	void DeleteBuffers();
+	void BufferData();
+
 	Mesh* _mesh = nullptr;
 	Material* _material = nullptr;
+
+	bool _needReupload = false;
+	GLuint vao;
+	GLuint vbo;
+	GLuint ibo;
 };
 

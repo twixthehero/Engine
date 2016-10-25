@@ -4,6 +4,8 @@
 #include "Window\Window.h"
 #include "Window\WindowManager.h"
 #include <glm\gtc\matrix_transform.hpp>
+#include "Time.h"
+#include <iostream>
 
 Camera* Camera::main = nullptr;
 
@@ -24,6 +26,14 @@ Camera::Camera(ECameraMode cameraMode)
 
 Camera::~Camera()
 {
+}
+
+void Camera::Update()
+{
+	//gameObject->transform->Rotate(glm::vec3(0.0f, 120 * Time::deltaTime, 0.0f));
+
+	//glm::vec3 euler = glm::eulerAngles(gameObject->transform->rotation);
+	//std::cout << "rot: (" << euler.x << ", " << euler.y << ", " << euler.z << ")" << std::endl;
 }
 
 ECameraMode Camera::GetCameraMode()
@@ -105,5 +115,11 @@ glm::mat4 Camera::GetProjectionMatrix()
 
 glm::mat4 Camera::GetViewMatrix()
 {
-	return glm::translate(glm::mat4(), -gameObject->transform->position);
+	return glm::mat4_cast(glm::inverse(gameObject->transform->rotation)) *
+		glm::translate(glm::mat4(), -gameObject->transform->position);
+}
+
+glm::mat4 Camera::GetViewProjectionMatrix()
+{
+	return GetProjectionMatrix() * GetViewMatrix();
 }

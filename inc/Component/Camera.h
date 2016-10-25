@@ -15,6 +15,8 @@ public:
 	Camera(ECameraMode cameraMode);
 	~Camera();
 
+	void Update() override;
+
 	ECameraMode GetCameraMode();
 	void SetCameraMode(ECameraMode cameraMode);
 
@@ -30,6 +32,7 @@ public:
 
 	glm::mat4 GetProjectionMatrix();
 	glm::mat4 GetViewMatrix();
+	glm::mat4 GetViewProjectionMatrix();
 
 	static Camera* main;
 private:

@@ -1,7 +1,9 @@
 #include "Draw\RenderingEngine.h"
-#include <GLFW\glfw3.h>
+#include <glew\glew.h>
 #include "Component\Light.h"
 #include "Core\GameObject.h"
+#include "Component\Camera.h"
+#include <iostream>
 
 RenderingEngine* RenderingEngine::_instance = nullptr;
 
@@ -25,12 +27,11 @@ void RenderingEngine::Init()
 {
 	_instance = new RenderingEngine();
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
 	glEnable(GL_BLEND);	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_CULL_FACE);	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST); glDepthFunc(GL_EQUAL);
-	glEnable(GL_TEXTURE_2D);
 }
 
 RenderingEngine* RenderingEngine::GetInstance()
@@ -51,6 +52,7 @@ void RenderingEngine::Render(GameObject* gameObject)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	SetCamera(Camera::main);
 	_currentLight = _ambientLight;
 
 	gameObject->Render(this);
@@ -60,6 +62,16 @@ void RenderingEngine::Render(GameObject* gameObject)
 		_currentLight = light;
 		gameObject->Render(this);
 	}
+}
+
+void RenderingEngine::SetCamera(Camera* camera)
+{
+	_camera = camera;
+}
+
+Camera* RenderingEngine::GetCamera()
+{
+	return _camera;
 }
 
 Light* RenderingEngine::GetLight()

@@ -37,3 +37,15 @@ glm::mat4 Transform::GetModelMatrix()
 
 	return transMatrix * rotMatrix * scaleMatrix;
 }
+
+void Transform::Rotate(glm::vec3 xyz, bool isRadians)
+{
+	if (!isRadians)
+	{
+		xyz.x = glm::radians(xyz.x);
+		xyz.y = glm::radians(xyz.y);
+		xyz.z = glm::radians(xyz.z);
+	}
+
+	rotation *= glm::quat(xyz);
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include <glew\glew.h>
 
+class Shader;
 class WindowManager;
 class Window;
 class RenderingEngine;
@@ -19,6 +20,7 @@ private:
 	void Render();
 
 	bool _running;
+	double _lastTime;
 
 	WindowManager* _windowManager;
 	Window* _window;
@@ -26,5 +28,9 @@ private:
 	RenderingEngine* _renderingEngine;
 	
 	Scene* _scene;
+
+	Shader* _shader;
+	GLuint vao;
+	GLuint vbo;
 };
 

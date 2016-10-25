@@ -3,21 +3,26 @@
 
 class GameObject;
 class Light;
+class Camera;
 class RenderingEngine
 {
 public:
-	RenderingEngine();
-	~RenderingEngine();
-
 	static void Init();
 	static RenderingEngine* GetInstance();
 	static void Shutdown();
 
 	void Render(GameObject* gameObject);
 
+	void SetCamera(Camera* camera);
+	Camera* GetCamera();
 	Light* GetLight();
 private:
+	RenderingEngine();
+	~RenderingEngine();
+
 	static RenderingEngine* _instance;
+
+	Camera* _camera;
 
 	Light* _ambientLight;
 	std::vector<Light*> _lights;

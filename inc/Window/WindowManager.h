@@ -6,9 +6,6 @@ class Window;
 class WindowManager
 {
 public:
-	WindowManager();
-	~WindowManager();
-
 	static void Init();
 	static WindowManager* GetInstance();
 	static void Shutdown();
@@ -21,6 +18,9 @@ public:
 	Window* GetWindow(int id);
 	Window* GetMainWindow();
 private:
+	WindowManager();
+	~WindowManager();
+
 	static WindowManager* _instance;
 
 	int _nextWindowId = 1;
