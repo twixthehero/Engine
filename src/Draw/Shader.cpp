@@ -7,7 +7,8 @@
 #include "Component\Transform.h"
 #include "Component\Camera.h"
 #include <glm\gtc\matrix_transform.hpp>
-
+#include <Core\GameObject.h>
+#include "Utils.h"
 
 Shader::Shader(int id, std::string name)
 {
@@ -36,11 +37,25 @@ void Shader::UpdateUniforms(Transform* transform, Material* material, RenderingE
 	glm::mat4 modelMatrix = transform->GetModelMatrix();
 	Camera* mainCamera = renderingEngine->GetCamera();
 	glm::mat4 mvpMatrix = mainCamera->GetViewProjectionMatrix() * modelMatrix;
+	glm::vec3 forward = mainCamera->gameObject->transform->GetForward();
+	//std::cout << forward.x << "," << forward.y << "," << forward.z << std::endl;
 
-	glm::mat4 proj = glm::perspective(60.0f, 800.0f / 600, 0.01f, 500.0f);
-	glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), 800.0f / 600, 0.01f, 500.0f);
+	glm::mat4 view = glm::lookAt(glm::vec3(5, 0, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glm::mat4 model = glm::translate(glm::mat4(), glm::vec3(0, 0, 0));
 	glm::mat4 mvp = proj * view * model;
+
+	glm::mat4 camView = mainCamera->GetViewMatrix();
+
+	std::cout << (camView[3][0] == view[3][0]) << std::endl;
+
+	std::cout << "========================= Came =========================" << std::endl;
+	Utils::PrintMatrix(camView);
+	std::cout << "======================= End Came =======================" << std::endl;
+
+	std::cout << "========================= View =========================" << std::endl;
+	Utils::PrintMatrix(view);
+	std::cout << "======================= End View =======================" << std::endl;
 
 	for (int i = 0; i < _uniformNames.size(); i++)
 	{
@@ -51,8 +66,8 @@ void Shader::UpdateUniforms(Transform* transform, Material* material, RenderingE
 
 		if (uniformName == "mvp")
 		{
-			glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &mvpMatrix[0][0]);
-			//glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &mvp[0][0]);
+			//glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &mvpMatrix[0][0]);
+			glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &mvp[0][0]);
 		}
 		else if (uniformName == "model")
 		{

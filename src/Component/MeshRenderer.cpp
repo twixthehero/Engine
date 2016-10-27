@@ -69,6 +69,13 @@ void MeshRenderer::BufferData()
 
 	float data[] =
 	{
+		-1.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f
+	};
+	/*
+	float data[] =
+	{
 		-1, -1, 0,
 		1, -1, 0,
 		-1, 1, 0,
@@ -84,7 +91,6 @@ void MeshRenderer::BufferData()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	//glBufferData(GL_ARRAY_BUFFER, _mesh->CalcVertexSize() * _mesh->indices.size(), _mesh->data, GL_STATIC_DRAW);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * _mesh->indices.size(), &_mesh->indices[0], GL_STATIC_DRAW);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);

@@ -51,10 +51,13 @@ float Camera::GetFOV()
 	return _fov;
 }
 
-void Camera::SetFOV(float fov)
+void Camera::SetFOV(float fov, bool isRadians)
 {
 	if (fov <= 0)
 		fov = 60;
+
+	if (!isRadians)
+		fov = glm::radians(fov);
 
 	_fov = fov;
 }
@@ -115,7 +118,7 @@ glm::mat4 Camera::GetProjectionMatrix()
 
 glm::mat4 Camera::GetViewMatrix()
 {
-	return glm::mat4_cast(glm::inverse(gameObject->transform->rotation)) *
+	return glm::mat4_cast(glm::conjugate(gameObject->transform->rotation)) *
 		glm::translate(glm::mat4(), -gameObject->transform->position);
 }
 

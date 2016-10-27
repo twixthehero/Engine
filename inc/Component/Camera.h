@@ -21,7 +21,7 @@ public:
 	void SetCameraMode(ECameraMode cameraMode);
 
 	float GetFOV();
-	void SetFOV(float fov);
+	void SetFOV(float fov, bool isRadians = false);
 	float GetAspectRatio();
 	void SetAspectRatio(float aspectRatio);
 

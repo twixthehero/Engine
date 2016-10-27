@@ -96,13 +96,15 @@ void Engine::Run()
 	
 	_scene = new Scene();
 	GameObject* camera = new GameObject("Camera");
-	camera->transform->position.z = -5;
+	camera->transform->position.x = 5;
+	camera->transform->position.z = 5;
+	camera->transform->Rotate(glm::vec3(0.0f, 45.0f, 0.0f));
 	camera->tag = "MainCamera";
 	Camera* cam = new Camera();
 	cam->SetFOV(60);
 	cam->SetAspectRatio(800.0f / 600);
 	cam->SetNearClipping(0.01f);
-	cam->SetFarClipping(500);
+	cam->SetFarClipping(500.0f);
 	camera->AddComponent(cam);
 	_scene->AddObject(camera);
 	

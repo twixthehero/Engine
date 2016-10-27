@@ -31,7 +31,7 @@ void RenderingEngine::Init()
 
 	glEnable(GL_BLEND);	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_CULL_FACE);	glCullFace(GL_BACK);
-	glEnable(GL_DEPTH_TEST); glDepthFunc(GL_EQUAL);
+	glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LEQUAL);
 }
 
 RenderingEngine* RenderingEngine::GetInstance()
