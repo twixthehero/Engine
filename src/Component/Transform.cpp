@@ -9,24 +9,23 @@ Transform::Transform()
 	scale = glm::vec3(1);
 }
 
-
 Transform::~Transform()
 {
 }
 
 glm::vec3 Transform::GetForward()
 {
-	return glm::vec3(0, 0, 1) * rotation;
+	return rotation * glm::vec3(0, 0, -1);
 }
 
 glm::vec3 Transform::GetRight()
 {
-	return glm::vec3(1, 0, 0) * rotation;
+	return rotation * glm::vec3(1, 0, 0);
 }
 
 glm::vec3 Transform::GetUp()
 {
-	return glm::vec3(0, 1, 0) * rotation;
+	return rotation * glm::vec3(0, 1, 0);
 }
 
 glm::mat4 Transform::GetModelMatrix()
@@ -38,14 +37,17 @@ glm::mat4 Transform::GetModelMatrix()
 	return transMatrix * rotMatrix * scaleMatrix;
 }
 
-void Transform::Rotate(glm::vec3 xyz, bool isRadians)
+void Transform::Rotate(glm::vec3 axis, float angle, bool isRadians)
 {
 	if (!isRadians)
 	{
-		xyz.x = glm::radians(xyz.x);
-		xyz.y = glm::radians(xyz.y);
-		xyz.z = glm::radians(xyz.z);
+		angle = glm::radians(angle);
 	}
 
-	rotation *= glm::quat(xyz);
+	rotation = glm::normalize(glm::angleAxis(angle, axis) * rotation);
+}
+
+void Transform::Translate(glm::vec3 translation)
+{
+	position += translation;
 }

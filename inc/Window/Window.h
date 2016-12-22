@@ -1,5 +1,6 @@
 #pragma once
 #include <glfw\glfw3.h>
+#include <glm\glm.hpp>
 #include "Input.h"
 
 enum EWindowMode
@@ -34,10 +35,14 @@ public:
 
 	int GetKey(KeyCode key);
 	int GetMouse(ButtonCode button);
+	glm::vec2 GetMousePosition();
+	void SetMousePosition(double x, double y);
 private:
 	int _id;
 	GLFWwindow* _window = nullptr;
 	EWindowMode _windowMode;
+	double* _mouseX;
+	double* _mouseY;
 
 	int _width;
 	int _height;

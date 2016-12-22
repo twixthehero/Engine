@@ -18,31 +18,29 @@ Mesh::~Mesh()
 
 int Mesh::CalcVertexSize()
 {
-	return 3 + (hasUVs ? 2 : 0) + (hasNormals ? 3 : 0);
+	//position + uv + normal
+	return 3 + 2 + 3;
 }
 
 void Mesh::CreateData()
 {
-	data = new float[indices.size() * CalcVertexSize()];
+	if (data != nullptr)
+		delete[] data;
+
+	data = new float[vertices.size() * CalcVertexSize()];
 	int index = 0;
 
-	for (int i = 0; i < indices.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		data[index++] = vertices[indices[i]].position.x;
-		data[index++] = vertices[indices[i]].position.y;
-		data[index++] = vertices[indices[i]].position.z;
+		data[index++] = vertices[i].position.x;
+		data[index++] = vertices[i].position.y;
+		data[index++] = vertices[i].position.z;
 
-		if (hasUVs)
-		{
-			data[index++] = vertices[indices[i]].uv.x;
-			data[index++] = vertices[indices[i]].uv.y;
-		}
+		data[index++] = vertices[i].uv.x;
+		data[index++] = vertices[i].uv.y;
 
-		if (hasNormals)
-		{
-			data[index++] = vertices[indices[i]].normal.x;
-			data[index++] = vertices[indices[i]].normal.y;
-			data[index++] = vertices[indices[i]].normal.z;
-		}
+		data[index++] = vertices[i].normal.x;
+		data[index++] = vertices[i].normal.y;
+		data[index++] = vertices[i].normal.z;
 	}
 }

@@ -27,7 +27,7 @@ void RenderingEngine::Init()
 {
 	_instance = new RenderingEngine();
 
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	glEnable(GL_BLEND);	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_CULL_FACE);	glCullFace(GL_BACK);

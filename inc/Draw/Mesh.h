@@ -13,9 +13,6 @@ public:
 
 	void CreateData();
 
-	bool hasUVs;
-	bool hasNormals;
-
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
 	float* data = nullptr;

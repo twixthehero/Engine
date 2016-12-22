@@ -1,5 +1,6 @@
 #pragma once
 #include <glfw\glfw3.h>
+#include <glm\glm.hpp>
 #include <map>
 
 enum KeyCode
@@ -136,6 +137,9 @@ public:
 	static bool GetMouse(ButtonCode button);
 	static bool GetMouseDown(ButtonCode button);
 	static bool GetMouseUp(ButtonCode button);
+
+	static glm::vec2 GetMousePosition();
+	static void SetMousePosition(double x, double y);
 private:
 	static Input* _instance;
 	static Window* _window;
@@ -150,4 +154,3 @@ private:
 	static bool _previousMouse[3];
 	static int _buttons[3];
 };
-

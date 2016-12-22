@@ -1,18 +1,17 @@
 #include "Core\GameObject.h"
 #include "Component\Transform.h"
 
-
 GameObject::GameObject(std::string name)
 {
 	_children = std::vector<GameObject*>();
 	_components = std::vector<Component*>();
 
 	transform = new Transform();
-	_components.push_back(transform);
+	AddComponent(transform);
 
 	this->name = name;
+	_active = true;
 }
-
 
 GameObject::~GameObject()
 {
@@ -25,6 +24,8 @@ GameObject::~GameObject()
 
 void GameObject::Update()
 {
+	if (!_active) return;
+
 	for (int i = 0; i < _components.size(); i++)
 		if (_components[i]->IsEnabled())
 			_components[i]->Update();
@@ -35,6 +36,8 @@ void GameObject::Update()
 
 void GameObject::Render(RenderingEngine* renderingEngine)
 {
+	if (!_active) return;
+
 	for (int i = 0; i < _components.size(); i++)
 		if (_components[i]->IsEnabled())
 			_components[i]->Render(renderingEngine);

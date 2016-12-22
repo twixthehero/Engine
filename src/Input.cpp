@@ -64,6 +64,16 @@ bool Input::GetMouseUp(ButtonCode button)
 	return !_currentMouse[button] && _previousMouse[button];
 }
 
+glm::vec2 Input::GetMousePosition()
+{
+	return _window->GetMousePosition();
+}
+
+void Input::SetMousePosition(double x, double y)
+{
+	_window->SetMousePosition(x, y);
+}
+
 int Input::_keys[] =
 {
 	GLFW_KEY_ESCAPE,

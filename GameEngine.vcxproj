@@ -151,6 +151,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Component\FreeLook.h" />
+    <ClInclude Include="inc\Component\FlyMove.h" />
     <ClInclude Include="inc\Component\Camera.h" />
     <ClInclude Include="inc\Core\Component.h" />
     <ClInclude Include="inc\Core\GameObject.h" />
@@ -175,6 +177,9 @@
     <ClInclude Include="inc\Draw\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Component\FreeLook.cpp" />
+    <ClCompile Include="src\Component\FlyMove.cpp" />
+    <ClCompile Include="src\Draw\Vertex.cpp" />
     <ClCompile Include="src\MeshManager.cpp" />
     <ClCompile Include="src\Core\Material.cpp" />
     <ClCompile Include="src\Component\MeshRenderer.cpp" />

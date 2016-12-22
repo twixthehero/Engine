@@ -1,11 +1,21 @@
 #pragma once
 #include <glm\glm.hpp>
+#include <iostream>
 
 struct Vertex
 {
 	glm::vec3 position;
 	glm::vec2 uv;
 	glm::vec3 normal;
+
+	bool operator==(const Vertex& o) const
+	{
+		return position == o.position &&
+			uv == o.uv &&
+			normal == o.normal;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const Vertex& v);
 };
 
 struct VertexCompare
@@ -33,6 +43,9 @@ struct VertexCompare
 		if (v1.position.y < v2.position.y) return true;
 		if (v1.position.y > v2.position.y) return false;
 
-		return v1.position.x < v2.position.x;
+		if (v1.position.x < v2.position.x)
+			return true;
+
+		return false;
 	}
 };

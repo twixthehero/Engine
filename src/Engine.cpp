@@ -13,7 +13,9 @@
 #include "Draw\Shader.h"
 #include "Component\MeshRenderer.h"
 #include "Component\Transform.h"
+#include "Component\FlyMove.h"
 #include "Time.h"
+#include "Component\FreeLook.h"
 
 Engine::Engine()
 {
@@ -95,25 +97,28 @@ void Engine::Run()
 	_running = true;
 	
 	_scene = new Scene();
-	GameObject* camera = new GameObject("Camera");
-	camera->transform->position.x = 5;
-	camera->transform->position.z = 5;
-	camera->transform->Rotate(glm::vec3(0.0f, 45.0f, 0.0f));
-	camera->tag = "MainCamera";
-	Camera* cam = new Camera();
-	cam->SetFOV(60);
-	cam->SetAspectRatio(800.0f / 600);
-	cam->SetNearClipping(0.01f);
-	cam->SetFarClipping(500.0f);
-	camera->AddComponent(cam);
-	_scene->AddObject(camera);
+	GameObject* cameraObject = new GameObject("Camera");
+	cameraObject->transform->position.z = 10;
+	cameraObject->name = "MainCamera";
+	cameraObject->tag = "MainCamera";
+	Camera* camera = new Camera();
+	camera->SetFOV(60);
+	camera->SetAspectRatio(800.0f / 600);
+	camera->SetNearClipping(0.01f);
+	camera->SetFarClipping(500.0f);
+	cameraObject->AddComponent(camera);
+	FlyMove* flyMove = new FlyMove();
+	cameraObject->AddComponent(flyMove);
+	FreeLook* freeLook = new FreeLook();
+	cameraObject->AddComponent(freeLook);
+	_scene->AddObject(cameraObject);
 	
 	Mesh* mesh = MeshManager::GetInstance()->GetMesh("cube");
 	Shader* shader = new Shader(1, "default");
 	Material* material = new Material(shader, TextureManager::GetInstance()->GetTexture("emma.png"));
 	MeshRenderer* meshRenderer = new MeshRenderer(mesh, material);
 	GameObject* cube = new GameObject("Cube");
-	cube->transform->position.z = 5;
+	cube->name = "Cube";
 	cube->AddComponent(meshRenderer);
 	_scene->AddObject(cube);
 

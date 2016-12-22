@@ -17,11 +17,16 @@ Window::Window(int id, EWindowMode windowMode, int width, int height, const char
 	_width = width;
 	_height = height;
 	_title = title;
+
+	_mouseX = new double;
+	_mouseY = new double;
 }
 
 
 Window::~Window()
 {
+	delete _mouseX;
+	delete _mouseY;
 }
 
 int Window::GetID()
@@ -120,4 +125,16 @@ int Window::GetKey(KeyCode key)
 int Window::GetMouse(ButtonCode button)
 {
 	return glfwGetMouseButton(_window, button);
+}
+
+glm::vec2 Window::GetMousePosition()
+{
+	glfwGetCursorPos(_window, _mouseX, _mouseY);
+
+	return glm::vec2(*_mouseX, *_mouseY);
+}
+
+void Window::SetMousePosition(double x, double y)
+{
+	glfwSetCursorPos(_window, x, y);
 }

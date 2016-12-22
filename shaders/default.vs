@@ -9,9 +9,12 @@ uniform mat4 mvp;
 //out vec2 uv;
 //out vec3 normal;
 
+out vec3 col;
+
 void main()
 {
 	gl_Position = mvp * vec4(inPosition, 1);
+	col = inPosition;
 	//uv = inUV;
 	//normal = inNormal;
 }

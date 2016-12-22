@@ -92,6 +92,11 @@ bool MeshManager::LoadMesh(std::string name)
 			faces.push_back(line);
 		}
 	}
+
+	//if no uvs
+	if (uvs.size() == 0)
+		uvs.push_back(glm::vec2(0, 0));
+
 	/*
 	std::cout << "num verts: " << vertices.size() << std::endl;
 	std::cout << "num uvs: " << uvs.size() << std::endl;
@@ -114,15 +119,27 @@ bool MeshManager::LoadMesh(std::string name)
 		for (int i = 0; i < tokens.size(); i++)
 		{
 			std::vector<std::string> vert = Utils::Split(tokens[i], '/');
+
+			if (vert[0].length() == 0)
+			{
+				std::cout << "Error parsing face data: " << i << " has no vertex index" << std::endl;
+				return false;
+			}
+			else if (vert[2].length() == 0)
+			{
+				std::cout << "Error parsing face data: " << i << " has no normal index" << std::endl;
+				return false;
+			}
+
 			int vertexIndex = std::stoi(vert[0]) - 1;
-			int uvIndex = -1;
-			int normalIndex = -1;
+			int uvIndex;
 
 			if (vert[1].length() > 0)
 				uvIndex = std::stoi(vert[1]) - 1;
+			else
+				uvIndex = 0;
 
-			if (vert[2].length() > 0)
-				normalIndex = std::stoi(vert[2]) - 1;
+			int normalIndex = std::stoi(vert[2]) - 1;
 
 			vis.push_back(vertexIndex);
 			uis.push_back(uvIndex);
@@ -154,35 +171,34 @@ bool MeshManager::LoadMesh(std::string name)
 	std::map<Vertex, int, VertexCompare> vertexMap = std::map<Vertex, int, VertexCompare>();
 	std::vector<Vertex> vertex = std::vector<Vertex>();
 	std::vector<int> indices = std::vector<int>();
-	int index = 0;
 
-	bool hasUVs = uvs.size() > 0;
-	bool hasNormals = normals.size() > 0;
+	Vertex v;
+	std::map<Vertex, int, VertexCompare>::iterator it;
+	int index = 0;
 
 	for (int i = 0; i < vertexIndices.size(); i++)
 	{
-		Vertex v;
 		v.position = vertices[vertexIndices[i]];
+		v.uv = uvs[uvIndices[i]];
+		v.normal = normals[normalIndices[i]];
 
-		if (hasUVs)
-			v.uv = uvs[uvIndices[i]];
+		it = vertexMap.find(v);
 
-		if (hasNormals)
-			v.normal = normals[normalIndices[i]];
-
-		if (vertexMap.find(v) == vertexMap.end())
+		if (it == vertexMap.end())
 		{
 			vertex.push_back(v);
 			indices.push_back(index);
 			vertexMap.insert(std::pair<Vertex, int>(v, index++));
 		}
+		else
+		{
+			indices.push_back(vertexMap[v]);
+		}
 	}
-
+	
 	Mesh* mesh = new Mesh();
 	mesh->vertices = vertex;
 	mesh->indices = indices;
-	mesh->hasUVs = hasUVs;
-	mesh->hasNormals = hasNormals;
 
 	_meshes.insert(std::pair<std::string, Mesh*>(name, mesh));
 
