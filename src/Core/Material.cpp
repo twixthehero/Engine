@@ -1,5 +1,6 @@
 #include "Core\Material.h"
 #include "Draw\Shader.h"
+#include "Core\Texture.h"
 
 Material::Material()
 {
@@ -23,6 +24,9 @@ Material::~Material()
 void Material::Use(Transform* transform, RenderingEngine* renderingEngine)
 {
 	_shader->Bind();
+
+	glBindTexture(GL_TEXTURE_2D, _textures[0]->GetID());
+
 	_shader->UpdateUniforms(transform, this, renderingEngine);
 }
 

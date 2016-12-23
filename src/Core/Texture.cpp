@@ -7,7 +7,11 @@ Texture::Texture(GLuint id)
 	_id = id;
 }
 
-
 Texture::~Texture()
 {
+}
+
+GLuint Texture::GetID()
+{
+	return _id;
 }
