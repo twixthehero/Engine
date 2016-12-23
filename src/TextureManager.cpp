@@ -3,6 +3,7 @@
 #include <iostream>
 #include <glew\glew.h>
 #include <Core\Texture.h>
+#include "Logger.h"
 
 TextureManager* TextureManager::_instance = nullptr;
 
@@ -12,7 +13,6 @@ TextureManager::TextureManager()
 
 	_missingTexture = GetTexture("missing.png");
 }
-
 
 TextureManager::~TextureManager()
 {
@@ -58,25 +58,25 @@ bool TextureManager::LoadTexture(std::string name)
 	std::string path = "textures\\" + name;
 	const char* filename = path.c_str();
 
-	std::cout << "loading texture: " << filename << std::endl;
+	Logger::WriteLine("loading texture: " + path);
 
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(filename, 0);
 
 	if (format == -1)
 	{
-		std::cout << "Could not find image: " << filename << std::endl;
+		Logger::WriteLine("Could not find image: " + path);
 		return false;
 	}
 
 	if (format == FIF_UNKNOWN)
 	{
-		std::cout << "Couldn't determine file format - attemping by extension..." << std::endl;
+		Logger::WriteLine("Couldn't determine file format - attemping by extension...");
 
 		format = FreeImage_GetFIFFromFilename(filename);
 
 		if (!FreeImage_FIFSupportsReading(format))
 		{
-			std::cout << "Detected image format that cannot be read!" << std::endl;
+			Logger::WriteLine("Detected image format that cannot be read!");
 			return false;
 		}
 	}
@@ -89,20 +89,20 @@ bool TextureManager::LoadTexture(std::string name)
 
 	if (bitsPerPixel == 32)
 	{
-		//std::cout << "skipping conversion" << std::endl;
+		//Logger::WriteLine("skipping conversion");
 		bitmap32 = bitmap;
 	}
 	else
 	{
-		//std::cout << "converting to 32bits" << std::endl;
+		//Logger::WriteLine("converting to 32bits");
 		bitmap32 = FreeImage_ConvertTo32Bits(bitmap);
 	}
 
 	int imageWidth = FreeImage_GetWidth(bitmap32);
 	int imageHeight = FreeImage_GetHeight(bitmap32);
 
-	//std::cout << "width: " << imageWidth << std::endl;
-	//std::cout << "height: " << imageHeight << std::endl;
+	//Logger::WriteLine("width: " + std::to_string(imageWidth));
+	//Logger::WriteLine("height: " + std::to_string(imageHeight));
 
 	GLubyte* textureData = FreeImage_GetBits(bitmap32);
 
@@ -127,25 +127,25 @@ bool TextureManager::LoadTexture(std::string name)
 
 	if (error)
 	{
-		std::cout << "error loading texture: " << filename << std::endl;
+		Logger::WriteLine("Error loading texture: " + path);
 
 		switch (error)
 		{
 		case GL_INVALID_ENUM:
-			std::cout << "Invalid enum" << std::endl;
+			Logger::WriteLine("Invalid enum");
 			break;
 		case GL_INVALID_VALUE:
-			std::cout << "Invalid value" << std::endl;
+			Logger::WriteLine("Invalid value");
 			break;
 		case GL_INVALID_OPERATION:
-			std::cout << "Invalid operation" << std::endl;
+			Logger::WriteLine("Invalid operation");
 			break;
 		default:
-			std::cout << "Unrecognized GLenum: " << error << std::endl;
+			Logger::WriteLine("Unrecognized GLenum: " + std::to_string(error));
 			break;
 		}
 
-		std::cout << "see https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml for further details" << std::endl;
+		Logger::WriteLine("See https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml for further details");
 	}
 
 	FreeImage_Unload(bitmap32);
@@ -153,7 +153,7 @@ bool TextureManager::LoadTexture(std::string name)
 	if (bitsPerPixel != 32)
 		FreeImage_Unload(bitmap);
 
-	std::cout << "loaded texture '" << name << "' to id " << tempTextureId << std::endl;
+	Logger::WriteLine("loaded texture '" + name + "' to id " + std::to_string(tempTextureId));
 	_textures.insert(std::pair<std::string, Texture*>(name, new Texture(tempTextureId)));
 
 	return true;

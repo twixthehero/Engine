@@ -15,13 +15,13 @@ void main()
 {
 	gl_Position = mvp * vec4(inPosition, 1);
 
-	vec3 positionCamera = (V * M * vec4(inPosition, 1)).xyz;
+	vec3 positionCamera = (viewMatrix * modelMatrix * vec4(inPosition, 1)).xyz;
 	vec3 eyeDirectionCamera = vec3(0, 0, 0) - positionCamera;
 
-	vec3 lightPositionCamera = (V * vec4(0, 0, 0, 1)).xyz;
+	vec3 lightPositionCamera = (viewMatrix * vec4(0, 0, 0, 1)).xyz;
 	vec3 lightDirectionCamera = lightPositionCamera + eyeDirectionCamera;
 	
-	vec3 normalCamera = (V * M * vec4(inNormal, 0)).xyz;
+	vec3 normalCamera = (viewMatrix * modelMatrix * vec4(inNormal, 0)).xyz;
 
 	vec3 n = normalize(normalCamera);
 	vec3 l = normalize(lightDirectionCamera);

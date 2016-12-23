@@ -160,7 +160,7 @@
     <ClInclude Include="inc\Main.h" />
     <ClInclude Include="inc\Component\Transform.h" />
     <ClInclude Include="inc\Draw\Mesh.h" />
-    <ClInclude Include="inc\Time.h" />
+    <ClInclude Include="inc\EngineTime.h" />
     <ClInclude Include="inc\Window\WindowManager.h" />
     <ClInclude Include="inc\Draw\Shader.h" />
     <ClInclude Include="inc\Window\Window.h" />
@@ -202,7 +202,7 @@
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Core\Texture.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
-    <ClCompile Include="src\Time.cpp" />
+    <ClCompile Include="src\EngineTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\x32\glew32.lib" />

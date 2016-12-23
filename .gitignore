@@ -1,8 +1,10 @@
 [Dd]ebug/
 [Oo]bj/
 .vs/
+logs/
 
 *.sdf
 *.opendb
 *.user
 *.db
+*~

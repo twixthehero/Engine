@@ -20,7 +20,10 @@ private:
 
 	static Logger* _instance;
 
+	static std::string PATH_SEPARATOR;
+
 	char _timeBuffer[80];
+	bool _initialized;
 	std::ofstream _log;
 };
 

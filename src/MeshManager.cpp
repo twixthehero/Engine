@@ -5,6 +5,7 @@
 #include <glm\glm.hpp>
 #include "Draw\Mesh.h"
 #include "Draw\Vertex.h"
+#include "Logger.h"
 
 MeshManager* MeshManager::_instance = nullptr;
 
@@ -12,7 +13,6 @@ MeshManager::MeshManager()
 {
 	_meshes = std::map<std::string, Mesh*>();
 }
-
 
 MeshManager::~MeshManager()
 {
@@ -55,7 +55,7 @@ bool MeshManager::LoadMesh(std::string name)
 
 	if (!file)
 	{
-		std::cout << "Unable to open file for read: " << path << std::endl;
+		Logger::WriteLine("Unable to open file for read: " + path);
 		return false;
 	}
 
@@ -98,10 +98,10 @@ bool MeshManager::LoadMesh(std::string name)
 		uvs.push_back(glm::vec2(0, 0));
 
 	/*
-	std::cout << "num verts: " << vertices.size() << std::endl;
-	std::cout << "num uvs: " << uvs.size() << std::endl;
-	std::cout << "num normals: " << normals.size() << std::endl;
-	std::cout << "num faces: " << faces.size() << std::endl;
+	Logger::WriteLine("num verts: " + std::to_string(vertices.size()));
+	Logger::WriteLine("num uvs: " + std::to_string(uvs.size()));
+	Logger::WriteLine("num normals: " + std::to_string(normals.size()));
+	Logger::WriteLine("num faces: " + std::to_string(faces.size()));
 	*/
 	std::vector<int> vertexIndices = std::vector<int>();
 	std::vector<int> uvIndices = std::vector<int>();
@@ -122,12 +122,12 @@ bool MeshManager::LoadMesh(std::string name)
 
 			if (vert[0].length() == 0)
 			{
-				std::cout << "Error parsing face data: " << i << " has no vertex index" << std::endl;
+				Logger::WriteLine("Error parsing face data: " + std::to_string(i) + " has no vertex index");
 				return false;
 			}
 			else if (vert[2].length() == 0)
 			{
-				std::cout << "Error parsing face data: " << i << " has no normal index" << std::endl;
+				Logger::WriteLine("Error parsing face data: " + std::to_string(i) + " has no normal index");
 				return false;
 			}
 

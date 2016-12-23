@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Logger.h"
 #include "Window\Window.h"
 #include "Window\WindowManager.h"
 #include "Input.h"
@@ -14,14 +15,14 @@
 #include "Component\MeshRenderer.h"
 #include "Component\Transform.h"
 #include "Component\FlyMove.h"
-#include "Time.h"
+#include "EngineTime.h"
 #include "Component\FreeLook.h"
 
 Engine::Engine()
 {
 	if (Init() != 0)
 	{
-		std::cout << "Error initializing engine!" << std::endl;
+		Logger::WriteLine("Error initializing engine!");
 		return;
 	}
 	
@@ -36,6 +37,8 @@ Engine::~Engine()
 
 int Engine::Init()
 {
+	Logger::Init();
+
 	if (!glfwInit())
 	{
 		return -1;
@@ -68,26 +71,6 @@ int Engine::Init()
 		Shutdown();
 		return -1;
 	}
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	float data[] =
-	{
-		-1, -1, -1,
-		1, -1, -1,
-		0, 1, -1
-	};
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
-	_shader = new Shader(2, "rawPosition");
 
 	return 0;
 }
@@ -140,6 +123,7 @@ void Engine::Shutdown()
 	RenderingEngine::Shutdown();
 	Input::Shutdown();
 	WindowManager::Shutdown();
+	Logger::Shutdown();
 }
 
 void Engine::Update()
@@ -161,8 +145,4 @@ void Engine::Update()
 void Engine::Render()
 {
 	_scene->Render(_renderingEngine);
-
-	/*_shader->Bind();
-	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);*/
 }

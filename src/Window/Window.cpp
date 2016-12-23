@@ -1,5 +1,6 @@
 #include "Window\Window.h"
 #include <iostream>
+#include "Logger.h"
 
 Window::Window(int id, EWindowMode windowMode) : Window(id, windowMode, 800, 600)
 {
@@ -74,7 +75,7 @@ bool Window::Create()
 
 	if (!_window)
 	{
-		std::cout << "Failed to create window!" << std::endl;
+		Logger::WriteLine("Failed to create window!");
 		return false;
 	}
 

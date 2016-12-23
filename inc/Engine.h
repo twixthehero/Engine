@@ -28,9 +28,5 @@ private:
 	RenderingEngine* _renderingEngine;
 	
 	Scene* _scene;
-
-	Shader* _shader;
-	GLuint vao;
-	GLuint vbo;
 };
 

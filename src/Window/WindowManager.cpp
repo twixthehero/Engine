@@ -1,6 +1,7 @@
 #include "Window\WindowManager.h"
 #include <iostream>
 #include "Window\Window.h"
+#include "Logger.h"
 
 WindowManager* WindowManager::_instance = nullptr;
 
@@ -8,7 +9,6 @@ WindowManager::WindowManager()
 {
 	_windows = std::map<int, Window*>();
 }
-
 
 WindowManager::~WindowManager()
 {
@@ -19,7 +19,7 @@ WindowManager::~WindowManager()
 void WindowManager::Init()
 {
 	if (!glfwInit())
-		std::cout << "Failed to initialize GLFW!" << std::endl;
+		Logger::WriteLine("Failed to initialize GLFW!");
 
 	_instance = new WindowManager();
 }

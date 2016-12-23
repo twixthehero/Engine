@@ -30,10 +30,7 @@ Camera::~Camera()
 
 void Camera::Update()
 {
-	//gameObject->transform->Rotate(glm::vec3(0.0f, 120 * Time::deltaTime, 0.0f));
-
-	//glm::vec3 euler = glm::eulerAngles(gameObject->transform->rotation);
-	//std::cout << "rot: (" << euler.x << ", " << euler.y << ", " << euler.z << ")" << std::endl;
+	
 }
 
 ECameraMode Camera::GetCameraMode()

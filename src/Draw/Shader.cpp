@@ -9,6 +9,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <Core\GameObject.h>
 #include "Utils.h"
+#include "Logger.h"
 
 Shader::Shader(int id, std::string name)
 {
@@ -188,7 +189,7 @@ std::string Shader::ReadText(std::string filename, std::vector<std::string>* uni
 				std::string uniformType = parts[1];
 				std::string uniformName = parts[2].substr(0, parts[2].length() - 1);
 
-				std::cout << "new uniform: " << uniformType << " " << uniformName << std::endl;
+				Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
 
 				uniforms->push_back(uniformName);
 				_uniformNames.push_back(uniformName);
@@ -220,7 +221,7 @@ void Shader::Load(std::string name)
 	glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
 	if (success != GL_TRUE)
 	{
-		std::cout << "ERROR: GL vertex shader index " << vs << " did not compile" << std::endl;
+		Logger::WriteLine("ERROR: GL vertex shader index " + std::to_string(vs) + " did not compile");
 
 		int logLength;
 
@@ -230,7 +231,7 @@ void Shader::Load(std::string name)
 		{
 			char* errorMessage = new char[logLength + 1];
 			glGetShaderInfoLog(vs, logLength, NULL, errorMessage);
-			std::cout << errorMessage << std::endl;
+			Logger::WriteLine(errorMessage);
 			delete errorMessage;
 		}
 
@@ -245,7 +246,7 @@ void Shader::Load(std::string name)
 	glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
 	if (success != GL_TRUE)
 	{
-		std::cout << "ERROR: GL fragment shader index " << fs << " did not compile" << std::endl;
+		Logger::WriteLine("ERROR: GL fragment shader index " + std::to_string(fs) + " did not compile");
 
 		int logLength;
 
@@ -255,7 +256,7 @@ void Shader::Load(std::string name)
 		{
 			char* errorMessage = new char[logLength + 1];
 			glGetShaderInfoLog(vs, logLength, NULL, errorMessage);
-			std::cout << errorMessage << std::endl;
+			Logger::WriteLine(errorMessage);
 			delete errorMessage;
 		}
 
@@ -267,7 +268,7 @@ void Shader::Load(std::string name)
 
 	if (_program == 0)
 	{
-		std::cout << "ERROR: Unable to create program space for shader" << std::endl;
+		Logger::WriteLine("ERROR: Unable to create program space for shader");
 		exit(-1);
 	}
 
@@ -279,7 +280,7 @@ void Shader::Load(std::string name)
 	glGetProgramiv(_program, GL_LINK_STATUS, &success);
 	if (success != GL_TRUE)
 	{
-		std::cout << "ERROR: shader '" << name << "' did not link properly" << std::endl;
+		Logger::WriteLine("ERROR: shader '" + name + "' did not link properly");
 		exit(-1);
 	}
 
@@ -297,7 +298,7 @@ void Shader::Load(std::string name)
 	}
 
 	for (int i = 0; i < _uniformNames.size(); i++)
-		std::cout << _uniformNames[i] << " location: " << GetUniformLocation(_uniformNames[i]) << std::endl;
+		Logger::WriteLine(_uniformNames[i] + " location: " + std::to_string(GetUniformLocation(_uniformNames[i])));
 
 	delete uniforms;
 }
