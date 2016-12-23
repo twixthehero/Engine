@@ -153,6 +153,7 @@ bool TextureManager::LoadTexture(std::string name)
 	if (bitsPerPixel != 32)
 		FreeImage_Unload(bitmap);
 
+	std::cout << "loaded texture '" << name << "' to id " << tempTextureId << std::endl;
 	_textures.insert(std::pair<std::string, Texture*>(name, new Texture(tempTextureId)));
 
 	return true;

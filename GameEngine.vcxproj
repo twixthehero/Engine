@@ -175,8 +175,10 @@
     <ClInclude Include="inc\TextureManager.h" />
     <ClInclude Include="inc\MeshManager.h" />
     <ClInclude Include="inc\Draw\Vertex.h" />
+    <ClInclude Include="inc\Logger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\Component\FreeLook.cpp" />
     <ClCompile Include="src\Component\FlyMove.cpp" />
     <ClCompile Include="src\Draw\Vertex.cpp" />

@@ -25,7 +25,7 @@ void Material::Use(Transform* transform, RenderingEngine* renderingEngine)
 {
 	_shader->Bind();
 
-	glBindTexture(GL_TEXTURE_2D, _textures[0]->GetID());
+	glBindTexture(GL_TEXTURE_2D, _textures["diffuse"]->GetID());
 
 	_shader->UpdateUniforms(transform, this, renderingEngine);
 }

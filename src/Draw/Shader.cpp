@@ -35,6 +35,7 @@ void Shader::Bind()
 void Shader::UpdateUniforms(Transform* transform, Material* material, RenderingEngine* renderingEngine)
 {
 	glm::mat4 modelMatrix = transform->GetModelMatrix();
+	glm::mat4 viewMatrix = renderingEngine->GetCamera()->GetViewMatrix();
 	glm::mat4 mvpMatrix = renderingEngine->GetCamera()->GetViewProjectionMatrix() * modelMatrix;
 
 	for (int i = 0; i < _uniformNames.size(); i++)
@@ -46,9 +47,13 @@ void Shader::UpdateUniforms(Transform* transform, Material* material, RenderingE
 		{
 			glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &mvpMatrix[0][0]);
 		}
-		else if (uniformName == "model")
+		else if (uniformName == "modelMatrix")
 		{
 			glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &modelMatrix[0][0]);
+		}
+		else if (uniformName == "viewMatrix")
+		{
+			glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &viewMatrix[0][0]);
 		}
 	}
 }
