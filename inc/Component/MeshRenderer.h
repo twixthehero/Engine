@@ -11,8 +11,7 @@ public:
 	MeshRenderer(Mesh* mesh, Material* material);
 	~MeshRenderer();
 
-	void Update() override;
-	void Render(RenderingEngine* renderingEngine) override;
+	void Render() override;
 
 	void Reupload();
 private:

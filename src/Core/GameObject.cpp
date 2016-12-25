@@ -34,18 +34,6 @@ void GameObject::Update()
 		_children[i]->Update();
 }
 
-void GameObject::Render(RenderingEngine* renderingEngine)
-{
-	if (!_active) return;
-
-	for (int i = 0; i < _components.size(); i++)
-		if (_components[i]->IsEnabled())
-			_components[i]->Render(renderingEngine);
-
-	for (int i = 0; i < _children.size(); i++)
-		_children[i]->Render(renderingEngine);
-}
-
 void GameObject::AddChild(GameObject* child)
 {
 	child->transform->parent = transform;

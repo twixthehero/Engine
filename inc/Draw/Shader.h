@@ -15,7 +15,7 @@ public:
 	~Shader();
 
 	void Bind();
-	void UpdateUniforms(Transform* transform, Material* material, RenderingEngine*);
+	void UpdateUniforms(Transform* transform);
 
 	int GetUniformLocation(std::string uniform);
 

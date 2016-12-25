@@ -4,7 +4,6 @@
 class Shader;
 class Texture;
 class Transform;
-class RenderingEngine;
 class Material
 {
 public:
@@ -13,8 +12,9 @@ public:
 	Material(Shader* shader, Texture* texture);
 	~Material();
 
-	void Use(Transform* transform, RenderingEngine* renderingEngine);
+	void Use(Transform* transform);
 
+	Shader* GetShader();
 	Texture* GetTexture();
 private:
 	Shader* _shader;

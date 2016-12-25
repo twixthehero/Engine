@@ -21,13 +21,18 @@ Material::~Material()
 {
 }
 
-void Material::Use(Transform* transform, RenderingEngine* renderingEngine)
+void Material::Use(Transform* transform)
 {
 	_shader->Bind();
 
 	glBindTexture(GL_TEXTURE_2D, _textures["diffuse"]->GetID());
 
-	_shader->UpdateUniforms(transform, this, renderingEngine);
+	_shader->UpdateUniforms(transform);
+}
+
+Shader* Material::GetShader()
+{
+	return _shader;
 }
 
 Texture* Material::GetTexture()

@@ -91,6 +91,11 @@ Logger::~Logger()
 {
 }
 
+void Logger::SetUseStdOut(bool use)
+{
+	_instance->_useStdout = use;
+}
+
 void Logger::CloseLog()
 {
 	if (_initialized)
@@ -101,7 +106,8 @@ void Logger::_Write(std::string message)
 {
 	if (_initialized)
 		_log << message;
-	else
+	
+	if (_useStdout)
 		std::cout << message;
 }
 

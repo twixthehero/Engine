@@ -8,6 +8,8 @@ public:
 	static void Init();
 	static void Shutdown();
 
+	static void SetUseStdOut(bool use);
+
 	static void Write(std::string message);
 	static void WriteLine(std::string message);
 private:
@@ -24,6 +26,7 @@ private:
 
 	char _timeBuffer[80];
 	bool _initialized;
+	bool _useStdout = true;
 	std::ofstream _log;
 };
 

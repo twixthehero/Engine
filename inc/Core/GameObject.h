@@ -4,7 +4,6 @@
 
 class Component;
 class Transform;
-class RenderingEngine;
 class GameObject
 {
 public:
@@ -12,7 +11,6 @@ public:
 	~GameObject();
 
 	void Update();
-	void Render(RenderingEngine* renderingEngine);
 
 	void AddChild(GameObject* child);
 	void AddComponent(Component* component);

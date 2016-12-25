@@ -155,6 +155,7 @@
     <ClInclude Include="inc\Component\FlyMove.h" />
     <ClInclude Include="inc\Component\Camera.h" />
     <ClInclude Include="inc\Core\Component.h" />
+    <ClInclude Include="inc\Core\EComponentType.h" />
     <ClInclude Include="inc\Core\GameObject.h" />
     <ClInclude Include="inc\Engine.h" />
     <ClInclude Include="inc\Main.h" />

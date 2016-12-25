@@ -8,6 +8,7 @@
 #include "Component\Camera.h"
 #include <glm\gtc\matrix_transform.hpp>
 #include <Core\GameObject.h>
+#include "Component\Light.h"
 #include "Utils.h"
 #include "Logger.h"
 
@@ -23,7 +24,6 @@ Shader::Shader(int id, std::string name)
 	Load(_name);
 }
 
-
 Shader::~Shader()
 {
 }
@@ -33,11 +33,13 @@ void Shader::Bind()
 	glUseProgram(_program);
 }
 
-void Shader::UpdateUniforms(Transform* transform, Material* material, RenderingEngine* renderingEngine)
+void Shader::UpdateUniforms(Transform* transform)
 {
 	glm::mat4 modelMatrix = transform->GetModelMatrix();
-	glm::mat4 viewMatrix = renderingEngine->GetCamera()->GetViewMatrix();
-	glm::mat4 mvpMatrix = renderingEngine->GetCamera()->GetViewProjectionMatrix() * modelMatrix;
+
+	Camera* mainCamera = Camera::main;
+	glm::mat4 viewMatrix = mainCamera->GetViewMatrix();
+	glm::mat4 mvpMatrix = mainCamera->GetViewProjectionMatrix() * modelMatrix;
 
 	for (int i = 0; i < _uniformNames.size(); i++)
 	{
@@ -231,7 +233,7 @@ void Shader::Load(std::string name)
 		{
 			char* errorMessage = new char[logLength + 1];
 			glGetShaderInfoLog(vs, logLength, NULL, errorMessage);
-			Logger::WriteLine(errorMessage);
+			Logger::WriteLine(std::string(errorMessage));
 			delete errorMessage;
 		}
 
@@ -250,20 +252,20 @@ void Shader::Load(std::string name)
 
 		int logLength;
 
-		glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logLength);
+		glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &logLength);
 
 		if (logLength > 0)
 		{
 			char* errorMessage = new char[logLength + 1];
-			glGetShaderInfoLog(vs, logLength, NULL, errorMessage);
-			Logger::WriteLine(errorMessage);
+			glGetShaderInfoLog(fs, logLength, NULL, errorMessage);
+			Logger::WriteLine(std::string(errorMessage));
 			delete errorMessage;
 		}
 
 		exit(-1);
 	}
 
-	//std::cout << "Reserving pointer for shader" << std::endl;
+	//Logger::WriteLine("Reserving pointer for shader");
 	_program = glCreateProgram();
 
 	if (_program == 0)
@@ -272,7 +274,7 @@ void Shader::Load(std::string name)
 		exit(-1);
 	}
 
-	//std::cout << "Linking vertex and fragment" << std::endl;
+	//Logger::WriteLine("Linking vertex and fragment");
 	glAttachShader(_program, vs);
 	glAttachShader(_program, fs);
 	glLinkProgram(_program);

@@ -16,7 +16,7 @@ void Component::Update()
 
 }
 
-void Component::Render(RenderingEngine* renderingEngine)
+void Component::Render()
 {
 
 }

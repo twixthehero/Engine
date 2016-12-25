@@ -18,7 +18,6 @@ RenderingEngine::RenderingEngine()
 	_ambientLight->color.a = 1.0f;
 }
 
-
 RenderingEngine::~RenderingEngine()
 {
 }
@@ -55,13 +54,13 @@ void RenderingEngine::Render(GameObject* gameObject)
 	SetCamera(Camera::main);
 	_currentLight = _ambientLight;
 
-	gameObject->Render(this);
+	
 
-	for (Light* light : _lights)
+	/*for (Light* light : _lights)
 	{
 		_currentLight = light;
 		gameObject->Render(this);
-	}
+	}*/
 }
 
 void RenderingEngine::SetCamera(Camera* camera)
@@ -74,7 +73,7 @@ Camera* RenderingEngine::GetCamera()
 	return _camera;
 }
 
-Light* RenderingEngine::GetLight()
+Light* RenderingEngine::GetAmbientLight()
 {
-	return _currentLight;
+	return _ambientLight;
 }

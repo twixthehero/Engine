@@ -15,7 +15,7 @@ public:
 
 	void SetCamera(Camera* camera);
 	Camera* GetCamera();
-	Light* GetLight();
+	Light* GetAmbientLight();
 private:
 	RenderingEngine();
 	~RenderingEngine();

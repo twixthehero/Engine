@@ -3,10 +3,6 @@
 #include "Core\Material.h"
 #include "Core\GameObject.h"
 #include "Draw\Vertex.h"
-#include <iostream>
-#include "Component\Transform.h"
-#include <glm\glm.hpp>
-#include "Input.h"
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Material* material)
 {
@@ -23,20 +19,9 @@ MeshRenderer::~MeshRenderer()
 	DeleteBuffers();
 }
 
-void MeshRenderer::Update()
+void MeshRenderer::Render()
 {
-	if (_needReupload)
-	{
-		_needReupload = false;
-
-		_mesh->CreateData();
-		BufferData();
-	}
-}
-
-void MeshRenderer::Render(RenderingEngine* renderingEngine)
-{
-	_material->Use(gameObject->transform, renderingEngine);
+	_material->Use(gameObject->transform);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, _mesh->indices.size(), GL_UNSIGNED_INT, 0);
@@ -44,7 +29,8 @@ void MeshRenderer::Render(RenderingEngine* renderingEngine)
 
 void MeshRenderer::Reupload()
 {
-	_needReupload = true;
+	_mesh->CreateData();
+	BufferData();
 }
 
 void MeshRenderer::CreateBuffers()
