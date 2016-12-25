@@ -40,7 +40,7 @@ void WindowManager::Shutdown()
 	glfwTerminate();
 }
 
-Window* WindowManager::CreateWindow(EWindowMode windowMode, int width, int height)
+Window* WindowManager::CreateWindow(Window::EWindowMode windowMode, int width, int height)
 {
 	Window* newWindow = new Window(_nextWindowId++, windowMode, width, height);
 
@@ -53,7 +53,7 @@ Window* WindowManager::CreateWindow(EWindowMode windowMode, int width, int heigh
 	return newWindow;
 }
 
-Window* WindowManager::CreateWindow(EWindowMode windowMode, int width, int height, const char* title)
+Window* WindowManager::CreateWindow(Window::EWindowMode windowMode, int width, int height, const char* title)
 {
 	Window* newWindow = new Window(_nextWindowId++, windowMode, width, height, title);
 

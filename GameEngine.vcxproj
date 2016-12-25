@@ -178,8 +178,10 @@
     <ClInclude Include="inc\Draw\Vertex.h" />
     <ClInclude Include="inc\Logger.h" />
     <ClInclude Include="inc\Component\Servant.h" />
+    <ClInclude Include="inc\Component\Oscillate.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Component\Oscillate.cpp" />
     <ClCompile Include="src\Component\Servant.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\Component\FreeLook.cpp" />

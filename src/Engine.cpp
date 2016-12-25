@@ -17,6 +17,7 @@
 #include "Component\FlyMove.h"
 #include "EngineTime.h"
 #include "Component\FreeLook.h"
+#include "Component\Oscillate.h"
 
 Engine::Engine()
 {
@@ -47,7 +48,7 @@ int Engine::Init()
 	WindowManager::Init();
 	_windowManager = WindowManager::GetInstance();
 
-	_window = _windowManager->CreateWindow(EWindowMode::WINDOWED, 800, 600, "Engine");
+	_window = _windowManager->CreateWindow(Window::EWindowMode::WINDOWED, 800, 600, "Engine");
 
 	if (_window == nullptr)
 	{
@@ -95,15 +96,25 @@ void Engine::Run()
 	FreeLook* freeLook = new FreeLook();
 	cameraObject->AddComponent(freeLook);
 	_scene->AddObject(cameraObject);
-	
+
 	Mesh* mesh = MeshManager::GetInstance()->GetMesh("cube");
 	Shader* shader = new Shader(1, "default");
-	Material* material = new Material(shader, TextureManager::GetInstance()->GetTexture("emma.png"));
-	MeshRenderer* meshRenderer = new MeshRenderer(mesh, material);
-	GameObject* cube = new GameObject("Cube");
-	cube->name = "Cube";
-	cube->AddComponent(meshRenderer);
-	_scene->AddObject(cube);
+
+	GameObject* emmaCube = new GameObject("EmmaCube");
+	emmaCube->transform->position.x = 3;
+	emmaCube->transform->position.y = 1;
+	Material* mat_emma = new Material(shader, TextureManager::GetInstance()->GetTexture("emma.png"));
+	MeshRenderer* meshRenderer = new MeshRenderer(mesh, mat_emma);
+	emmaCube->AddComponent(meshRenderer);
+
+	GameObject* danielCube = new GameObject("DanielCube");
+	Material* mat_daniel = new Material(shader, TextureManager::GetInstance()->GetTexture("daniel.png"));
+	MeshRenderer* meshRenderer2 = new MeshRenderer(mesh, mat_daniel);
+	danielCube->AddComponent(meshRenderer2);
+	Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
+	danielCube->AddComponent(oscillate);
+	emmaCube->SetParent(danielCube);
+	_scene->AddObject(danielCube);
 
 	while (_running)
 	{

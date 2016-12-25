@@ -3,16 +3,16 @@
 #include <glm\glm.hpp>
 #include "Input.h"
 
-enum EWindowMode
-{
-	NO_MODE, FULLSCREEN, BORDERLESS, WINDOWED
-};
-
 enum KeyCode;
 enum ButtonCode;
 class Window
 {
 public:
+	enum EWindowMode
+	{
+		NONE, FULLSCREEN, BORDERLESS, WINDOWED
+	};
+
 	Window(int id, EWindowMode windowMode);
 	Window(int id, EWindowMode windowMode, int width, int height);
 	Window(int id, EWindowMode windowMode, int width, int height, const char* title);

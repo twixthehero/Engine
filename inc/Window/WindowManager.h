@@ -1,8 +1,8 @@
 #pragma once
 #include <map>
+#include "Window\Window.h"
 
 enum EWindowMode;
-class Window;
 class WindowManager
 {
 public:
@@ -10,8 +10,8 @@ public:
 	static WindowManager* GetInstance();
 	static void Shutdown();
 
-	Window* CreateWindow(EWindowMode windowMode, int width, int height);
-	Window* CreateWindow(EWindowMode windowMode, int width, int height, const char* title);
+	Window* CreateWindow(Window::EWindowMode windowMode, int width, int height);
+	Window* CreateWindow(Window::EWindowMode windowMode, int width, int height, const char* title);
 	void DestroyWindow(Window* window);
 	void DestroyWindow(int id);
 

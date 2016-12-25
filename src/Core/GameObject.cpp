@@ -117,7 +117,7 @@ int GameObject::GetComponentsInChildren(EComponentType type, std::vector<Compone
 	count += GetComponents(type, components);
 
 	for (GameObject* child : _children)
-		count += child->GetComponents(type, components);
+		count += child->GetComponentsInChildren(type, components);
 
 	return count;
 }

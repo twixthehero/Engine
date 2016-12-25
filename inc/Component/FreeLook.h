@@ -14,6 +14,6 @@ private:
 	glm::vec2 _screenCenter;
 	glm::vec2 _lastMousePosition;
 
-	float _sensitivity = 90;
+	float _sensitivity = 10;
 };
 

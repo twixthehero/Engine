@@ -10,6 +10,7 @@ public:
 	virtual ~Light();
 
 	glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	float range = 10;
 	float intensity = 1;
 };
 
