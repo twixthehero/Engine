@@ -4,6 +4,8 @@
 class GameObject;
 class Light;
 class Camera;
+class Component;
+class MeshRenderer;
 class RenderingEngine
 {
 public:
@@ -27,6 +29,8 @@ private:
 	Light* _ambientLight;
 	std::vector<Light*> _lights;
 
+	std::vector<Component*> renderingComponents;
+	std::vector<MeshRenderer*> meshRenderers;
 	Light* _currentLight;
 };
 

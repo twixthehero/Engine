@@ -35,7 +35,7 @@ void Shader::Bind()
 
 void Shader::UpdateUniforms(Transform* transform)
 {
-	glm::mat4 modelMatrix = transform->GetModelMatrix();
+	glm::mat4 modelMatrix = transform->GetTransformation();
 
 	Camera* mainCamera = Camera::main;
 	glm::mat4 viewMatrix = mainCamera->GetViewMatrix();

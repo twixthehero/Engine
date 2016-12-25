@@ -3,6 +3,7 @@
 #include "Component\Light.h"
 #include "Core\GameObject.h"
 #include "Component\Camera.h"
+#include "Component\MeshRenderer.h"
 #include <iostream>
 
 RenderingEngine* RenderingEngine::_instance = nullptr;
@@ -50,11 +51,21 @@ void RenderingEngine::Shutdown()
 void RenderingEngine::Render(GameObject* gameObject)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderingComponents.clear();
+	meshRenderers.clear();
 
-	SetCamera(Camera::main);
+	if (_camera != Camera::main)
+		SetCamera(Camera::main);
+
 	_currentLight = _ambientLight;
 
-	
+	gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, renderingComponents);
+
+	for (auto it = renderingComponents.begin(); it != renderingComponents.end(); it++)
+		meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
+
+	for (MeshRenderer* renderer : meshRenderers)
+		renderer->Render();
 
 	/*for (Light* light : _lights)
 	{

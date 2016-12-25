@@ -16,7 +16,7 @@ Scene::~Scene()
 
 void Scene::AddObject(GameObject* object)
 {
-	root->AddChild(object);
+	object->SetParent(root);
 }
 
 void Scene::RemoveObject(GameObject* object)

@@ -39,6 +39,21 @@ glm::mat4 Transform::GetModelMatrix()
 	return transMatrix * rotMatrix * scaleMatrix;
 }
 
+glm::mat4 Transform::GetTransformation()
+{
+	return GetParentTransformation() * GetModelMatrix();
+}
+
+glm::mat4 Transform::GetParentTransformation()
+{
+	GameObject* parent = gameObject->GetParent();
+
+	if (parent != nullptr)
+		return parent->transform->GetTransformation();
+
+	return glm::mat4();
+}
+
 void Transform::Rotate(glm::vec3 axis, float angle, bool isRadians)
 {
 	if (!isRadians)
