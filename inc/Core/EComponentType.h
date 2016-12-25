@@ -2,5 +2,5 @@
 
 enum EComponentType
 {
-	None, Transform, MeshRenderer, 
+	NONE, TRANSFORM, MESH_RENDERER, CAMERA, LIGHT, SERVANT
 };

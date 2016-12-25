@@ -36,14 +36,112 @@ void GameObject::Update()
 
 void GameObject::AddChild(GameObject* child)
 {
-	child->transform->parent = transform;
 	_children.push_back(child);
+}
+
+void GameObject::RemoveChild(std::string name)
+{
+	for (int i = 0; i < _children.size(); i++)
+		if (_children[i]->name == name)
+		{
+			_children.erase(_children.begin() + i);
+			return;
+		}
+}
+
+GameObject* GameObject::GetParent()
+{
+	return _parent;
+}
+
+void GameObject::SetParent(GameObject* parent)
+{
+	if (_parent != nullptr)
+		_parent->RemoveChild(name);
+
+	if (parent != nullptr)
+		parent->AddChild(this);
+
+	_parent = parent;
 }
 
 void GameObject::AddComponent(Component* component)
 {
 	component->gameObject = this;
 	_components.push_back(component);
+}
+
+Component* GameObject::GetComponent(EComponentType type)
+{
+	for (Component* component : _components)
+		if (component->GetType() == type)
+			return component;
+
+	return nullptr;
+}
+
+int GameObject::GetComponents(EComponentType type, std::vector<Component*>& components)
+{
+	int count = 0;
+
+	for (Component* component : _components)
+		if (component->GetType() == type)
+		{
+			components.push_back(component);
+			count++;
+		}
+
+	return count;
+}
+
+Component* GameObject::GetComponentInChildren(EComponentType type)
+{
+	Component* component = GetComponent(type);
+
+	if (component == nullptr)
+		for (GameObject* child : _children)
+		{
+			component = child->GetComponent(type);
+
+			if (component != nullptr)
+				break;
+		}
+
+	return component;
+}
+
+int GameObject::GetComponentsInChildren(EComponentType type, std::vector<Component*>& components)
+{
+	int count = 0;
+
+	count += GetComponents(type, components);
+
+	for (GameObject* child : _children)
+		count += child->GetComponents(type, components);
+
+	return count;
+}
+
+int GameObject::GetChildCount()
+{
+	return _children.size();
+}
+
+GameObject* GameObject::Find(std::string name)
+{
+	for (GameObject* child : _children)
+		if (child->name == name)
+			return child;
+
+	return nullptr;
+}
+
+GameObject* GameObject::GetChild(int index)
+{
+	if (index < 0 || index >= _children.size())
+		return nullptr;
+
+	return _children[index];
 }
 
 bool GameObject::IsActive()

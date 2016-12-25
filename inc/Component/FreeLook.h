@@ -1,13 +1,13 @@
 #pragma once
-#include "Core\Component.h"
+#include "Component\Servant.h"
 #include <glm\glm.hpp>
 
 class FreeLook :
-	public Component
+	public Servant
 {
 public:
 	FreeLook();
-	~FreeLook();
+	~FreeLook() override;
 
 	void Update() override;
 private:

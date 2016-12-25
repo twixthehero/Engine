@@ -11,6 +11,7 @@ Camera* Camera::main = nullptr;
 
 Camera::Camera() : Camera(ECameraMode::PERSPECTIVE)
 {
+	_componentType = EComponentType::CAMERA;
 }
 
 Camera::Camera(ECameraMode cameraMode)

@@ -19,9 +19,6 @@ public:
 	void Rotate(glm::vec3 xyz, float angle, bool isRadians = false);
 	void Translate(glm::vec3 translation);
 
-	Transform* parent;
-	Transform* root;
-
 	glm::vec3 position;
 	glm::quat rotation;
 	glm::vec3 scale;

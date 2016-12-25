@@ -1,9 +1,11 @@
 #include "Component\Transform.h"
 #include <glm\gtc\matrix_transform.hpp>
-
+#include "Core\GameObject.h"
 
 Transform::Transform()
 {
+	_componentType = EComponentType::TRANSFORM;
+
 	position = glm::vec3(0);
 	rotation = glm::quat();
 	scale = glm::vec3(1);

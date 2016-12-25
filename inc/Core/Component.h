@@ -1,4 +1,5 @@
 #pragma once
+#include "EComponentType.h"
 
 class GameObject;
 class Component
@@ -17,6 +18,7 @@ public:
 
 	GameObject* gameObject;
 protected:
+	EComponentType _componentType;
 
 	bool _enabled = true;
 };

@@ -11,6 +11,11 @@ Component::~Component()
 {
 }
 
+EComponentType Component::GetType()
+{
+	return _componentType;
+}
+
 void Component::Update()
 {
 

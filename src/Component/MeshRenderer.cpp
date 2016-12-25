@@ -6,6 +6,8 @@
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Material* material)
 {
+	_componentType = EComponentType::MESH_RENDERER;
+
 	_mesh = mesh;
 	_material = material;
 

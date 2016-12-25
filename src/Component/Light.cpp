@@ -4,6 +4,7 @@
 
 Light::Light()
 {
+	_componentType = EComponentType::LIGHT;
 }
 
 

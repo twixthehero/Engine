@@ -1,12 +1,12 @@
 #pragma once
-#include "Core\Component.h"
+#include "Component\Servant.h"
 
 class FlyMove :
-	public Component
+	public Servant
 {
 public:
 	FlyMove();
-	~FlyMove();
+	~FlyMove() override;
 
 	void Update() override;
 private:
