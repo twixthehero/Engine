@@ -3,54 +3,57 @@
 #include <glm\glm.hpp>
 #include "Input.h"
 
-enum KeyCode;
-enum ButtonCode;
-class Window
+namespace VoxEngine
 {
-public:
 	enum EWindowMode
 	{
-		NONE, FULLSCREEN, BORDERLESS, WINDOWED
+		NO_WINDOW_MODE = 0,
+		FULLSCREEN = 1,
+		BORDERLESS = 2,
+		WINDOWED = 3
 	};
 
-	Window(int id, EWindowMode windowMode);
-	Window(int id, EWindowMode windowMode, int width, int height);
-	Window(int id, EWindowMode windowMode, int width, int height, const char* title);
-	~Window();
+	class Window
+	{
+	public:
+		Window(int id, unsigned int windowMode);
+		Window(int id, unsigned int windowMode, int width, int height);
+		Window(int id, unsigned int windowMode, int width, int height, const char* title);
+		~Window();
 
-	int GetID();
-	int GetWidth();
-	int GetHeight();
+		int GetID();
+		int GetWidth();
+		int GetHeight();
 
-	bool Create();
-	void Destroy();
+		bool Create();
+		void Destroy();
 
-	void MakeContextCurrent();
-	bool ShouldClose();
-	void SwapBuffers();
+		void MakeContextCurrent();
+		bool ShouldClose();
+		void SwapBuffers();
 
-	void SetMultiSamples(int samples);
-	void SetOpenGLVersion(int major, int minor);
-	void SetTitle(const char* title);
+		void SetMultiSamples(int samples);
+		void SetOpenGLVersion(int major, int minor);
+		void SetTitle(const char* title);
 
-	int GetKey(KeyCode key);
-	int GetMouse(ButtonCode button);
-	glm::vec2 GetMousePosition();
-	void SetMousePosition(double x, double y);
-private:
-	int _id;
-	GLFWwindow* _window = nullptr;
-	EWindowMode _windowMode;
-	double* _mouseX;
-	double* _mouseY;
+		int GetKey(unsigned int key);
+		int GetMouse(unsigned int button);
+		glm::vec2 GetMousePosition();
+		void SetMousePosition(double x, double y);
+	private:
+		int _id;
+		GLFWwindow* _window = nullptr;
+		unsigned int _windowMode;
+		double* _mouseX;
+		double* _mouseY;
 
-	int _width;
-	int _height;
-	const char* _title;
+		int _width;
+		int _height;
+		const char* _title;
 
-	int _contextVersionMajor = 4;
-	int _contextVersionMinor = 0;
+		int _contextVersionMajor = 4;
+		int _contextVersionMinor = 0;
 
-	int _samples = 0;
-};
-
+		int _samples = 0;
+	};
+}

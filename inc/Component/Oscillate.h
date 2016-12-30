@@ -1,19 +1,21 @@
 #pragma once
 #include "Component\Servant.h"
 
-class Oscillate :
-	public Servant
+namespace VoxEngine
 {
-public:
-	enum EAxis { NONE, X, Y, Z };
+	class Oscillate :
+		public Servant
+	{
+	public:
+		enum EAxis { NONE, X, Y, Z };
 
-	Oscillate();
-	Oscillate(EAxis axis, float distance);
-	~Oscillate();
+		Oscillate();
+		Oscillate(EAxis axis, float distance);
+		~Oscillate();
 
-	void Update() override;
+		void Update() override;
 
-	EAxis axis = EAxis::NONE;
-	float distance;
-};
-
+		EAxis axis = EAxis::NONE;
+		float distance;
+	};
+}

@@ -7,7 +7,9 @@ in vec2 uv;
 
 uniform sampler2D diffuse;
 
+out vec4 glFragColor;
+
 void main()
 {
-	gl_FragColor = texture2D(diffuse, uv).rgba;// * (ambientColor * ambientIntensity);
+	glFragColor = texture2D(diffuse, uv).rgba;// * (ambientColor * ambientIntensity);
 }

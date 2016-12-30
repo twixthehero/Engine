@@ -1,10 +1,13 @@
 #pragma once
 #include "Core\Component.h"
-class Servant :
-	public Component
-{
-public:
-	Servant();
-	virtual ~Servant();
-};
 
+namespace VoxEngine
+{
+	class Servant :
+		public Component
+	{
+	public:
+		Servant();
+		virtual ~Servant();
+	};
+}

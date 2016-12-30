@@ -3,107 +3,110 @@
 #include "Window\Window.h"
 #include "Logger.h"
 
-WindowManager* WindowManager::_instance = nullptr;
-
-WindowManager::WindowManager()
+namespace VoxEngine
 {
-	_windows = std::map<int, Window*>();
-}
+	WindowManager* WindowManager::_instance = nullptr;
 
-WindowManager::~WindowManager()
-{
-	for (std::map<int, Window*>::iterator it = _windows.begin(); it != _windows.end(); it++)
-		delete it->second;
-}
-
-void WindowManager::Init()
-{
-	if (!glfwInit())
-		Logger::WriteLine("Failed to initialize GLFW!");
-
-	_instance = new WindowManager();
-}
-
-WindowManager* WindowManager::GetInstance()
-{
-	return _instance;
-}
-
-void WindowManager::Shutdown()
-{
-	if (_instance != nullptr)
+	WindowManager::WindowManager()
 	{
-		delete _instance;
-		_instance = nullptr;
+		_windows = std::map<int, Window*>();
 	}
 
-	glfwTerminate();
-}
-
-Window* WindowManager::CreateWindow(Window::EWindowMode windowMode, int width, int height)
-{
-	Window* newWindow = new Window(_nextWindowId++, windowMode, width, height);
-
-	if (!newWindow->Create())
-		return nullptr;
-
-	_mainWindow = newWindow;
-	_windows.insert(std::pair<int, Window*>(newWindow->GetID(), newWindow));
-
-	return newWindow;
-}
-
-Window* WindowManager::CreateWindow(Window::EWindowMode windowMode, int width, int height, const char* title)
-{
-	Window* newWindow = new Window(_nextWindowId++, windowMode, width, height, title);
-
-	if (!newWindow->Create())
-		return nullptr;
-
-	_mainWindow = newWindow;
-	_windows.insert(std::pair<int, Window*>(newWindow->GetID(), newWindow));
-
-	return newWindow;
-}
-
-void WindowManager::DestroyWindow(int id)
-{
-	std::map<int, Window*>::iterator it;
-
-	for (it = _windows.begin(); it != _windows.end(); it++)
-		if (it->second->GetID() == id)
-		{
-			it->second->Destroy();
+	WindowManager::~WindowManager()
+	{
+		for (std::map<int, Window*>::iterator it = _windows.begin(); it != _windows.end(); it++)
 			delete it->second;
-			break;
+	}
+
+	void WindowManager::Init()
+	{
+		if (!glfwInit())
+			Logger::WriteLine("Failed to initialize GLFW!");
+
+		_instance = new WindowManager();
+	}
+
+	WindowManager* WindowManager::GetInstance()
+	{
+		return _instance;
+	}
+
+	void WindowManager::Shutdown()
+	{
+		if (_instance != nullptr)
+		{
+			delete _instance;
+			_instance = nullptr;
 		}
 
-	_windows.erase(it);
-}
+		glfwTerminate();
+	}
 
-void WindowManager::DestroyWindow(Window* window)
-{
-	std::map<int, Window*>::iterator it;
+	Window* WindowManager::CreateNewWindow(unsigned int windowMode, int width, int height)
+	{
+		Window* newWindow = new Window(_nextWindowId++, windowMode, width, height);
 
-	for (it = _windows.begin(); it != _windows.end(); it++)
-		if (it->second->GetID() == window->GetID())
-		{
-			it->second->Destroy();
-			delete it->second;
-			break;
-		}
+		if (!newWindow->Create())
+			return nullptr;
 
-	_windows.erase(it);
-}
+		_mainWindow = newWindow;
+		_windows.insert(std::pair<int, Window*>(newWindow->GetID(), newWindow));
 
-Window* WindowManager::GetWindow(int id)
-{
-	for (std::map<int, Window*>::iterator it = _windows.begin(); it != _windows.end(); it++)
-		if (it->second->GetID() == id)
-			return it->second;
-}
+		return newWindow;
+	}
 
-Window* WindowManager::GetMainWindow()
-{
-	return _mainWindow;
+	Window* WindowManager::CreateNewWindow(unsigned int windowMode, int width, int height, const char* title)
+	{
+		Window* newWindow = new Window(_nextWindowId++, windowMode, width, height, title);
+
+		if (!newWindow->Create())
+			return nullptr;
+
+		_mainWindow = newWindow;
+		_windows.insert(std::pair<int, Window*>(newWindow->GetID(), newWindow));
+
+		return newWindow;
+	}
+
+	void WindowManager::DestroyWindow(int id)
+	{
+		std::map<int, Window*>::iterator it;
+
+		for (it = _windows.begin(); it != _windows.end(); it++)
+			if (it->second->GetID() == id)
+			{
+				it->second->Destroy();
+				delete it->second;
+				break;
+			}
+
+		_windows.erase(it);
+	}
+
+	void WindowManager::DestroyWindow(Window* window)
+	{
+		std::map<int, Window*>::iterator it;
+
+		for (it = _windows.begin(); it != _windows.end(); it++)
+			if (it->second->GetID() == window->GetID())
+			{
+				it->second->Destroy();
+				delete it->second;
+				break;
+			}
+
+		_windows.erase(it);
+	}
+
+	Window* WindowManager::GetWindow(int id)
+	{
+		for (std::map<int, Window*>::iterator it = _windows.begin(); it != _windows.end(); it++)
+			if (it->second->GetID() == id)
+				return it->second;
+	}
+
+	Window* WindowManager::GetMainWindow()
+	{
+		return _mainWindow;
+	}
 }

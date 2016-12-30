@@ -95,7 +95,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gl3w.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -109,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gl3w.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"</Command>
@@ -126,7 +126,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gl3w.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -144,13 +144,14 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;FreeImage.lib;</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gl3w.lib;FreeImage.lib;</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Draw\GBuffer.h" />
     <ClInclude Include="inc\Component\FreeLook.h" />
     <ClInclude Include="inc\Component\FlyMove.h" />
     <ClInclude Include="inc\Component\Camera.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="inc\Component\Oscillate.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Draw\GBuffer.cpp" />
     <ClCompile Include="src\Component\Oscillate.cpp" />
     <ClCompile Include="src\Component\Servant.cpp" />
     <ClCompile Include="src\Logger.cpp" />
@@ -208,20 +210,6 @@
     <ClCompile Include="src\Core\Texture.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
     <ClCompile Include="src\EngineTime.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\x32\glew32.lib" />
-    <Library Include="lib\x32\glew32s.lib" />
-    <Library Include="lib\x32\glfw3.lib" />
-    <Library Include="lib\x64\glew32.lib" />
-    <Library Include="lib\x64\glew32s.lib" />
-    <Library Include="lib\x64\glfw3.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lib\x32\glew32.dll" />
-    <None Include="lib\x32\glfw3.dll" />
-    <None Include="lib\x64\glew32.dll" />
-    <None Include="lib\x64\glfw3.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

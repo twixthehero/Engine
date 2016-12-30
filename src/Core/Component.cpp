@@ -1,37 +1,37 @@
 #include "Core\Component.h"
 
-
-
-Component::Component()
+namespace VoxEngine
 {
-}
+	Component::Component()
+	{
+	}
 
+	Component::~Component()
+	{
+	}
 
-Component::~Component()
-{
-}
+	EComponentType Component::GetType()
+	{
+		return _componentType;
+	}
 
-EComponentType Component::GetType()
-{
-	return _componentType;
-}
+	void Component::Update()
+	{
 
-void Component::Update()
-{
+	}
 
-}
+	void Component::Render()
+	{
 
-void Component::Render()
-{
+	}
 
-}
+	bool Component::IsEnabled()
+	{
+		return _enabled;
+	}
 
-bool Component::IsEnabled()
-{
-	return _enabled;
-}
-
-void Component::SetEnabled(bool enabled)
-{
-	_enabled = enabled;
+	void Component::SetEnabled(bool enabled)
+	{
+		_enabled = enabled;
+	}
 }

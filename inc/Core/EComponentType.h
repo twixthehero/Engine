@@ -1,6 +1,9 @@
 #pragma once
 
-enum EComponentType
+namespace VoxEngine
 {
-	NONE, TRANSFORM, MESH_RENDERER, CAMERA, LIGHT, SERVANT
-};
+	enum EComponentType
+	{
+		NO_COMPONENT_TYPE, TRANSFORM, MESH_RENDERER, CAMERA, LIGHT, SERVANT
+	};
+}

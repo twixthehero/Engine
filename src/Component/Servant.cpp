@@ -1,13 +1,13 @@
 #include "Component\Servant.h"
 
-
-
-Servant::Servant()
+namespace VoxEngine
 {
-	_componentType = EComponentType::SERVANT;
-}
+	Servant::Servant()
+	{
+		_componentType = EComponentType::SERVANT;
+	}
 
-
-Servant::~Servant()
-{
+	Servant::~Servant()
+	{
+	}
 }

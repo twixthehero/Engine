@@ -4,32 +4,35 @@
 #include "EngineTime.h"
 #include <cmath>
 
-Oscillate::Oscillate()
+namespace VoxEngine
 {
-}
-
-Oscillate::Oscillate(EAxis axis, float distance)
-{
-	this->axis = axis;
-	this->distance = distance;
-}
-
-Oscillate::~Oscillate()
-{
-}
-
-void Oscillate::Update()
-{
-	switch (axis)
+	Oscillate::Oscillate()
 	{
-		case EAxis::X:
-			gameObject->transform->position.x = sin(Time::time) * distance;
-			break;
-		case EAxis::Y:
-			gameObject->transform->position.y = sin(Time::time) * distance;
-			break;
-		case EAxis::Z:
-			gameObject->transform->position.z = sin(Time::time) * distance;
-			break;
+	}
+
+	Oscillate::Oscillate(EAxis axis, float distance)
+	{
+		this->axis = axis;
+		this->distance = distance;
+	}
+
+	Oscillate::~Oscillate()
+	{
+	}
+
+	void Oscillate::Update()
+	{
+		switch (axis)
+		{
+			case EAxis::X:
+				gameObject->transform->position.x = sin(Time::time) * distance;
+				break;
+			case EAxis::Y:
+				gameObject->transform->position.y = sin(Time::time) * distance;
+				break;
+			case EAxis::Z:
+				gameObject->transform->position.z = sin(Time::time) * distance;
+				break;
+		}
 	}
 }

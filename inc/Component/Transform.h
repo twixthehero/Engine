@@ -3,27 +3,29 @@
 #include <glm\gtc\quaternion.hpp>
 #include "Core\Component.h"
 
-class Transform :
-	public Component
+namespace VoxEngine
 {
-public:
-	Transform();
-	~Transform();
+	class Transform :
+		public Component
+	{
+	public:
+		Transform();
+		~Transform();
 
-	glm::vec3 GetForward();
-	glm::vec3 GetRight();
-	glm::vec3 GetUp();
+		glm::vec3 GetForward();
+		glm::vec3 GetRight();
+		glm::vec3 GetUp();
 
-	glm::mat4 GetModelMatrix();
-	glm::mat4 GetTransformation();
+		glm::mat4 GetModelMatrix();
+		glm::mat4 GetTransformation();
 
-	void Rotate(glm::vec3 xyz, float angle, bool isRadians = false);
-	void Translate(glm::vec3 translation);
+		void Rotate(glm::vec3 xyz, float angle, bool isRadians = false);
+		void Translate(glm::vec3 translation);
 
-	glm::vec3 position;
-	glm::quat rotation;
-	glm::vec3 scale;
-private:
-	glm::mat4 GetParentTransformation();
-};
-
+		glm::vec3 position;
+		glm::quat rotation;
+		glm::vec3 scale;
+	private:
+		glm::mat4 GetParentTransformation();
+	};
+}

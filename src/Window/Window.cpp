@@ -2,140 +2,148 @@
 #include <iostream>
 #include "Logger.h"
 
-Window::Window(int id, EWindowMode windowMode) : Window(id, windowMode, 800, 600)
+namespace VoxEngine
 {
-}
-
-Window::Window(int id, EWindowMode windowMode, int width, int height) : Window(id, windowMode, width, height, "Default Title")
-{
-}
-
-Window::Window(int id, EWindowMode windowMode, int width, int height, const char* title)
-{
-	_id = id;
-	_windowMode = windowMode;
-
-	_width = width;
-	_height = height;
-	_title = title;
-
-	_mouseX = new double;
-	_mouseY = new double;
-}
-
-
-Window::~Window()
-{
-	delete _mouseX;
-	delete _mouseY;
-}
-
-int Window::GetID()
-{
-	return _id;
-}
-
-int Window::GetWidth()
-{
-	return _width;
-}
-
-int Window::GetHeight()
-{
-	return _height;
-}
-
-bool Window::Create()
-{
-	if (_window != nullptr)
+	Window::Window(int id, unsigned int windowMode) : Window(id, windowMode, 800, 600)
 	{
-		Destroy();
-		_window = nullptr;
 	}
 
-	GLFWmonitor* monitor = _windowMode == EWindowMode::FULLSCREEN ? glfwGetPrimaryMonitor() : NULL;
-
-	if (_windowMode == EWindowMode::BORDERLESS)
+	Window::Window(int id, unsigned int windowMode, int width, int height) : Window(id, windowMode, width, height, "Default Title")
 	{
-		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-		_width = mode->width;
-		_height = mode->height;
-		glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-		glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-		glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-		glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	}
 
-	glfwWindowHint(GLFW_SAMPLES, _samples);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
-
-	_window = glfwCreateWindow(_width, _height, _title, monitor, NULL);
-
-	if (!_window)
+	Window::Window(int id, unsigned int windowMode, int width, int height, const char* title)
 	{
-		Logger::WriteLine("Failed to create window!");
-		return false;
+		_id = id;
+		_windowMode = windowMode;
+
+		_width = width;
+		_height = height;
+		_title = title;
+
+		_mouseX = new double;
+		_mouseY = new double;
 	}
 
-	return true;
-}
 
-void Window::Destroy()
-{
-	glfwDestroyWindow(_window);
-}
+	Window::~Window()
+	{
+		delete _mouseX;
+		delete _mouseY;
+	}
 
-void Window::MakeContextCurrent()
-{
-	glfwMakeContextCurrent(_window);
-}
+	int Window::GetID()
+	{
+		return _id;
+	}
 
-bool Window::ShouldClose()
-{
-	return glfwWindowShouldClose(_window) == 1;
-}
+	int Window::GetWidth()
+	{
+		return _width;
+	}
 
-void Window::SwapBuffers()
-{
-	glfwSwapBuffers(_window);
-}
+	int Window::GetHeight()
+	{
+		return _height;
+	}
 
-void Window::SetMultiSamples(int samples)
-{
-	_samples = samples;
-}
+	bool Window::Create()
+	{
+		if (_window != nullptr)
+		{
+			Destroy();
+			_window = nullptr;
+		}
 
-void Window::SetOpenGLVersion(int major, int minor)
-{
-	_contextVersionMajor = major;
-	_contextVersionMinor = minor;
-}
+		GLFWmonitor* monitor = _windowMode == EWindowMode::FULLSCREEN ? glfwGetPrimaryMonitor() : NULL;
 
-void Window::SetTitle(const char* title)
-{
-	glfwSetWindowTitle(_window, title);
-}
+		if (_windowMode == EWindowMode::BORDERLESS)
+		{
+			const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-int Window::GetKey(KeyCode key)
-{
-	return glfwGetKey(_window, key);
-}
+			_width = mode->width;
+			_height = mode->height;
+			glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+		}
 
-int Window::GetMouse(ButtonCode button)
-{
-	return glfwGetMouseButton(_window, button);
-}
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-glm::vec2 Window::GetMousePosition()
-{
-	glfwGetCursorPos(_window, _mouseX, _mouseY);
+		glfwWindowHint(GLFW_SAMPLES, _samples);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 
-	return glm::vec2(*_mouseX, *_mouseY);
-}
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-void Window::SetMousePosition(double x, double y)
-{
-	glfwSetCursorPos(_window, x, y);
+		_window = glfwCreateWindow(_width, _height, _title, monitor, NULL);
+
+		if (!_window)
+		{
+			Logger::WriteLine("Failed to create window!");
+			return false;
+		}
+
+		return true;
+	}
+
+	void Window::Destroy()
+	{
+		glfwDestroyWindow(_window);
+	}
+
+	void Window::MakeContextCurrent()
+	{
+		glfwMakeContextCurrent(_window);
+	}
+
+	bool Window::ShouldClose()
+	{
+		return glfwWindowShouldClose(_window) == 1;
+	}
+
+	void Window::SwapBuffers()
+	{
+		glfwSwapBuffers(_window);
+	}
+
+	void Window::SetMultiSamples(int samples)
+	{
+		_samples = samples;
+	}
+
+	void Window::SetOpenGLVersion(int major, int minor)
+	{
+		_contextVersionMajor = major;
+		_contextVersionMinor = minor;
+	}
+
+	void Window::SetTitle(const char* title)
+	{
+		glfwSetWindowTitle(_window, title);
+	}
+
+	int Window::GetKey(unsigned int key)
+	{
+		return glfwGetKey(_window, key);
+	}
+
+	int Window::GetMouse(unsigned int button)
+	{
+		return glfwGetMouseButton(_window, button);
+	}
+
+	glm::vec2 Window::GetMousePosition()
+	{
+		glfwGetCursorPos(_window, _mouseX, _mouseY);
+
+		return glm::vec2(*_mouseX, *_mouseY);
+	}
+
+	void Window::SetMousePosition(double x, double y)
+	{
+		glfwSetCursorPos(_window, x, y);
+	}
 }

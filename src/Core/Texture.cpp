@@ -1,17 +1,18 @@
 #include "Core\Texture.h"
 
-
-
-Texture::Texture(GLuint id)
+namespace VoxEngine
 {
-	_id = id;
-}
+	Texture::Texture(GLuint id)
+	{
+		_id = id;
+	}
 
-Texture::~Texture()
-{
-}
+	Texture::~Texture()
+	{
+	}
 
-GLuint Texture::GetID()
-{
-	return _id;
+	GLuint Texture::GetID()
+	{
+		return _id;
+	}
 }

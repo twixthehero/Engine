@@ -3,7 +3,7 @@
 
 int main()
 {
-	Engine engine;
+	VoxEngine::Engine engine;
 
 	return 0;
 }

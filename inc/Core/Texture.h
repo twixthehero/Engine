@@ -1,14 +1,16 @@
 #pragma once
-#include <glew\glew.h>
+#include <GL\gl3w.h>
 
-class Texture
+namespace VoxEngine
 {
-public:
-	Texture(GLuint id);
-	~Texture();
+	class Texture
+	{
+	public:
+		Texture(GLuint id);
+		~Texture();
 
-	GLuint GetID();
-private:
-	GLuint _id;
-};
-
+		GLuint GetID();
+	private:
+		GLuint _id;
+	};
+}

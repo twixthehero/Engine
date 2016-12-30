@@ -1,13 +1,13 @@
 #include "Component\Light.h"
 
-
-
-Light::Light()
+namespace VoxEngine
 {
-	_componentType = EComponentType::LIGHT;
-}
+	Light::Light()
+	{
+		_componentType = EComponentType::LIGHT;
+	}
 
-
-Light::~Light()
-{
+	Light::~Light()
+	{
+	}
 }

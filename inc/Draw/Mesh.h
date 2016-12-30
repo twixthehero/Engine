@@ -2,19 +2,21 @@
 #include <vector>
 #include <glm\glm.hpp>
 
-struct Vertex;
-class Mesh
+namespace VoxEngine
 {
-public:
-	Mesh();
-	~Mesh();
+	struct Vertex;
+	class Mesh
+	{
+	public:
+		Mesh();
+		~Mesh();
 
-	int CalcVertexSize();
+		int CalcVertexSize();
 
-	void CreateData();
+		void CreateData();
 
-	std::vector<Vertex> vertices;
-	std::vector<int> indices;
-	float* data = nullptr;
-};
-
+		std::vector<Vertex> vertices;
+		std::vector<int> indices;
+		float* data = nullptr;
+	};
+}

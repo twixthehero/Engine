@@ -1,4 +1,7 @@
 #include "EngineTime.h"
 
-float Time::time = 0;
-float Time::deltaTime = 0;
+namespace VoxEngine
+{
+	float Time::time = 0;
+	float Time::deltaTime = 0;
+}

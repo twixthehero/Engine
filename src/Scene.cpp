@@ -2,39 +2,41 @@
 #include "Core\GameObject.h"
 #include "Draw\RenderingEngine.h"
 
-
-Scene::Scene()
+namespace VoxEngine
 {
-	root = new GameObject("Root");
-}
+	Scene::Scene()
+	{
+		root = new GameObject("Root");
+	}
 
 
-Scene::~Scene()
-{
-	delete root;
-}
+	Scene::~Scene()
+	{
+		delete root;
+	}
 
-void Scene::AddObject(GameObject* object)
-{
-	object->SetParent(root);
-}
+	void Scene::AddObject(GameObject* object)
+	{
+		object->SetParent(root);
+	}
 
-void Scene::RemoveObject(GameObject* object)
-{
+	void Scene::RemoveObject(GameObject* object)
+	{
 
-}
+	}
 
-GameObject* Scene::Find(std::string name)
-{
-	return nullptr;
-}
+	GameObject* Scene::Find(std::string name)
+	{
+		return nullptr;
+	}
 
-void Scene::Update()
-{
-	root->Update();
-}
+	void Scene::Update()
+	{
+		root->Update();
+	}
 
-void Scene::Render(RenderingEngine* renderingEngine)
-{
-	renderingEngine->Render(root);
+	void Scene::Render(RenderingEngine* renderingEngine)
+	{
+		renderingEngine->Render(root);
+	}
 }

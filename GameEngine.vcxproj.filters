@@ -96,6 +96,9 @@
     <ClCompile Include="src\Component\Oscillate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Draw\GBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Main.h">
@@ -182,19 +185,8 @@
     <ClInclude Include="inc\Component\Oscillate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\x32\glfw3.lib" />
-    <Library Include="lib\x64\glfw3.lib" />
-    <Library Include="lib\x32\glew32.lib" />
-    <Library Include="lib\x32\glew32s.lib" />
-    <Library Include="lib\x64\glew32.lib" />
-    <Library Include="lib\x64\glew32s.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lib\x32\glew32.dll" />
-    <None Include="lib\x64\glew32.dll" />
-    <None Include="lib\x64\glfw3.dll" />
-    <None Include="lib\x32\glfw3.dll" />
+    <ClInclude Include="inc\Draw\GBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,25 +1,27 @@
 #pragma once
 #include "EComponentType.h"
 
-class GameObject;
-class Component
+namespace VoxEngine
 {
-public:
-	Component();
-	virtual ~Component();
+	class GameObject;
+	class Component
+	{
+	public:
+		Component();
+		virtual ~Component();
 
-	EComponentType GetType();
+		EComponentType GetType();
 
-	virtual void Update();
-	virtual void Render();
+		virtual void Update();
+		virtual void Render();
 
-	bool IsEnabled();
-	void SetEnabled(bool active);
+		bool IsEnabled();
+		void SetEnabled(bool active);
 
-	GameObject* gameObject;
-protected:
-	EComponentType _componentType;
+		GameObject* gameObject;
+	protected:
+		EComponentType _componentType;
 
-	bool _enabled = true;
-};
-
+		bool _enabled = true;
+	};
+}
