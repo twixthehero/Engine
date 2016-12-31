@@ -4,6 +4,7 @@
 #include <GL\gl3w.h>
 #include <Core\Texture.h>
 #include "Logger.h"
+#include "Utils.h"
 
 namespace VoxEngine
 {
@@ -124,31 +125,15 @@ namespace VoxEngine
 			//std::cout << "generating mipmaps" << std::endl;
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
-
-		GLenum error = glGetError();
-
-		if (error)
+		else
 		{
-			Logger::WriteLine("Error loading texture: " + path);
-
-			switch (error)
-			{
-				case GL_INVALID_ENUM:
-					Logger::WriteLine("Invalid enum");
-					break;
-				case GL_INVALID_VALUE:
-					Logger::WriteLine("Invalid value");
-					break;
-				case GL_INVALID_OPERATION:
-					Logger::WriteLine("Invalid operation");
-					break;
-				default:
-					Logger::WriteLine("Unrecognized GLenum: " + std::to_string(error));
-					break;
-			}
-
-			Logger::WriteLine("See https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml for further details");
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 		}
+
+		if (Utils::CheckGLError("Error loading texture: " + path))
+			Logger::WriteLine("See https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml for further details");
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		FreeImage_Unload(bitmap32);
 

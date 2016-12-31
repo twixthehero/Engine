@@ -1,5 +1,6 @@
 #include "Draw\RenderingEngine.h"
 #include <GL\gl3w.h>
+#include "ShaderManager.h"
 #include "Component\Light.h"
 #include "Core\GameObject.h"
 #include "Component\Camera.h"
@@ -8,6 +9,7 @@
 #include "Window\WindowManager.h"
 #include "Window\Window.h"
 #include "Logger.h"
+#include "Utils.h"
 #include <iostream>
 
 namespace VoxEngine
@@ -18,9 +20,11 @@ namespace VoxEngine
 	{
 		_gbuffer = new GBuffer();
 
-		Window* window = WindowManager::GetInstance()->GetMainWindow();
+		_window = WindowManager::GetInstance()->GetMainWindow();
+		_windowWidth = _window->GetWidth();
+		_windowHeight = _window->GetHeight();
 
-		if (!_gbuffer->Init(window->GetWidth(), window->GetHeight()))
+		if (!_gbuffer->Init(_windowWidth, _windowHeight))
 		{
 			Logger::WriteLine("Failed to initialize the GBuffer!");
 		}
@@ -42,9 +46,8 @@ namespace VoxEngine
 	{
 		_instance = new RenderingEngine();
 
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(0.2f, 0.4f, 0.85f, 1.0f);
 
-		glEnable(GL_BLEND);	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_CULL_FACE);	glCullFace(GL_BACK);
 		glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LEQUAL);
 	}
@@ -65,15 +68,29 @@ namespace VoxEngine
 
 	void RenderingEngine::Render(GameObject* gameObject)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		renderingComponents.clear();
-		meshRenderers.clear();
-
 		if (_camera != Camera::main)
 			SetCamera(Camera::main);
 
-		_currentLight = _ambientLight;
+		RenderGeometry(gameObject);
+		RenderLighting(gameObject);
 
+		/*for (Light* light : _lights)
+		{
+			_currentLight = light;
+			gameObject->Render(this);
+		}*/
+	}
+
+	void RenderingEngine::RenderGeometry(GameObject* gameObject)
+	{
+		ShaderManager::GetInstance()->UseShader("geometry");
+
+		_gbuffer->BindForWriting();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		renderingComponents.clear();
+		meshRenderers.clear();
 		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, renderingComponents);
 
 		for (auto it = renderingComponents.begin(); it != renderingComponents.end(); it++)
@@ -81,12 +98,30 @@ namespace VoxEngine
 
 		for (MeshRenderer* renderer : meshRenderers)
 			renderer->Render();
+	}
 
-		/*for (Light* light : _lights)
-		{
-			_currentLight = light;
-			gameObject->Render(this);
-		}*/
+	void RenderingEngine::RenderLighting(GameObject* gameObject)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		_gbuffer->BindForReading();
+
+		GLsizei halfWidth = _windowWidth / 2.0f;
+		GLsizei halfHeight = _windowHeight / 2.0f;
+
+		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::Position);
+		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, halfWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::Diffuse);
+		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, halfHeight, halfWidth, _windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::Normal);
+		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, halfWidth, halfHeight, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::TextureCoordinate);
+		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, halfWidth, 0, _windowWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 	}
 
 	void RenderingEngine::SetCamera(Camera* camera)

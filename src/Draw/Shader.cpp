@@ -47,18 +47,15 @@ namespace VoxEngine
 		{
 			std::string uniformName = _uniformNames[i];
 			std::string uniformType = _uniformTypes[i];
+			GLuint location = GetUniformLocation(uniformName);
 
 			if (uniformName == "mvp")
 			{
-				glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &mvpMatrix[0][0]);
+				glUniformMatrix4fv(location, 1, false, &mvpMatrix[0][0]);
 			}
 			else if (uniformName == "modelMatrix")
 			{
-				glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &modelMatrix[0][0]);
-			}
-			else if (uniformName == "viewMatrix")
-			{
-				glUniformMatrix4fv(GetUniformLocation(uniformName), 1, false, &viewMatrix[0][0]);
+				glUniformMatrix4fv(location, 1, false, &modelMatrix[0][0]);
 			}
 		}
 	}
@@ -211,6 +208,8 @@ namespace VoxEngine
 
 	void Shader::Load(std::string name)
 	{
+		Logger::WriteLine("Loading shader '" + name + "'");
+
 		std::vector<std::string>* uniforms = new std::vector<std::string>();
 		std::string v = ReadText(name + ".vs", uniforms);
 		std::string f = ReadText(name + ".fs", uniforms);

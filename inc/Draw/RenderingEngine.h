@@ -9,6 +9,7 @@ namespace VoxEngine
 	class Camera;
 	class Component;
 	class MeshRenderer;
+	class Window;
 	class RenderingEngine
 	{
 	public:
@@ -25,9 +26,15 @@ namespace VoxEngine
 		RenderingEngine();
 		~RenderingEngine();
 
+		void RenderGeometry(GameObject* gameObject);
+		void RenderLighting(GameObject* gameObject);
+
 		static RenderingEngine* _instance;
 
 		GBuffer* _gbuffer;
+		Window* _window;
+		int _windowWidth;
+		int _windowHeight;
 
 		Camera* _camera;
 

@@ -2,6 +2,7 @@
 #include "Logger.h"
 #include <sstream>
 #include <iostream>
+#include <GL\gl3w.h>
 
 namespace VoxEngine
 {
@@ -33,5 +34,45 @@ namespace VoxEngine
 			Logger::Write("[" + std::to_string(matrix[2][i]) + "]");
 			Logger::WriteLine("[" + std::to_string(matrix[3][i]) + "]");
 		}
+	}
+
+	bool Utils::CheckGLError(std::string message)
+	{
+		GLenum error = glGetError();
+		bool result = false;
+
+		if (error != GL_NO_ERROR)
+		{
+			result = true;
+			Logger::WriteLine("CheckGLError: " + message);
+
+			do
+			{
+				switch (error)
+				{
+					case GL_INVALID_ENUM:
+						Logger::WriteLine("INVALID ENUM");
+						break;
+					case GL_INVALID_VALUE:
+						Logger::WriteLine("INVALID VALUE");
+						break;
+					case GL_INVALID_OPERATION:
+						Logger::WriteLine("INVALID OPERATION");
+						break;
+					case GL_INVALID_FRAMEBUFFER_OPERATION:
+						Logger::WriteLine("INVALID FRAMEBUFFER OPERATION");
+						break;
+					case GL_OUT_OF_MEMORY:
+						Logger::WriteLine("OUT OF MEMORY");
+						break;
+					default:
+						Logger::WriteLine("Unknown error code: " + std::to_string(error));
+						break;
+				}
+			}
+			while ((error = glGetError()) != GL_NO_ERROR);
+		}
+
+		return result;
 	}
 }

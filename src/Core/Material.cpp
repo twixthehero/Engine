@@ -25,16 +25,10 @@ namespace VoxEngine
 
 	void Material::Use(Transform* transform)
 	{
-		_shader->Bind();
-
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, _textures["diffuse"]->GetID());
-
+		_shader->SetUniform1i("diffuse", 0);
 		_shader->UpdateUniforms(transform);
-	}
-
-	Shader* Material::GetShader()
-	{
-		return _shader;
 	}
 
 	Texture* Material::GetTexture()

@@ -17,6 +17,8 @@ namespace VoxEngine
 		bool Init(int width, int height);
 		void BindForWriting();
 		void BindForReading();
+
+		void SetReadBuffer(GBufferTextureType textureType);
 	private:
 		GLuint _fbo;
 		GLuint _textures[NumTextures];

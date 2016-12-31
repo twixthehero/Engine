@@ -55,7 +55,8 @@ namespace VoxEngine
 			_window = nullptr;
 		}
 
-		GLFWmonitor* monitor = _windowMode == EWindowMode::FULLSCREEN ? glfwGetPrimaryMonitor() : NULL;
+		GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+		GLFWmonitor* monitor = _windowMode == EWindowMode::FULLSCREEN ? primaryMonitor : NULL;
 
 		if (_windowMode == EWindowMode::BORDERLESS)
 		{
@@ -78,12 +79,21 @@ namespace VoxEngine
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
 		_window = glfwCreateWindow(_width, _height, _title, monitor, NULL);
 
 		if (!_window)
 		{
 			Logger::WriteLine("Failed to create window!");
 			return false;
+		}
+
+		//center the window
+		if (_windowMode == EWindowMode::WINDOWED)
+		{
+			const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
+			glfwSetWindowPos(_window, vidmode->width / 2 - _width / 2, vidmode->height / 2 - _height / 2);
 		}
 
 		return true;

@@ -14,6 +14,11 @@ namespace VoxEngine
 	public:
 		Engine();
 		~Engine();
+
+		static void CALLBACK DebugCallback(unsigned int source, unsigned int type,
+			unsigned int id, unsigned int severity,
+			int length, const char* message,
+			const void* userParam);
 	private:
 		int Init();
 		void Run();

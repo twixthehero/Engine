@@ -12,5 +12,7 @@ namespace VoxEngine
 		static std::vector<std::string> Split(const std::string& string, char delimiter);
 
 		static void PrintMatrix(const glm::mat4& matrix);
+
+		static bool CheckGLError(std::string message);
 	};
 }

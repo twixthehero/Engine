@@ -99,7 +99,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(ProjectDir)lib\x32\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x32\*.dll" "$(OutDir)"
+xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,7 +113,8 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;gl3w.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"
+xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -130,7 +132,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(ProjectDir)lib\x32\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x32\*.dll" "$(OutDir)"
+xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +150,8 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;gl3w.lib;FreeImage.lib;</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(ProjectDir)lib\x64\*.dll" "$(OutDir)"
+xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -180,8 +184,10 @@
     <ClInclude Include="inc\Logger.h" />
     <ClInclude Include="inc\Component\Servant.h" />
     <ClInclude Include="inc\Component\Oscillate.h" />
+    <ClInclude Include="inc\ShaderManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ShaderManager.cpp" />
     <ClCompile Include="src\Draw\GBuffer.cpp" />
     <ClCompile Include="src\Component\Oscillate.cpp" />
     <ClCompile Include="src\Component\Servant.cpp" />

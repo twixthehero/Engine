@@ -25,10 +25,12 @@ namespace VoxEngine
 
 	void MeshRenderer::Render()
 	{
-		_material->Use(gameObject->transform);
-
 		glBindVertexArray(vao);
+
+		_material->Use(gameObject->transform);
 		glDrawElements(GL_TRIANGLES, _mesh->indices.size(), GL_UNSIGNED_INT, 0);
+
+		glBindVertexArray(0);
 	}
 
 	void MeshRenderer::Reupload()

@@ -4,6 +4,7 @@
 #include "Window\WindowManager.h"
 #include "Input.h"
 #include "Draw\RenderingEngine.h"
+#include "ShaderManager.h"
 #include "TextureManager.h"
 #include "Scene.h"
 #include "Core\GameObject.h"
@@ -50,7 +51,7 @@ namespace VoxEngine
 		WindowManager::Init();
 		_windowManager = WindowManager::GetInstance();
 
-		_window = _windowManager->CreateNewWindow(EWindowMode::WINDOWED, 800, 600, "Engine");
+		_window = _windowManager->CreateNewWindow(EWindowMode::WINDOWED, 1280, 720, "Engine");
 
 		if (_window == nullptr)
 		{
@@ -73,7 +74,12 @@ namespace VoxEngine
 		Logger::WriteLine("OpenGL Version: " + std::string((const char*)glGetString(GL_VERSION)));
 		Logger::WriteLine("GLSL Version: " + std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
+		//setup debug callback
+		glDebugMessageCallbackARB(&Engine::DebugCallback, NULL);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+
 		Input::Init();
+		ShaderManager::Init();
 		RenderingEngine::Init();
 		TextureManager::Init();
 		MeshManager::Init();
@@ -94,7 +100,7 @@ namespace VoxEngine
 		cameraObject->tag = "MainCamera";
 		Camera* camera = new Camera();
 		camera->SetFOV(60);
-		camera->SetAspectRatio(800.0f / 600);
+		camera->SetAspectRatio((float)_window->GetWidth() / _window->GetHeight());
 		camera->SetNearClipping(0.01f);
 		camera->SetFarClipping(500.0f);
 		cameraObject->AddComponent(camera);
@@ -105,7 +111,7 @@ namespace VoxEngine
 		_scene->AddObject(cameraObject);
 
 		Mesh* mesh = MeshManager::GetInstance()->GetMesh("cube");
-		Shader* shader = new Shader(1, "default");
+		Shader* shader = ShaderManager::GetInstance()->GetShader("geometry");
 
 		GameObject* emmaCube = new GameObject("EmmaCube");
 		emmaCube->transform->position.x = 3;
@@ -118,8 +124,8 @@ namespace VoxEngine
 		Material* mat_daniel = new Material(shader, TextureManager::GetInstance()->GetTexture("daniel.png"));
 		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh, mat_daniel);
 		danielCube->AddComponent(meshRenderer2);
-		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
-		danielCube->AddComponent(oscillate);
+		//Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
+		//danielCube->AddComponent(oscillate);
 		//emmaCube->SetParent(danielCube);
 		_scene->AddObject(danielCube);
 
@@ -139,6 +145,7 @@ namespace VoxEngine
 		MeshManager::Shutdown();
 		TextureManager::Shutdown();
 		RenderingEngine::Shutdown();
+		ShaderManager::Shutdown();
 		Input::Shutdown();
 		WindowManager::Shutdown();
 		Logger::Shutdown();
@@ -163,5 +170,88 @@ namespace VoxEngine
 	void Engine::Render()
 	{
 		_scene->Render(_renderingEngine);
+	}
+
+	void Engine::DebugCallback(unsigned int source, unsigned int type,
+		unsigned int id, unsigned int severity,
+		int length, const char* message, const void* userParam)
+	{
+		Logger::WriteLine("=========== glDebugCallback ===========");
+
+		Logger::Write("Source: ");
+
+		switch (source)
+		{
+			case GL_DEBUG_SOURCE_API_ARB:
+				Logger::WriteLine("OpenGL");
+				break;
+			case GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB:
+				Logger::WriteLine("Windows");
+				break;
+			case GL_DEBUG_SOURCE_SHADER_COMPILER_ARB:
+				Logger::WriteLine("Shader Compiler");
+				break;
+			case GL_DEBUG_SOURCE_THIRD_PARTY_ARB:
+				Logger::WriteLine("Third Party");
+				break;
+			case GL_DEBUG_SOURCE_APPLICATION_ARB:
+				Logger::WriteLine("Application");
+				break;
+			case GL_DEBUG_SOURCE_OTHER_ARB:
+				Logger::WriteLine("Other");
+				break;
+			default:
+				Logger::WriteLine("Unknown (" + std::to_string(source) + ")");
+				break;
+		}
+
+		Logger::Write("Type: ");
+
+		switch (type)
+		{
+			case GL_DEBUG_TYPE_ERROR_ARB:
+				Logger::WriteLine("Error");
+				break;
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB:
+				Logger::WriteLine("Deprecated behavior");
+				break;
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB:
+				Logger::WriteLine("Undefined behavior");
+				break;
+			case GL_DEBUG_TYPE_PORTABILITY_ARB:
+				Logger::WriteLine("Portability");
+				break;
+			case GL_DEBUG_TYPE_PERFORMANCE_ARB:
+				Logger::WriteLine("Performance");
+				break;
+			case GL_DEBUG_TYPE_OTHER_ARB:
+				Logger::WriteLine("Other");
+				break;
+			default:
+				Logger::WriteLine("Unknown (" + std::to_string(type) + ")");
+				break;
+		}
+
+		Logger::Write("Severity: ");
+
+		switch (severity)
+		{
+			case GL_DEBUG_SEVERITY_HIGH_ARB:
+				Logger::WriteLine("High");
+				break;
+			case GL_DEBUG_SEVERITY_MEDIUM_ARB:
+				Logger::WriteLine("Medium");
+				break;
+			case GL_DEBUG_SEVERITY_LOW_ARB:
+				Logger::WriteLine("Low");
+				break;
+			default:
+				Logger::WriteLine("Unknown (" + std::to_string(severity) + ")");
+				break;
+		}
+
+		Logger::WriteLine("Message: " + std::string(message));
+
+		Logger::WriteLine("================= End =================");
 	}
 }

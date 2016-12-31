@@ -16,7 +16,6 @@ namespace VoxEngine
 
 		void Use(Transform* transform);
 
-		Shader* GetShader();
 		Texture* GetTexture();
 	private:
 		Shader* _shader;

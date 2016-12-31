@@ -43,6 +43,7 @@ namespace VoxEngine
 			return false;
 		}
 
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 		return true;
@@ -50,11 +51,16 @@ namespace VoxEngine
 
 	void GBuffer::BindForWriting()
 	{
-
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _fbo);
 	}
 
 	void GBuffer::BindForReading()
 	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, _fbo);
+	}
 
+	void GBuffer::SetReadBuffer(GBufferTextureType textureType)
+	{
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + textureType);
 	}
 }
