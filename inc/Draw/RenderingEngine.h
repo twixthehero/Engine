@@ -6,6 +6,8 @@ namespace VoxEngine
 	class GBuffer;
 	class GameObject;
 	class Light;
+	class PointLight;
+	class DirectionalLight;
 	class Camera;
 	class Component;
 	class MeshRenderer;
@@ -26,8 +28,10 @@ namespace VoxEngine
 		RenderingEngine();
 		~RenderingEngine();
 
-		void RenderGeometry(GameObject* gameObject);
-		void RenderLighting(GameObject* gameObject);
+		void GeometryPass(GameObject* gameObject);
+		void BeginLightingPasses();
+		void DirectionalLightPass(GameObject* gameObject);
+		void PointLightPass(GameObject* gameObject);
 
 		static RenderingEngine* _instance;
 
@@ -39,7 +43,8 @@ namespace VoxEngine
 		Camera* _camera;
 
 		Light* _ambientLight;
-		std::vector<Light*> _lights;
+		std::vector<PointLight*> _pointLights;
+		std::vector<DirectionalLight*> _directionalLights;
 
 		std::vector<Component*> renderingComponents;
 		std::vector<MeshRenderer*> meshRenderers;

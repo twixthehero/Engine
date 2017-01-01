@@ -13,8 +13,11 @@ namespace VoxEngine
 	class Shader
 	{
 	public:
-		Shader(int id, std::string name);
+		Shader(int id);
 		~Shader();
+
+		void AttachShader(GLenum shaderType, std::string filename);
+		void Finish();
 
 		void Bind();
 		void UpdateUniforms(Transform* transform);
@@ -48,15 +51,15 @@ namespace VoxEngine
 		void SetUniform3d(std::string uniform, glm::vec3 v);
 		void SetUniform4d(std::string uniform, glm::vec4 v);
 	protected:
-		std::string ReadText(std::string filename, std::vector<std::string>* uniforms);
-		virtual void Load(std::string name);
+		std::string ReadText(std::string filename);
 		void AddUniform(std::string name);
 
 		GLuint _program;
 		std::map<std::string, int> _uniforms;
 	private:
 		int _id;
-		std::string _name;
+
+		std::vector<GLuint> _shaders;
 
 		std::vector<std::string> _uniformNames;
 		std::vector<std::string> _uniformTypes;

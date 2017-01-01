@@ -25,23 +25,27 @@ namespace VoxEngine
 
 	ShaderManager::ShaderManager()
 	{
-		//LoadShader("default");
-		LoadShader("geometry");
+		Shader* geometry = new Shader(_nextShaderIndex++);
+		geometry->AttachShader(GL_VERTEX_SHADER, "geometry.vs");
+		geometry->AttachShader(GL_FRAGMENT_SHADER, "geometry.fs");
+		geometry->Finish();
+
+		AddShader("geometry", geometry);
 	}
 
 	ShaderManager::~ShaderManager()
 	{
 	}
 
-	void ShaderManager::LoadShader(std::string name)
+	void ShaderManager::AddShader(std::string name, Shader* shader)
 	{
 		if (_shaders.find(name) != _shaders.end())
 		{
-			Logger::WriteLine("Shader '" + name + "' is already loaded!");
+			Logger::WriteLine("Shader '" + name + "' is already added!");
 			return;
 		}
 
-		_shaders.insert(std::pair<std::string, Shader*>(name, new Shader(_nextShaderIndex++, name)));
+		_shaders.insert(std::pair<std::string, Shader*>(name, shader));
 	}
 
 	void ShaderManager::UnloadShader(std::string name)

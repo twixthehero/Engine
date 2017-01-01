@@ -155,6 +155,7 @@ xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Component\DirectionalLight.h" />
     <ClInclude Include="inc\Draw\GBuffer.h" />
     <ClInclude Include="inc\Component\FreeLook.h" />
     <ClInclude Include="inc\Component\FlyMove.h" />
@@ -185,8 +186,11 @@ xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     <ClInclude Include="inc\Component\Servant.h" />
     <ClInclude Include="inc\Component\Oscillate.h" />
     <ClInclude Include="inc\ShaderManager.h" />
+    <ClInclude Include="inc\Component\PointLight.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Component\DirectionalLight.cpp" />
+    <ClCompile Include="src\Component\PointLight.cpp" />
     <ClCompile Include="src\ShaderManager.cpp" />
     <ClCompile Include="src\Draw\GBuffer.cpp" />
     <ClCompile Include="src\Component\Oscillate.cpp" />

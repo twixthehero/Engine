@@ -20,7 +20,7 @@ namespace VoxEngine
 
 		GameObject* gameObject;
 	protected:
-		EComponentType _componentType;
+		EComponentType _componentType = EComponentType::NO_COMPONENT_TYPE;
 
 		bool _enabled = true;
 	};

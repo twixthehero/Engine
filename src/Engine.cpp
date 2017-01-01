@@ -124,8 +124,8 @@ namespace VoxEngine
 		Material* mat_daniel = new Material(shader, TextureManager::GetInstance()->GetTexture("daniel.png"));
 		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh, mat_daniel);
 		danielCube->AddComponent(meshRenderer2);
-		//Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
-		//danielCube->AddComponent(oscillate);
+		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
+		danielCube->AddComponent(oscillate);
 		//emmaCube->SetParent(danielCube);
 		_scene->AddObject(danielCube);
 

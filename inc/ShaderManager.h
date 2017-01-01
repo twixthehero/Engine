@@ -12,7 +12,7 @@ namespace VoxEngine
 		static ShaderManager* GetInstance();
 		static void Shutdown();
 
-		void LoadShader(std::string name);
+		void AddShader(std::string name, Shader* shader);
 		void UnloadShader(std::string name);
 		
 		Shader* GetShader(std::string name);

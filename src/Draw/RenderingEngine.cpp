@@ -29,8 +29,6 @@ namespace VoxEngine
 			Logger::WriteLine("Failed to initialize the GBuffer!");
 		}
 
-		_lights = std::vector<Light*>();
-
 		_ambientLight = new Light();
 		_ambientLight->color.r = 0.0f;
 		_ambientLight->color.g = 0.0f;
@@ -71,8 +69,10 @@ namespace VoxEngine
 		if (_camera != Camera::main)
 			SetCamera(Camera::main);
 
-		RenderGeometry(gameObject);
-		RenderLighting(gameObject);
+		GeometryPass(gameObject);
+		//BeginLightingPasses();
+		//PointLightPass(gameObject);
+		DirectionalLightPass(gameObject);
 
 		/*for (Light* light : _lights)
 		{
@@ -81,13 +81,18 @@ namespace VoxEngine
 		}*/
 	}
 
-	void RenderingEngine::RenderGeometry(GameObject* gameObject)
+	void RenderingEngine::GeometryPass(GameObject* gameObject)
 	{
 		ShaderManager::GetInstance()->UseShader("geometry");
 
 		_gbuffer->BindForWriting();
 
+		//glDepthMask(GL_TRUE);
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//glEnable(GL_DEPTH_TEST);
+		//glDisable(GL_BLEND);
 
 		renderingComponents.clear();
 		meshRenderers.clear();
@@ -98,14 +103,31 @@ namespace VoxEngine
 
 		for (MeshRenderer* renderer : meshRenderers)
 			renderer->Render();
+
+		//glDepthMask(GL_FALSE);
+		
+		//glDisable(GL_DEPTH_TEST);
 	}
 
-	void RenderingEngine::RenderLighting(GameObject* gameObject)
+	void RenderingEngine::BeginLightingPasses()
+	{
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		_gbuffer->BindForReading();
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
+	void RenderingEngine::PointLightPass(GameObject* gameObject)
+	{
+
+	}
+
+	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		_gbuffer->BindForReading();
 
 		GLsizei halfWidth = _windowWidth / 2.0f;

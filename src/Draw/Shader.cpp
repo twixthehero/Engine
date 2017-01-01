@@ -14,20 +14,125 @@
 
 namespace VoxEngine
 {
-	Shader::Shader(int id, std::string name)
+	Shader::Shader(int id)
 	{
 		_id = id;
-		_name = name;
 
-		_uniforms = std::map<std::string, int>();
-		_uniformNames = std::vector<std::string>();
-		_uniformTypes = std::vector<std::string>();
+		_program = glCreateProgram();
 
-		Load(_name);
+		if (_program == 0)
+		{
+			Logger::WriteLine("ERROR: Unable to create program space for shader");
+			exit(-1);
+		}
 	}
 
 	Shader::~Shader()
 	{
+	}
+
+	void Shader::AttachShader(GLenum shaderType, std::string filename)
+	{
+		std::string content = ReadText(filename);
+		const char* contentPtr = content.c_str();
+
+		GLuint shader = glCreateShader(shaderType);
+		glShaderSource(shader, 1, &contentPtr, NULL);
+		glCompileShader(shader);
+
+		GLint success = -1;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+		if (success != GL_TRUE)
+		{
+			Logger::WriteLine("ERROR: GL " + std::to_string(shaderType) + " shader type of index " + std::to_string(shader) + " did not compile");
+
+			int logLength;
+
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+
+			if (logLength > 0)
+			{
+				char* errorMessage = new char[logLength + 1];
+				glGetShaderInfoLog(shader, logLength, NULL, errorMessage);
+				Logger::WriteLine(std::string(errorMessage));
+				delete errorMessage;
+			}
+
+			exit(-1);
+		}
+
+		glAttachShader(_program, shader);
+
+		_shaders.push_back(shader);
+	}
+
+	std::string Shader::ReadText(std::string filename)
+	{
+		std::ifstream file("shaders\\" + filename);
+		std::string line;
+		std::string text;
+
+		if (file.is_open())
+		{
+			while (getline(file, line))
+			{
+				if (line.find("uniform") == 0)
+				{
+					std::vector<std::string> parts = Utils::Split(line, ' ');
+
+					std::string uniformType = parts[1];
+					std::string uniformName = parts[2].substr(0, parts[2].length() - 1);
+
+					Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
+
+					_uniformNames.push_back(uniformName);
+					_uniformTypes.push_back(uniformType);
+				}
+
+				text += line + "\n";
+			}
+
+			file.close();
+		}
+
+		return text;
+	}
+
+	void Shader::Finish()
+	{
+		Logger::WriteLine("Linking shader " + std::to_string(_id));
+
+		glLinkProgram(_program);
+
+		GLint success;
+		glGetProgramiv(_program, GL_LINK_STATUS, &success);
+		if (success != GL_TRUE)
+		{
+			Logger::WriteLine("ERROR: shader " + std::to_string(_id) + " did not link properly");
+			exit(-1);
+		}
+
+		while (_shaders.size() > 0)
+		{
+			glDetachShader(_program, _shaders[0]);
+			glDeleteShader(_shaders[0]);
+
+			_shaders.erase(_shaders.begin());
+		}
+
+		//add all uniforms to map
+		for (auto it = _uniformNames.begin(); it != _uniformNames.end(); it++)
+		{
+			AddUniform(*it);
+			Logger::WriteLine(*it + " location: " + std::to_string(GetUniformLocation(*it)));
+		}
+	}
+
+	void Shader::AddUniform(std::string name)
+	{
+		if (_uniforms.find(name) == _uniforms.end())
+			_uniforms.insert(std::pair<std::string, int>(name, glGetUniformLocation(_program, name.c_str())));
 	}
 
 	void Shader::Bind()
@@ -171,144 +276,5 @@ namespace VoxEngine
 	void Shader::SetUniform4d(std::string uniform, glm::vec4 v)
 	{
 		SetUniform4d(uniform, v.x, v.y, v.z, v.w);
-	}
-
-	std::string Shader::ReadText(std::string filename, std::vector<std::string>* uniforms)
-	{
-		std::ifstream file("shaders\\" + filename);
-		std::string line;
-		std::string text;
-
-		if (file.is_open())
-		{
-			while (getline(file, line))
-			{
-				if (line.find("uniform") == 0)
-				{
-					std::vector<std::string> parts = Utils::Split(line, ' ');
-
-					std::string uniformType = parts[1];
-					std::string uniformName = parts[2].substr(0, parts[2].length() - 1);
-
-					Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
-
-					uniforms->push_back(uniformName);
-					_uniformNames.push_back(uniformName);
-					_uniformTypes.push_back(uniformType);
-				}
-
-				text += line + "\n";
-			}
-
-			file.close();
-		}
-
-		return text;
-	}
-
-	void Shader::Load(std::string name)
-	{
-		Logger::WriteLine("Loading shader '" + name + "'");
-
-		std::vector<std::string>* uniforms = new std::vector<std::string>();
-		std::string v = ReadText(name + ".vs", uniforms);
-		std::string f = ReadText(name + ".fs", uniforms);
-		const char* vert = v.c_str();
-		const char* frag = f.c_str();
-
-		GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vs, 1, &vert, NULL);
-		glCompileShader(vs);
-
-		int success = -1;
-		glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-		if (success != GL_TRUE)
-		{
-			Logger::WriteLine("ERROR: GL vertex shader index " + std::to_string(vs) + " did not compile");
-
-			int logLength;
-
-			glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logLength);
-
-			if (logLength > 0)
-			{
-				char* errorMessage = new char[logLength + 1];
-				glGetShaderInfoLog(vs, logLength, NULL, errorMessage);
-				Logger::WriteLine(std::string(errorMessage));
-				delete errorMessage;
-			}
-
-			exit(-1);
-		}
-
-		GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fs, 1, &frag, NULL);
-		glCompileShader(fs);
-
-		success = -1;
-		glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-		if (success != GL_TRUE)
-		{
-			Logger::WriteLine("ERROR: GL fragment shader index " + std::to_string(fs) + " did not compile");
-
-			int logLength;
-
-			glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &logLength);
-
-			if (logLength > 0)
-			{
-				char* errorMessage = new char[logLength + 1];
-				glGetShaderInfoLog(fs, logLength, NULL, errorMessage);
-				Logger::WriteLine(std::string(errorMessage));
-				delete errorMessage;
-			}
-
-			exit(-1);
-		}
-
-		//Logger::WriteLine("Reserving pointer for shader");
-		_program = glCreateProgram();
-
-		if (_program == 0)
-		{
-			Logger::WriteLine("ERROR: Unable to create program space for shader");
-			exit(-1);
-		}
-
-		//Logger::WriteLine("Linking vertex and fragment");
-		glAttachShader(_program, vs);
-		glAttachShader(_program, fs);
-		glLinkProgram(_program);
-
-		glGetProgramiv(_program, GL_LINK_STATUS, &success);
-		if (success != GL_TRUE)
-		{
-			Logger::WriteLine("ERROR: shader '" + name + "' did not link properly");
-			exit(-1);
-		}
-
-		glDetachShader(_program, vs);
-		glDetachShader(_program, fs);
-
-		glDeleteShader(vs);
-		glDeleteShader(fs);
-
-		//add all uniforms to map
-		while (uniforms->size() > 0)
-		{
-			AddUniform(uniforms->at(uniforms->size() - 1));
-			uniforms->pop_back();
-		}
-
-		for (int i = 0; i < _uniformNames.size(); i++)
-			Logger::WriteLine(_uniformNames[i] + " location: " + std::to_string(GetUniformLocation(_uniformNames[i])));
-
-		delete uniforms;
-	}
-
-	void Shader::AddUniform(std::string name)
-	{
-		if (_uniforms.find(name) == _uniforms.end())
-			_uniforms.insert(std::pair<std::string, int>(name, glGetUniformLocation(_program, name.c_str())));
 	}
 }
