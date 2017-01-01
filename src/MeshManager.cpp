@@ -98,6 +98,9 @@ namespace VoxEngine
 		//if no uvs
 		if (uvs.size() == 0)
 			uvs.push_back(glm::vec2(0, 0));
+		//if no normals
+		if (normals.size() == 0)
+			normals.push_back(glm::vec3(0, 0, 1));
 
 		/*
 		Logger::WriteLine("num verts: " + std::to_string(vertices.size()));
@@ -127,21 +130,20 @@ namespace VoxEngine
 					Logger::WriteLine("Error parsing face data: " + std::to_string(i) + " has no vertex index");
 					return false;
 				}
-				else if (vert[2].length() == 0)
-				{
-					Logger::WriteLine("Error parsing face data: " + std::to_string(i) + " has no normal index");
-					return false;
-				}
 
 				int vertexIndex = std::stoi(vert[0]) - 1;
 				int uvIndex;
+				int normalIndex;
 
 				if (vert[1].length() > 0)
 					uvIndex = std::stoi(vert[1]) - 1;
 				else
 					uvIndex = 0;
 
-				int normalIndex = std::stoi(vert[2]) - 1;
+				if (vert.size() >= 3 && vert[2].length() > 0)
+					normalIndex = std::stoi(vert[2]) - 1;
+				else
+					normalIndex = 0;
 
 				vis.push_back(vertexIndex);
 				uis.push_back(uvIndex);

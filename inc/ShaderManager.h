@@ -16,7 +16,8 @@ namespace VoxEngine
 		void UnloadShader(std::string name);
 		
 		Shader* GetShader(std::string name);
-		void UseShader(std::string name);
+		Shader* GetCurrentShader();
+		Shader* UseShader(std::string name);
 	private:
 		ShaderManager();
 		~ShaderManager();
@@ -25,5 +26,6 @@ namespace VoxEngine
 
 		unsigned int _nextShaderIndex = 0;
 		std::map<std::string, Shader*> _shaders;
+		Shader* _currentShader;
 	};
 }

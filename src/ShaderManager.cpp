@@ -29,8 +29,25 @@ namespace VoxEngine
 		geometry->AttachShader(GL_VERTEX_SHADER, "geometry.vs");
 		geometry->AttachShader(GL_FRAGMENT_SHADER, "geometry.fs");
 		geometry->Finish();
-
 		AddShader("geometry", geometry);
+
+		Shader* ambientLight = new Shader(_nextShaderIndex++);
+		ambientLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
+		ambientLight->AttachShader(GL_FRAGMENT_SHADER, "ambientLight.fs");
+		ambientLight->Finish();
+		AddShader("ambientLight", ambientLight);
+
+		Shader* pointLight = new Shader(_nextShaderIndex++);
+		pointLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
+		pointLight->AttachShader(GL_FRAGMENT_SHADER, "pointLight.fs");
+		pointLight->Finish();
+		AddShader("pointLight", pointLight);
+
+		Shader* directionalLight = new Shader(_nextShaderIndex++);
+		directionalLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
+		directionalLight->AttachShader(GL_FRAGMENT_SHADER, "directionalLight.fs");
+		directionalLight->Finish();
+		AddShader("directionalLight", directionalLight);
 	}
 
 	ShaderManager::~ShaderManager()
@@ -65,16 +82,24 @@ namespace VoxEngine
 		return _shaders[name];
 	}
 
-	void ShaderManager::UseShader(std::string name)
+	Shader* ShaderManager::GetCurrentShader()
+	{
+		return _currentShader;
+	}
+
+	Shader* ShaderManager::UseShader(std::string name)
 	{
 		if (_shaders.find(name) == _shaders.end())
 		{
 			Logger::WriteLine("Tried to use non-loaded shader '" + name + "'");
 			glUseProgram(0);
 			
-			return;
+			return nullptr;
 		}
 
-		_shaders[name]->Bind();
+		_currentShader = _shaders[name];
+		_currentShader->Bind();
+
+		return _currentShader;
 	}
 }

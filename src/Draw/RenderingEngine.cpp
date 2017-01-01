@@ -3,9 +3,12 @@
 #include "ShaderManager.h"
 #include "Component\Light.h"
 #include "Core\GameObject.h"
+#include "Component\Transform.h"
 #include "Component\Camera.h"
 #include "Component\MeshRenderer.h"
+#include "MeshManager.h"
 #include "Draw\GBuffer.h"
+#include "Draw\Shader.h"
 #include "Window\WindowManager.h"
 #include "Window\Window.h"
 #include "Logger.h"
@@ -28,6 +31,8 @@ namespace VoxEngine
 		{
 			Logger::WriteLine("Failed to initialize the GBuffer!");
 		}
+
+		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
 
 		_ambientLight = new Light();
 		_ambientLight->color.r = 0.0f;
@@ -71,6 +76,7 @@ namespace VoxEngine
 
 		GeometryPass(gameObject);
 		//BeginLightingPasses();
+		//AmbientLightPass(gameObject);
 		//PointLightPass(gameObject);
 		DirectionalLightPass(gameObject);
 
@@ -83,7 +89,7 @@ namespace VoxEngine
 
 	void RenderingEngine::GeometryPass(GameObject* gameObject)
 	{
-		ShaderManager::GetInstance()->UseShader("geometry");
+		Shader* shader = ShaderManager::GetInstance()->UseShader("geometry");
 
 		_gbuffer->BindForWriting();
 
@@ -101,8 +107,15 @@ namespace VoxEngine
 		for (auto it = renderingComponents.begin(); it != renderingComponents.end(); it++)
 			meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
 
+		Camera* main = Camera::main;
+		glm::mat4 mvp;
+		glm::mat4 viewProjection = main->GetViewProjectionMatrix();
+
 		for (MeshRenderer* renderer : meshRenderers)
+		{
+			shader->SetUniformMatrix4fv("mvp", viewProjection * renderer->gameObject->transform->GetTransformation());
 			renderer->Render();
+		}
 
 		//glDepthMask(GL_FALSE);
 		
@@ -119,13 +132,27 @@ namespace VoxEngine
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
+	void RenderingEngine::AmbientLightPass(GameObject* gameObject)
+	{
+		Shader* ambientShader = ShaderManager::GetInstance()->UseShader("ambientLight");
+		ambientShader->SetUniform1f("intensity", _ambientLight->intensity);
+		ambientShader->SetUniform4f("color", _ambientLight->color);
+		ambientShader->SetUniform2f("screenSize", _windowWidth, _windowHeight);
+		ambientShader->SetUniformMatrix4fv("mvp", glm::mat4());
+
+		_quad->Render();
+	}
+
 	void RenderingEngine::PointLightPass(GameObject* gameObject)
 	{
+		ShaderManager::GetInstance()->UseShader("pointLight");
+
 
 	}
 
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
 	{
+		//ShaderManager::GetInstance()->UseShader("directionalLight");
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		_gbuffer->BindForReading();

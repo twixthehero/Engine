@@ -1,5 +1,6 @@
 #include "Core\Material.h"
 #include "Draw\Shader.h"
+#include "ShaderManager.h"
 #include "Core\Texture.h"
 
 namespace VoxEngine
@@ -8,14 +9,8 @@ namespace VoxEngine
 	{
 	}
 
-	Material::Material(Shader* shader)
+	Material::Material(Texture* diffuseTexture)
 	{
-		_shader = shader;
-	}
-
-	Material::Material(Shader* shader, Texture* diffuseTexture)
-	{
-		_shader = shader;
 		_textures.insert(std::pair<std::string, Texture*>("diffuse", diffuseTexture));
 	}
 
@@ -23,12 +18,14 @@ namespace VoxEngine
 	{
 	}
 
-	void Material::Use(Transform* transform)
+	void Material::Use()
 	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, _textures["diffuse"]->GetID());
-		_shader->SetUniform1i("diffuse", 0);
-		_shader->UpdateUniforms(transform);
+		if (_textures.find("diffuse") != _textures.end())
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, _textures["diffuse"]->GetID());
+			ShaderManager::GetInstance()->GetCurrentShader()->SetUniform1i("diffuse", 0);
+		}
 	}
 
 	Texture* Material::GetTexture()

@@ -2,6 +2,9 @@
 #include "Draw\Mesh.h"
 #include "Core\Material.h"
 #include "Core\GameObject.h"
+#include "Component\Transform.h"
+#include "Draw\Shader.h"
+#include "ShaderManager.h"
 #include "Draw\Vertex.h"
 
 namespace VoxEngine
@@ -27,7 +30,14 @@ namespace VoxEngine
 	{
 		glBindVertexArray(vao);
 
-		_material->Use(gameObject->transform);
+		if (_material != nullptr)
+			_material->Use();
+
+		Shader* shader = ShaderManager::GetInstance()->GetCurrentShader();
+
+		if (shader->GetUniformLocation("modelMatrix") != -1)
+			shader->SetUniformMatrix4fv("modelMatrix", gameObject->transform->GetTransformation());
+
 		glDrawElements(GL_TRIANGLES, _mesh->indices.size(), GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);

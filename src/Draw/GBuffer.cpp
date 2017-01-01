@@ -25,6 +25,8 @@ namespace VoxEngine
 		{
 			glBindTexture(GL_TEXTURE_2D, _textures[i]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, 0);
+			//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _textures[i], 0);
 		}
 
@@ -57,6 +59,13 @@ namespace VoxEngine
 	void GBuffer::BindForReading()
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _fbo);
+		//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+		for (int i = 0; i < GBufferTextureType::NumTextures; i++)
+		{
+			//glActiveTexture(GL_TEXTURE0 + i);
+			//glBindTexture(GL_TEXTURE_2D, _textures[GBufferTextureType::Position + i]);
+		}
 	}
 
 	void GBuffer::SetReadBuffer(GBufferTextureType textureType)

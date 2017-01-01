@@ -12,7 +12,6 @@
 #include "MeshManager.h"
 #include <iostream>
 #include "Core\Material.h"
-#include "Draw\Shader.h"
 #include "Component\MeshRenderer.h"
 #include "Component\Transform.h"
 #include "Component\FlyMove.h"
@@ -80,9 +79,9 @@ namespace VoxEngine
 
 		Input::Init();
 		ShaderManager::Init();
+		MeshManager::Init();
 		RenderingEngine::Init();
 		TextureManager::Init();
-		MeshManager::Init();
 
 		_renderingEngine = RenderingEngine::GetInstance();
 
@@ -111,17 +110,16 @@ namespace VoxEngine
 		_scene->AddObject(cameraObject);
 
 		Mesh* mesh = MeshManager::GetInstance()->GetMesh("cube");
-		Shader* shader = ShaderManager::GetInstance()->GetShader("geometry");
 
 		GameObject* emmaCube = new GameObject("EmmaCube");
 		emmaCube->transform->position.x = 3;
 		emmaCube->transform->position.y = 1;
-		Material* mat_emma = new Material(shader, TextureManager::GetInstance()->GetTexture("emma.png"));
+		Material* mat_emma = new Material(TextureManager::GetInstance()->GetTexture("emma.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
 
 		GameObject* danielCube = new GameObject("DanielCube");
-		Material* mat_daniel = new Material(shader, TextureManager::GetInstance()->GetTexture("daniel.png"));
+		Material* mat_daniel = new Material(TextureManager::GetInstance()->GetTexture("daniel.png"));
 		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh, mat_daniel);
 		danielCube->AddComponent(meshRenderer2);
 		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
@@ -142,9 +140,9 @@ namespace VoxEngine
 
 	void Engine::Shutdown()
 	{
-		MeshManager::Shutdown();
 		TextureManager::Shutdown();
 		RenderingEngine::Shutdown();
+		MeshManager::Shutdown();
 		ShaderManager::Shutdown();
 		Input::Shutdown();
 		WindowManager::Shutdown();

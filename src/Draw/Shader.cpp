@@ -140,31 +140,6 @@ namespace VoxEngine
 		glUseProgram(_program);
 	}
 
-	void Shader::UpdateUniforms(Transform* transform)
-	{
-		glm::mat4 modelMatrix = transform->GetTransformation();
-
-		Camera* mainCamera = Camera::main;
-		glm::mat4 viewMatrix = mainCamera->GetViewMatrix();
-		glm::mat4 mvpMatrix = mainCamera->GetViewProjectionMatrix() * modelMatrix;
-
-		for (int i = 0; i < _uniformNames.size(); i++)
-		{
-			std::string uniformName = _uniformNames[i];
-			std::string uniformType = _uniformTypes[i];
-			GLuint location = GetUniformLocation(uniformName);
-
-			if (uniformName == "mvp")
-			{
-				glUniformMatrix4fv(location, 1, false, &mvpMatrix[0][0]);
-			}
-			else if (uniformName == "modelMatrix")
-			{
-				glUniformMatrix4fv(location, 1, false, &modelMatrix[0][0]);
-			}
-		}
-	}
-
 	int Shader::GetUniformLocation(std::string uniform)
 	{
 		if (_uniforms.find(uniform) != _uniforms.end())
@@ -231,6 +206,11 @@ namespace VoxEngine
 	void Shader::SetUniform4d(std::string uniform, double x, double y, double z, double w)
 	{
 		glUniform4d(GetUniformLocation(uniform), x, y, z, w);
+	}
+
+	void Shader::SetUniformMatrix4fv(std::string uniform, glm::mat4 matrix)
+	{
+		glUniformMatrix4fv(GetUniformLocation(uniform), 1, false, &matrix[0][0]);
 	}
 
 	void Shader::SetUniform2i(std::string uniform, glm::vec2 v)

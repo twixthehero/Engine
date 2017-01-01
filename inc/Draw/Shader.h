@@ -20,7 +20,6 @@ namespace VoxEngine
 		void Finish();
 
 		void Bind();
-		void UpdateUniforms(Transform* transform);
 
 		int GetUniformLocation(std::string uniform);
 
@@ -38,6 +37,8 @@ namespace VoxEngine
 		void SetUniform2d(std::string uniform, double x, double y);
 		void SetUniform3d(std::string uniform, double x, double y, double z);
 		void SetUniform4d(std::string uniform, double x, double y, double z, double w);
+
+		void SetUniformMatrix4fv(std::string uniform, glm::mat4 matrix);
 
 		void SetUniform2i(std::string uniform, glm::vec2 v);
 		void SetUniform3i(std::string uniform, glm::vec3 v);

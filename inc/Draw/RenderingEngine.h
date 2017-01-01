@@ -30,6 +30,7 @@ namespace VoxEngine
 
 		void GeometryPass(GameObject* gameObject);
 		void BeginLightingPasses();
+		void AmbientLightPass(GameObject* gameObject);
 		void DirectionalLightPass(GameObject* gameObject);
 		void PointLightPass(GameObject* gameObject);
 
@@ -41,6 +42,7 @@ namespace VoxEngine
 		int _windowHeight;
 
 		Camera* _camera;
+		MeshRenderer* _quad;
 
 		Light* _ambientLight;
 		std::vector<PointLight*> _pointLights;
@@ -48,6 +50,5 @@ namespace VoxEngine
 
 		std::vector<Component*> renderingComponents;
 		std::vector<MeshRenderer*> meshRenderers;
-		Light* _currentLight;
 	};
 }
