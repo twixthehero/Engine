@@ -2,6 +2,10 @@
 #include "Logger.h"
 #include <sstream>
 #include <iostream>
+#include <algorithm>
+#include <functional>
+#include <locale>
+#include <cctype>
 #include <GL\gl3w.h>
 
 namespace VoxEngine
@@ -23,6 +27,24 @@ namespace VoxEngine
 		Split(string, delimiter, elements);
 
 		return elements;
+	}
+
+	void Utils::LTrim(std::string& s)
+	{
+		s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+			std::not1(std::ptr_fun<int, int>(std::isspace))));
+	}
+
+	void Utils::RTrim(std::string& s)
+	{
+		s.erase(std::find_if(s.rbegin(), s.rend(),
+			std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	}
+
+	void Utils::Trim(std::string& s)
+	{
+		LTrim(s);
+		RTrim(s);
 	}
 
 	void Utils::PrintMatrix(const glm::mat4& matrix)

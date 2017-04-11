@@ -9,6 +9,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <Core\GameObject.h>
 #include "Component\Light.h"
+#include "Draw\ShaderStruct.h"
 #include "Utils.h"
 #include "Logger.h"
 
@@ -73,24 +74,75 @@ namespace VoxEngine
 		std::string line;
 		std::string text;
 
+		std::string currentStruct;
+		ShaderStruct* ss = nullptr;
+		std::map<std::string, ShaderStruct*> structs;
+		bool inStruct = false;
+
 		if (file.is_open())
 		{
 			while (getline(file, line))
 			{
-				if (line.find("uniform") == 0)
+				text += line + "\n";
+
+				if (line.find("struct") == 0)
 				{
-					std::vector<std::string> parts = Utils::Split(line, ' ');
-
-					std::string uniformType = parts[1];
-					std::string uniformName = parts[2].substr(0, parts[2].length() - 1);
-
-					Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
-
-					_uniformNames.push_back(uniformName);
-					_uniformTypes.push_back(uniformType);
+					inStruct = true;
+					currentStruct = Utils::Split(line, ' ')[1];
+					Logger::WriteLine("=================================================");
+					Logger::WriteLine("Found new shader struct: " + currentStruct);
+					ss = new ShaderStruct(currentStruct);
+					structs.insert(std::pair<std::string, ShaderStruct*>(currentStruct, ss));
+					continue;
+				}
+				else if (line.find("};") == 0)
+				{
+					inStruct = false;
+					Logger::WriteLine("End of shader struct");
+					Logger::WriteLine("=================================================");
 				}
 
-				text += line + "\n";
+				if (inStruct)
+				{
+					Utils::Trim(line);
+					std::vector<std::string> parts = Utils::Split(line, ' ');
+
+					if (parts.size() < 2) continue;
+
+					std::string varType = parts[0];
+					std::string varName = parts[1].substr(0, parts[1].length() - 1);
+
+					//found struct type in struct
+					if (structs.find(varType) != structs.end())
+					{
+						Logger::WriteLine("struct included another struct: " + varType);
+						ShaderStruct* included = structs[varType];
+
+						for (int i = 0; i < included->uniformNames.size(); i++)
+						{
+							Logger::WriteLine("Adding uniform: " + included->uniformTypes[i] + " " + varName + "." + included->uniformNames[i]);
+							ss->AddUniform(included->uniformTypes[i], varName + "." + included->uniformNames[i]);
+						}
+					}
+
+					Logger::WriteLine("Adding uniform: " + varType + " " + varName);
+					ss->AddUniform(varType, varName);
+				}
+				else
+				{
+					if (line.find("uniform") == 0)
+					{
+						std::vector<std::string> parts = Utils::Split(line, ' ');
+
+						std::string uniformType = parts[1];
+						std::string uniformName = parts[2].substr(0, parts[2].length() - 1);
+
+						Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
+
+						_uniformNames.push_back(uniformName);
+						_uniformTypes.push_back(uniformType);
+					}
+				}
 			}
 
 			file.close();

@@ -187,8 +187,10 @@ xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
     <ClInclude Include="inc\Component\Oscillate.h" />
     <ClInclude Include="inc\ShaderManager.h" />
     <ClInclude Include="inc\Component\PointLight.h" />
+    <ClInclude Include="inc\Draw\ShaderStruct.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Draw\ShaderStruct.cpp" />
     <ClCompile Include="src\Component\DirectionalLight.cpp" />
     <ClCompile Include="src\Component\PointLight.cpp" />
     <ClCompile Include="src\ShaderManager.cpp" />
