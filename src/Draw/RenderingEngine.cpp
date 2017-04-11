@@ -42,7 +42,6 @@ namespace VoxEngine
 		_ambientLight->color.r = 0.2f;
 		_ambientLight->color.g = 0.2f;
 		_ambientLight->color.b = 0.2f;
-		_ambientLight->color.a = 0.2f;
 	}
 
 	RenderingEngine::~RenderingEngine()
@@ -127,7 +126,7 @@ namespace VoxEngine
 
 		Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
 		shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
-		shader->SetUniform4f("ambientColor", _ambientLight->color);
+		shader->SetUniform3f("ambientColor", _ambientLight->color);
 		
 		for (MeshRenderer* renderer : _meshRenderers)
 		{
@@ -144,7 +143,7 @@ namespace VoxEngine
 			if (!point->IsEnabled()) continue;
 
 			shader->SetUniform3f("lightPosition", point->gameObject->transform->GetTransformedPosition());
-			shader->SetUniform4f("lightColor", point->color);
+			shader->SetUniform3f("lightColor", point->color);
 			shader->SetUniform1f("lightIntensity", point->intensity);
 			shader->SetUniform1f("constant", point->constant);
 			shader->SetUniform1f("linear", point->linear);
@@ -166,7 +165,7 @@ namespace VoxEngine
 			if (!dirLight->IsEnabled()) continue;
 
 			shader->SetUniform3f("lightDirection", dirLight->gameObject->transform->GetForward());
-			shader->SetUniform4f("lightColor", dirLight->color);
+			shader->SetUniform3f("lightColor", dirLight->color);
 			shader->SetUniform1f("lightIntensity", dirLight->intensity);
 
 			for (MeshRenderer* renderer : _meshRenderers)
@@ -235,7 +234,7 @@ namespace VoxEngine
 	{
 		Shader* ambientShader = ShaderManager::GetInstance()->UseShader("ambientLight");
 		ambientShader->SetUniform1f("intensity", _ambientLight->intensity);
-		ambientShader->SetUniform4f("color", _ambientLight->color);
+		ambientShader->SetUniform3f("color", _ambientLight->color);
 		ambientShader->SetUniform2f("screenSize", _windowWidth, _windowHeight);
 		ambientShader->SetUniformMatrix4fv("mvp", glm::mat4());
 		ambientShader->SetUniform1i("colors", GBuffer::GBufferTextureType::Diffuse);
@@ -248,8 +247,18 @@ namespace VoxEngine
 		Shader* pointShader = ShaderManager::GetInstance()->UseShader("pointLight");
 		pointShader->SetUniform2f("screenSize", _windowWidth, _windowHeight);
 		pointShader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
-		pointShader->SetUniform4f("ambientColor", _ambientLight->color);
+		pointShader->SetUniform3f("ambientColor", _ambientLight->color);
 		pointShader->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
+
+		pointShader->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
+		pointShader->SetUniform1i("colorMap", GBuffer::GBufferTextureType::Diffuse);
+		pointShader->SetUniform1i("normalMap", GBuffer::GBufferTextureType::Normal);
+
+		_renderingComponents.clear();
+		_pointLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_pointLights.push_back(dynamic_cast<PointLight*>(*it));
 
 		for (PointLight* light : _pointLights)
 		{

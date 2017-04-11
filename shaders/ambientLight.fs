@@ -1,7 +1,7 @@
 #version 400
 
 uniform float intensity;
-uniform vec4 color;
+uniform vec3 color;
 
 uniform vec2 screenSize;
 
@@ -16,5 +16,5 @@ vec2 CalcTextureCoordinate()
 
 void main()
 {
-	glFragColor = color * intensity * texture2D(colors, CalcTextureCoordinate());
+	glFragColor = vec4(color * intensity, 1.0) * texture2D(colors, CalcTextureCoordinate());
 }

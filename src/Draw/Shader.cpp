@@ -124,9 +124,11 @@ namespace VoxEngine
 							ss->AddUniform(included->uniformTypes[i], varName + "." + included->uniformNames[i]);
 						}
 					}
-
-					Logger::WriteLine("Adding uniform: " + varType + " " + varName);
-					ss->AddUniform(varType, varName);
+					else
+					{
+						Logger::WriteLine("Adding uniform: " + varType + " " + varName);
+						ss->AddUniform(varType, varName);
+					}
 				}
 				else
 				{
@@ -139,13 +141,30 @@ namespace VoxEngine
 
 						Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
 
-						_uniformNames.push_back(uniformName);
-						_uniformTypes.push_back(uniformType);
+						if (structs.find(uniformType) != structs.end())
+						{
+							Logger::WriteLine("is struct!");
+							ShaderStruct* usedStruct = structs[uniformType];
+
+							for (int i = 0; i < usedStruct->uniformNames.size(); i++)
+							{
+								_uniformTypes.push_back(usedStruct->uniformTypes[i]);
+								_uniformNames.push_back(uniformName + "." + usedStruct->uniformNames[i]);
+							}
+						}
+						else
+						{
+							_uniformTypes.push_back(uniformType);
+							_uniformNames.push_back(uniformName);
+						}
 					}
 				}
 			}
 
 			file.close();
+
+			for (auto it : structs)
+				delete it.second;
 		}
 
 		return text;

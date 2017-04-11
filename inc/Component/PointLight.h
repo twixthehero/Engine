@@ -11,8 +11,8 @@ namespace VoxEngine
 		~PointLight();
 
 		float constant = 1;
-		float linear = 0.00005;
-		float exponent = 0.00005;
+		float linear = 0.00005f;
+		float exponent = 0.00005f;
 
 		float range = 10;
 	};
