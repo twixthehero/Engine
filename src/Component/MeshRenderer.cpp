@@ -31,7 +31,7 @@ namespace VoxEngine
 		if (!_enabled) return;
 
 		glBindVertexArray(vao);
-
+		
 		if (_material != nullptr)
 			_material->Use();
 

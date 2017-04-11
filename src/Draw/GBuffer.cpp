@@ -45,7 +45,7 @@ namespace VoxEngine
 			return false;
 		}
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 		return true;

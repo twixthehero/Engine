@@ -1,5 +1,6 @@
 #include "Draw\RenderingEngine.h"
 #include <GL\gl3w.h>
+#include <glm\gtc\matrix_transform.hpp>
 #include "ShaderManager.h"
 #include "Component\Light.h"
 #include "Component\PointLight.h"
@@ -35,6 +36,7 @@ namespace VoxEngine
 		}
 
 		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
+		_sphere = new MeshRenderer(MeshManager::GetInstance()->GetMesh("sphere"), nullptr);
 
 		_ambientLight = new Light();
 		_ambientLight->color.r = 0.2f;
@@ -180,8 +182,8 @@ namespace VoxEngine
 	{
 		GeometryPass(gameObject);
 		BeginLightingPasses();
-		AmbientLightPass(gameObject);
-		//PointLightPass(gameObject);
+		//AmbientLightPass(gameObject);
+		PointLightPass(gameObject);
 		//DirectionalLightPass(gameObject);
 	}
 
@@ -243,9 +245,43 @@ namespace VoxEngine
 
 	void RenderingEngine::PointLightPass(GameObject* gameObject)
 	{
-		//ShaderManager::GetInstance()->UseShader("pointLight");
+		Shader* pointShader = ShaderManager::GetInstance()->UseShader("pointLight");
+		pointShader->SetUniform2f("screenSize", _windowWidth, _windowHeight);
+		pointShader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
+		pointShader->SetUniform4f("ambientColor", _ambientLight->color);
+		pointShader->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
 
+		for (PointLight* light : _pointLights)
+		{
+			pointShader->SetUniform3f("pointLight.light.color", light->color);
+			pointShader->SetUniform1f("pointLight.light.intensity", light->intensity);
+			pointShader->SetUniform3f("pointLight.position", light->gameObject->transform->position);
+			pointShader->SetUniform1f("pointLight.attenuation.constant", light->constant);
+			pointShader->SetUniform1f("pointLight.attenuation.linear", light->linear);
+			pointShader->SetUniform1f("pointLight.attenuation.exponent", light->exponent);
 
+			glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+			float scale = CalcPointLightSphere(*light);
+
+			pointShader->SetUniformMatrix4fv("mvp", viewProjection *
+				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+					glm::scale(glm::mat4(), glm::vec3(scale))
+				)
+			);
+
+			_sphere->Render();
+		}
+	}
+
+	float RenderingEngine::CalcPointLightSphere(const PointLight& light)
+	{
+		float maxChannel = fmax(fmax(light.color.x, light.color.y), light.color.z);
+
+		float ret = (-light.linear + sqrtf(light.linear * light.linear - 4 * light.exponent * (light.exponent - 256 * maxChannel * light.intensity)))
+			/
+			(2 * light.exponent);
+
+		return ret;
 	}
 
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)

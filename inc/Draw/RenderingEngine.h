@@ -40,6 +40,8 @@ namespace VoxEngine
 		void DirectionalLightPass(GameObject* gameObject);
 		void PointLightPass(GameObject* gameObject);
 
+		float CalcPointLightSphere(const PointLight& light);
+
 		static RenderingEngine* _instance;
 
 		GBuffer* _gbuffer;
@@ -47,9 +49,10 @@ namespace VoxEngine
 		int _windowWidth;
 		int _windowHeight;
 
-		ERenderingMode _renderingMode = ERenderingMode::FORWARD;
+		ERenderingMode _renderingMode = ERenderingMode::DEFERRED;
 		Camera* _camera;
 		MeshRenderer* _quad;
+		MeshRenderer* _sphere;
 		std::vector<Component*> _renderingComponents;
 
 		Light* _ambientLight;

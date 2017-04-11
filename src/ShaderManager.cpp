@@ -55,13 +55,13 @@ namespace VoxEngine
 		ambientLight->Finish();
 		AddShader("ambientLight", ambientLight);
 
-		/*Shader* pointLight = new Shader(_nextShaderIndex++);
+		Shader* pointLight = new Shader(_nextShaderIndex++);
 		pointLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
-		pointLight->AttachShader(GL_FRAGMENT_SHADER, "pointLight.fs");
+		pointLight->AttachShader(GL_FRAGMENT_SHADER, "lightPoint.fs");
 		pointLight->Finish();
 		AddShader("pointLight", pointLight);
 
-		Shader* directionalLight = new Shader(_nextShaderIndex++);
+		/*Shader* directionalLight = new Shader(_nextShaderIndex++);
 		directionalLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
 		directionalLight->AttachShader(GL_FRAGMENT_SHADER, "directionalLight.fs");
 		directionalLight->Finish();

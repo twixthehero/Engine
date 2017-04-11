@@ -112,12 +112,19 @@ namespace VoxEngine
 		_scene->AddObject(cameraObject);
 
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
+		//Mesh* mesh_quad = MeshManager::GetInstance()->GetMesh("quad");
 
 		GameObject* emmaCube = new GameObject("EmmaCube");
 		Material* mat_emma = new Material(TextureManager::GetInstance()->GetTexture("emma.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
 		_scene->AddObject(emmaCube);
+
+		/*GameObject* emmaQuad = new GameObject("EmmaQuad");
+		emmaQuad->transform->position.x = -5;
+		MeshRenderer* meshRendererQuad = new MeshRenderer(mesh_quad, mat_emma);
+		emmaQuad->AddComponent(meshRendererQuad);
+		_scene->AddObject(emmaQuad);*/
 
 		GameObject* danielCube = new GameObject("DanielCube");
 		Material* mat_daniel = new Material(TextureManager::GetInstance()->GetTexture("daniel.png"));
@@ -135,7 +142,7 @@ namespace VoxEngine
 		pointLightObject->AddComponent(pointLight);
 		_scene->AddObject(pointLightObject);
 		
-		GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
+		/*GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
 		directionalLightOrigin->transform->position.x = -3;
 		directionalLightOrigin->transform->position.y = 3;
 		directionalLightOrigin->transform->position.z = 3;
@@ -146,7 +153,7 @@ namespace VoxEngine
 		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_arrow, mat_missing);
 		directionalLightOrigin->AddComponent(meshRenderer3);
 		DirectionalLight* directionalLight = new DirectionalLight();
-		directionalLightOrigin->AddComponent(directionalLight);
+		directionalLightOrigin->AddComponent(directionalLight);*/
 		//_scene->AddObject(directionalLightOrigin);
 
 		while (_running)
