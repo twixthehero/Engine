@@ -34,11 +34,11 @@ namespace VoxEngine
 		{
 			gameObject->transform->Translate(gameObject->transform->GetRight() * speed * Time::deltaTime);
 		}
-		if (Input::GetKey(KeyCode::Q))
+		if (Input::GetKey(KeyCode::Space))
 		{
 			gameObject->transform->Translate(gameObject->transform->GetUp() * speed * Time::deltaTime);
 		}
-		if (Input::GetKey(KeyCode::E))
+		if (Input::GetKey(KeyCode::LeftShift))
 		{
 			gameObject->transform->Translate(-gameObject->transform->GetUp() * speed * Time::deltaTime);
 		}

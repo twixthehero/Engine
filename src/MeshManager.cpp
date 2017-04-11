@@ -154,7 +154,7 @@ namespace VoxEngine
 			{
 				int indices[6] = { 0, 1, 2, 0, 3, 1 };
 
-				for (int i = 0; i < sizeof(indices); i++)
+				for (int i = 0; i < 6; i++)
 				{
 					vertexIndices.push_back(vis[indices[i]]);
 					uvIndices.push_back(uis[indices[i]]);

@@ -2,6 +2,8 @@
 #include <GL\gl3w.h>
 #include "ShaderManager.h"
 #include "Component\Light.h"
+#include "Component\PointLight.h"
+#include "Component\DirectionalLight.h"
 #include "Core\GameObject.h"
 #include "Component\Transform.h"
 #include "Component\Camera.h"
@@ -35,10 +37,10 @@ namespace VoxEngine
 		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
 
 		_ambientLight = new Light();
-		_ambientLight->color.r = 0.0f;
-		_ambientLight->color.g = 0.0f;
-		_ambientLight->color.b = 0.25f;
-		_ambientLight->color.a = 1.0f;
+		_ambientLight->color.r = 0.2f;
+		_ambientLight->color.g = 0.2f;
+		_ambientLight->color.b = 0.2f;
+		_ambientLight->color.a = 0.2f;
 	}
 
 	RenderingEngine::~RenderingEngine()
@@ -49,10 +51,10 @@ namespace VoxEngine
 	{
 		_instance = new RenderingEngine();
 
-		glClearColor(0.2f, 0.4f, 0.85f, 1.0f);
+		//glClearColor(0.2f, 0.4f, 0.85f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		glEnable(GL_CULL_FACE);	glCullFace(GL_BACK);
-		glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LEQUAL);
 	}
 
 	RenderingEngine* RenderingEngine::GetInstance()
@@ -69,22 +71,118 @@ namespace VoxEngine
 		}
 	}
 
+	void RenderingEngine::SetRenderingMode(ERenderingMode mode)
+	{
+		_renderingMode = mode;
+	}
+
 	void RenderingEngine::Render(GameObject* gameObject)
 	{
 		if (_camera != Camera::main)
 			SetCamera(Camera::main);
 
-		GeometryPass(gameObject);
-		//BeginLightingPasses();
-		//AmbientLightPass(gameObject);
-		//PointLightPass(gameObject);
-		DirectionalLightPass(gameObject);
-
-		/*for (Light* light : _lights)
+		if (_renderingMode == ERenderingMode::FORWARD)
 		{
-			_currentLight = light;
-			gameObject->Render(this);
-		}*/
+			Forward(gameObject);
+		}
+		else if (_renderingMode == ERenderingMode::DEFERRED)
+		{
+			Deferred(gameObject);
+		}
+	}
+
+	void RenderingEngine::Forward(GameObject* gameObject)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LEQUAL);
+		glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		//fetch components - meshrenderers, lights
+
+		_renderingComponents.clear();
+		_meshRenderers.clear();
+		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
+
+		_renderingComponents.clear();
+		_pointLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_pointLights.push_back(dynamic_cast<PointLight*>(*it));
+
+		_renderingComponents.clear();
+		_directionalLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
+
+		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+		glm::mat4 modelMatrix;
+
+		//ambient
+
+		Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
+		shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
+		shader->SetUniform4f("ambientColor", _ambientLight->color);
+		
+		for (MeshRenderer* renderer : _meshRenderers)
+		{
+			modelMatrix = renderer->gameObject->transform->GetTransformation();
+			shader->SetUniformMatrix4fv("mvp", viewProjection * modelMatrix);
+			renderer->Render();
+		}
+
+		//point
+		
+		shader = ShaderManager::GetInstance()->UseShader("forward-point");
+		for (PointLight* point : _pointLights)
+		{
+			if (!point->IsEnabled()) continue;
+
+			shader->SetUniform3f("lightPosition", point->gameObject->transform->GetTransformedPosition());
+			shader->SetUniform4f("lightColor", point->color);
+			shader->SetUniform1f("lightIntensity", point->intensity);
+			shader->SetUniform1f("constant", point->constant);
+			shader->SetUniform1f("linear", point->linear);
+			shader->SetUniform1f("exponent", point->exponent);
+
+			for (MeshRenderer* renderer : _meshRenderers)
+			{
+				modelMatrix = renderer->gameObject->transform->GetTransformation();
+				shader->SetUniformMatrix4fv("mvp", viewProjection * modelMatrix);
+				renderer->Render();
+			}
+		}
+		
+		//directional
+		
+		shader = ShaderManager::GetInstance()->UseShader("forward-directional");
+		for (DirectionalLight* dirLight : _directionalLights)
+		{
+			if (!dirLight->IsEnabled()) continue;
+
+			shader->SetUniform3f("lightDirection", dirLight->gameObject->transform->GetForward());
+			shader->SetUniform4f("lightColor", dirLight->color);
+			shader->SetUniform1f("lightIntensity", dirLight->intensity);
+
+			for (MeshRenderer* renderer : _meshRenderers)
+			{
+				modelMatrix = renderer->gameObject->transform->GetTransformation();
+				shader->SetUniformMatrix4fv("mvp", viewProjection * modelMatrix);
+				renderer->Render();
+			}
+		}
+	}
+
+	void RenderingEngine::Deferred(GameObject* gameObject)
+	{
+		GeometryPass(gameObject);
+		BeginLightingPasses();
+		AmbientLightPass(gameObject);
+		//PointLightPass(gameObject);
+		//DirectionalLightPass(gameObject);
 	}
 
 	void RenderingEngine::GeometryPass(GameObject* gameObject)
@@ -93,33 +191,32 @@ namespace VoxEngine
 
 		_gbuffer->BindForWriting();
 
-		//glDepthMask(GL_TRUE);
+		glDepthMask(GL_TRUE);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//glEnable(GL_DEPTH_TEST);
-		//glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 
-		renderingComponents.clear();
-		meshRenderers.clear();
-		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, renderingComponents);
+		_renderingComponents.clear();
+		_meshRenderers.clear();
+		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, _renderingComponents);
 
-		for (auto it = renderingComponents.begin(); it != renderingComponents.end(); it++)
-			meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
 
-		Camera* main = Camera::main;
 		glm::mat4 mvp;
-		glm::mat4 viewProjection = main->GetViewProjectionMatrix();
+		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		for (MeshRenderer* renderer : meshRenderers)
+		for (MeshRenderer* renderer : _meshRenderers)
 		{
 			shader->SetUniformMatrix4fv("mvp", viewProjection * renderer->gameObject->transform->GetTransformation());
 			renderer->Render();
 		}
 
-		//glDepthMask(GL_FALSE);
+		glDepthMask(GL_FALSE);
 		
-		//glDisable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	void RenderingEngine::BeginLightingPasses()
@@ -139,13 +236,14 @@ namespace VoxEngine
 		ambientShader->SetUniform4f("color", _ambientLight->color);
 		ambientShader->SetUniform2f("screenSize", _windowWidth, _windowHeight);
 		ambientShader->SetUniformMatrix4fv("mvp", glm::mat4());
+		ambientShader->SetUniform1i("colors", GBuffer::GBufferTextureType::Diffuse);
 
 		_quad->Render();
 	}
 
 	void RenderingEngine::PointLightPass(GameObject* gameObject)
 	{
-		ShaderManager::GetInstance()->UseShader("pointLight");
+		//ShaderManager::GetInstance()->UseShader("pointLight");
 
 
 	}
@@ -153,24 +251,8 @@ namespace VoxEngine
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
 	{
 		//ShaderManager::GetInstance()->UseShader("directionalLight");
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		_gbuffer->BindForReading();
 
-		GLsizei halfWidth = _windowWidth / 2.0f;
-		GLsizei halfHeight = _windowHeight / 2.0f;
 
-		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::Position);
-		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, halfWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::Diffuse);
-		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, halfHeight, halfWidth, _windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::Normal);
-		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, halfWidth, halfHeight, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-		_gbuffer->SetReadBuffer(GBuffer::GBufferTextureType::TextureCoordinate);
-		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, halfWidth, 0, _windowWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 	}
 
 	void RenderingEngine::SetCamera(Camera* camera)

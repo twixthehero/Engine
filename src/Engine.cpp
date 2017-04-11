@@ -18,6 +18,8 @@
 #include "EngineTime.h"
 #include "Component\FreeLook.h"
 #include "Component\Oscillate.h"
+#include "Component\PointLight.h"
+#include "Component\DirectionalLight.h"
 
 namespace VoxEngine
 {
@@ -109,23 +111,43 @@ namespace VoxEngine
 		cameraObject->AddComponent(freeLook);
 		_scene->AddObject(cameraObject);
 
-		Mesh* mesh = MeshManager::GetInstance()->GetMesh("cube");
+		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
 
 		GameObject* emmaCube = new GameObject("EmmaCube");
-		emmaCube->transform->position.x = 3;
-		emmaCube->transform->position.y = 1;
 		Material* mat_emma = new Material(TextureManager::GetInstance()->GetTexture("emma.png"));
-		MeshRenderer* meshRenderer = new MeshRenderer(mesh, mat_emma);
+		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
+		_scene->AddObject(emmaCube);
 
 		GameObject* danielCube = new GameObject("DanielCube");
 		Material* mat_daniel = new Material(TextureManager::GetInstance()->GetTexture("daniel.png"));
-		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh, mat_daniel);
+		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh_cube, mat_daniel);
 		danielCube->AddComponent(meshRenderer2);
 		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
 		danielCube->AddComponent(oscillate);
-		//emmaCube->SetParent(danielCube);
 		_scene->AddObject(danielCube);
+		
+		GameObject* pointLightObject = new GameObject("PointLight");
+		pointLightObject->transform->position.x = -5;
+		pointLightObject->transform->position.y = 5;
+		pointLightObject->transform->position.z = 5;
+		PointLight* pointLight = new PointLight();
+		pointLightObject->AddComponent(pointLight);
+		_scene->AddObject(pointLightObject);
+		
+		GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
+		directionalLightOrigin->transform->position.x = -3;
+		directionalLightOrigin->transform->position.y = 3;
+		directionalLightOrigin->transform->position.z = 3;
+		directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
+		directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
+		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
+		Material* mat_missing = new Material(TextureManager::GetInstance()->GetTexture("missing.png"));
+		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_arrow, mat_missing);
+		directionalLightOrigin->AddComponent(meshRenderer3);
+		DirectionalLight* directionalLight = new DirectionalLight();
+		directionalLightOrigin->AddComponent(directionalLight);
+		//_scene->AddObject(directionalLightOrigin);
 
 		while (_running)
 		{

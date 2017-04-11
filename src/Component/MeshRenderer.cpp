@@ -28,6 +28,8 @@ namespace VoxEngine
 
 	void MeshRenderer::Render()
 	{
+		if (!_enabled) return;
+
 		glBindVertexArray(vao);
 
 		if (_material != nullptr)

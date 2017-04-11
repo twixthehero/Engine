@@ -15,10 +15,13 @@ namespace VoxEngine
 	class RenderingEngine
 	{
 	public:
+		enum ERenderingMode { NONE, FORWARD, DEFERRED };
+
 		static void Init();
 		static RenderingEngine* GetInstance();
 		static void Shutdown();
 
+		void SetRenderingMode(ERenderingMode mode);
 		void Render(GameObject* gameObject);
 
 		void SetCamera(Camera* camera);
@@ -27,6 +30,9 @@ namespace VoxEngine
 	private:
 		RenderingEngine();
 		~RenderingEngine();
+
+		void Forward(GameObject* gameObject);
+		void Deferred(GameObject* gameObject);
 
 		void GeometryPass(GameObject* gameObject);
 		void BeginLightingPasses();
@@ -41,14 +47,15 @@ namespace VoxEngine
 		int _windowWidth;
 		int _windowHeight;
 
+		ERenderingMode _renderingMode = ERenderingMode::FORWARD;
 		Camera* _camera;
 		MeshRenderer* _quad;
+		std::vector<Component*> _renderingComponents;
 
 		Light* _ambientLight;
 		std::vector<PointLight*> _pointLights;
 		std::vector<DirectionalLight*> _directionalLights;
 
-		std::vector<Component*> renderingComponents;
-		std::vector<MeshRenderer*> meshRenderers;
+		std::vector<MeshRenderer*> _meshRenderers;
 	};
 }

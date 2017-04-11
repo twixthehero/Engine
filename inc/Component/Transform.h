@@ -18,6 +18,7 @@ namespace VoxEngine
 
 		glm::mat4 GetModelMatrix();
 		glm::mat4 GetTransformation();
+		glm::vec3 GetTransformedPosition();
 
 		void Rotate(glm::vec3 xyz, float angle, bool isRadians = false);
 		void Translate(glm::vec3 translation);

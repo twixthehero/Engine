@@ -25,6 +25,24 @@ namespace VoxEngine
 
 	ShaderManager::ShaderManager()
 	{
+		Shader* forwardAmbient = new Shader(_nextShaderIndex++);
+		forwardAmbient->AttachShader(GL_VERTEX_SHADER, "forward-ambient.vs");
+		forwardAmbient->AttachShader(GL_FRAGMENT_SHADER, "forward-ambient.fs");
+		forwardAmbient->Finish();
+		AddShader("forward-ambient", forwardAmbient);
+
+		Shader* forwardDirectional = new Shader(_nextShaderIndex++);
+		forwardDirectional->AttachShader(GL_VERTEX_SHADER, "forward-directional.vs");
+		forwardDirectional->AttachShader(GL_FRAGMENT_SHADER, "forward-directional.fs");
+		forwardDirectional->Finish();
+		AddShader("forward-directional", forwardDirectional);
+
+		Shader* forwardPoint = new Shader(_nextShaderIndex++);
+		forwardPoint->AttachShader(GL_VERTEX_SHADER, "forward-point.vs");
+		forwardPoint->AttachShader(GL_FRAGMENT_SHADER, "forward-point.fs");
+		forwardPoint->Finish();
+		AddShader("forward-point", forwardPoint);
+
 		Shader* geometry = new Shader(_nextShaderIndex++);
 		geometry->AttachShader(GL_VERTEX_SHADER, "geometry.vs");
 		geometry->AttachShader(GL_FRAGMENT_SHADER, "geometry.fs");
@@ -37,7 +55,7 @@ namespace VoxEngine
 		ambientLight->Finish();
 		AddShader("ambientLight", ambientLight);
 
-		Shader* pointLight = new Shader(_nextShaderIndex++);
+		/*Shader* pointLight = new Shader(_nextShaderIndex++);
 		pointLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
 		pointLight->AttachShader(GL_FRAGMENT_SHADER, "pointLight.fs");
 		pointLight->Finish();
@@ -47,7 +65,7 @@ namespace VoxEngine
 		directionalLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
 		directionalLight->AttachShader(GL_FRAGMENT_SHADER, "directionalLight.fs");
 		directionalLight->Finish();
-		AddShader("directionalLight", directionalLight);
+		AddShader("directionalLight", directionalLight);*/
 	}
 
 	ShaderManager::~ShaderManager()
