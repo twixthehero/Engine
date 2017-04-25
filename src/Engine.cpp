@@ -115,8 +115,47 @@ namespace VoxEngine
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
 		//Mesh* mesh_quad = MeshManager::GetInstance()->GetMesh("quad");
 
+		GameObject* cube;
+		Material* mat_test = new Material(TextureManager::GetInstance()->GetTexture("test.png"));
+		MeshRenderer* renderer;
+
+		for (int i = -3; i < 12; i++)
+		{
+			cube = new GameObject("Cube++-" + std::to_string(i));
+			cube->transform->position.x = 5;
+			cube->transform->position.y = i + 0.5f;
+			cube->transform->position.z = 5;
+			renderer = new MeshRenderer(mesh_cube, mat_test);
+			cube->AddComponent(renderer);
+			_scene->AddObject(cube);
+
+			cube = new GameObject("Cube-+-" + std::to_string(i));
+			cube->transform->position.x = -5;
+			cube->transform->position.y = i + 0.5f;
+			cube->transform->position.z = 5;
+			renderer = new MeshRenderer(mesh_cube, mat_test);
+			cube->AddComponent(renderer);
+			_scene->AddObject(cube);
+
+			cube = new GameObject("Cube+--" + std::to_string(i));
+			cube->transform->position.x = 5;
+			cube->transform->position.y = i + 0.5f;
+			cube->transform->position.z = -5;
+			renderer = new MeshRenderer(mesh_cube, mat_test);
+			cube->AddComponent(renderer);
+			_scene->AddObject(cube);
+
+			cube = new GameObject("Cube---" + std::to_string(i));
+			cube->transform->position.x = -5;
+			cube->transform->position.y = i + 0.5f;
+			cube->transform->position.z = -5;
+			renderer = new MeshRenderer(mesh_cube, mat_test);
+			cube->AddComponent(renderer);
+			_scene->AddObject(cube);
+		}
+
 		GameObject* emmaCube = new GameObject("EmmaCube");
-		emmaCube->transform->position.y = 3;
+		emmaCube->transform->position.y = 0.5f;
 		Material* mat_emma = new Material(TextureManager::GetInstance()->GetTexture("emma.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
@@ -128,21 +167,22 @@ namespace VoxEngine
 		emmaQuad->AddComponent(meshRendererQuad);
 		_scene->AddObject(emmaQuad);*/
 
-		GameObject* danielCube = new GameObject("DanielCube");
-		danielCube->transform->position.x = 3;
-		danielCube->transform->position.y = 3;
+		/*GameObject* danielCube = new GameObject("DanielCube");
+		danielCube->transform->position.x = 5;
+		danielCube->transform->position.y = 5;
 		Material* mat_daniel = new Material(TextureManager::GetInstance()->GetTexture("daniel.png"));
 		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh_cube, mat_daniel);
 		danielCube->AddComponent(meshRenderer2);
-		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 3);
+		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 4);
 		danielCube->AddComponent(oscillate);
-		_scene->AddObject(danielCube);
+		_scene->AddObject(danielCube);*/
 		
 		GameObject* pointLightObject = new GameObject("PointLight");
-		pointLightObject->transform->position.x = -5;
+		pointLightObject->transform->position.x = 0;
 		pointLightObject->transform->position.y = 5;
-		pointLightObject->transform->position.z = 5;
+		pointLightObject->transform->position.z = 0;
 		PointLight* pointLight = new PointLight();
+		pointLight->range = 10;
 		pointLightObject->AddComponent(pointLight);
 		_scene->AddObject(pointLightObject);
 		

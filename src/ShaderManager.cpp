@@ -49,6 +49,12 @@ namespace VoxEngine
 		geometry->Finish();
 		AddShader("geometry", geometry);
 
+		Shader* lightingDebug = new Shader(_nextShaderIndex++);
+		lightingDebug->AttachShader(GL_VERTEX_SHADER, "lightingDebug.vs");
+		lightingDebug->AttachShader(GL_FRAGMENT_SHADER, "lightingDebug.fs");
+		lightingDebug->Finish();
+		AddShader("lightingDebug", lightingDebug);
+
 		Shader* ambientLight = new Shader(_nextShaderIndex++);
 		ambientLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
 		ambientLight->AttachShader(GL_FRAGMENT_SHADER, "ambientLight.fs");
