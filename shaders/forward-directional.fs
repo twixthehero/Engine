@@ -16,5 +16,5 @@ void main()
 	float diffuseFactor = dot(normalize(normal), -lightDirection);
 	diffuseFactor = clamp(diffuseFactor, 0, 1);
 
-	glFragColor = vec4(lightColor * lightIntensity * diffuseFactor, 1.0) * texture2D(diffuse, uv);
+	glFragColor = vec4(lightColor * lightIntensity * diffuseFactor, 1.0) * texture(diffuse, uv);
 }

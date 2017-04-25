@@ -11,5 +11,5 @@ out vec4 glFragColor;
 
 void main()
 {
-	glFragColor = vec4(ambientColor * ambientIntensity, 1.0) * texture2D(diffuse, uv);
+	glFragColor = vec4(ambientColor * ambientIntensity, 1.0) * texture(diffuse, uv);
 }

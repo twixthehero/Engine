@@ -14,7 +14,7 @@ uniform sampler2D diffuse;
 void main()
 {
 	outPosition = position;
-	outDiffuse = texture2D(diffuse, uv).xyz;
+	outDiffuse = texture(diffuse, uv).xyz;
 	outNormal = normalize(normal);
 	outUV = vec3(uv, 0.0);
 }

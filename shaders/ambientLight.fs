@@ -16,5 +16,5 @@ vec2 CalcTextureCoordinate()
 
 void main()
 {
-	glFragColor = vec4(color * intensity, 1.0) * texture2D(colors, CalcTextureCoordinate());
+	glFragColor = vec4(color * intensity, 1.0) * texture(colors, CalcTextureCoordinate());
 }

@@ -23,9 +23,9 @@ vec2 CalcTextureCoordinate()
 void main()
 {
 	vec2 uv = CalcTextureCoordinate();
-	vec3 worldPosition = texture2D(positions, uv).xyz;
-	vec3 color = texture2D(colors, uv).xyz;
-	vec3 normal = texture2D(normals, uv).xyz;
+	vec3 worldPosition = texture(positions, uv).xyz;
+	vec3 color = texture(colors, uv).xyz;
+	vec3 normal = texture(normals, uv).xyz;
 	normal = normalize(normal);
 
 	glFragColor = vec4(color, 1.0) * CalcDirectionalLight(worldPosition, normal);
