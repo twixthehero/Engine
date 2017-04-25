@@ -9,9 +9,7 @@ uniform sampler2D diffuse;
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 uniform float lightIntensity;
-uniform float constant;
-uniform float linear;
-uniform float exponent;
+uniform float range;
 
 out vec4 glFragColor;
 
@@ -23,8 +21,9 @@ void main()
 	float diffuseFactor = dot(normalize(normal), lightDirection);
 	diffuseFactor = clamp(diffuseFactor, 0, 1);
 
-	vec4 preAttenuation = vec4(lightColor * lightIntensity * diffuseFactor, 1.0) * texture2D(diffuse, uv);
-	float attenuation = constant + (linear * distance) + (exponent * distance * distance);
+	vec4 preAttenuationColor = vec4(lightColor * lightIntensity * diffuseFactor, 1.0) * texture2D(diffuse, uv);
+	float attenuation = clamp(1.0 - distance * distance / (range * range), 0, 1);
+	attenuation *= attenuation;
 
-	glFragColor = preAttenuation / attenuation;
+	glFragColor = preAttenuationColor / attenuation;
 }

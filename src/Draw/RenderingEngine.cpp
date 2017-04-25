@@ -143,9 +143,7 @@ namespace VoxEngine
 			shader->SetUniform3f("lightPosition", point->gameObject->transform->GetTransformedPosition());
 			shader->SetUniform3f("lightColor", point->color);
 			shader->SetUniform1f("lightIntensity", point->intensity);
-			shader->SetUniform1f("constant", point->constant);
-			shader->SetUniform1f("linear", point->linear);
-			shader->SetUniform1f("exponent", point->exponent);
+			shader->SetUniform1f("range", point->range);
 
 			for (MeshRenderer* renderer : _meshRenderers)
 			{
@@ -289,9 +287,7 @@ namespace VoxEngine
 		pointShader->SetUniform3f("pointLight.light.color", light->color);
 		pointShader->SetUniform1f("pointLight.light.intensity", light->intensity);
 		pointShader->SetUniform3f("pointLight.position", light->gameObject->transform->position);
-		pointShader->SetUniform1f("pointLight.attenuation.constant", light->constant);
-		pointShader->SetUniform1f("pointLight.attenuation.linear", light->linear);
-		pointShader->SetUniform1f("pointLight.attenuation.exponent", light->exponent);
+		pointShader->SetUniform1f("pointLight.range", light->range);
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 		float scale = CalcPointLightSphere(*light);
@@ -309,18 +305,28 @@ namespace VoxEngine
 
 		glDisable(GL_BLEND);
 	}
-
+	
 	float RenderingEngine::CalcPointLightSphere(const PointLight& light)
 	{
 		float maxChannel = fmax(fmax(light.color.x, light.color.y), light.color.z);
 
-		float ret = (-light.linear + sqrtf(light.linear * light.linear - 4 * light.exponent * (light.exponent - 256 * maxChannel * light.intensity)))
-			/
-			(2 * light.exponent);
+		/*
 
-		return ret;
+		atten = 256 * maxChannel * intensity
+
+		atten = clamp(1.0 - distance^2 / range^2, 0, 1)
+
+		1.0 + distance^2 / -(range^2) = 256 * maxChannel * intensity
+
+		distance^2 = (256 * maxChannel * intensity - 1) * -(range^2)
+
+		distance = sqrtf((256 * maxChannel * light.intensity - 1) * light.range * light.range)
+
+		*/
+		//return sqrtf((1.0 - 256 * maxChannel * light.intensity) * (light.range * light.range));
+		return sqrtf((256 * maxChannel * light.intensity - 1) * light.range * light.range);
 	}
-
+	
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
 	{
 		//ShaderManager::GetInstance()->UseShader("directionalLight");
