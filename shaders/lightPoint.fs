@@ -62,12 +62,10 @@ vec4 CalcPointLight(vec3 worldPos, vec3 normal)
 
 	vec4 color = CalcLightInternal(pointLight.light, lightDirection, worldPos, normal);
 
-	float atten = clamp(1.0 - distance * distance / (pointLight.range * pointLight.range), 0, 1);
-	atten *= atten;
+	float modDistance = distance / pointLight.range;
+	float atten = 1.0 / (1.0 + 25 * modDistance * modDistance);
 
-	atten = max(1.0, atten);
-
-	return color / atten;
+	return color * atten;
 }
 
 vec2 CalcTexCoord()

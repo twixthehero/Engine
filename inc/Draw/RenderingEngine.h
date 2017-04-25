@@ -40,8 +40,6 @@ namespace VoxEngine
 		void DirectionalLightPass(GameObject* gameObject);
 		void FinalPass();
 
-		float CalcPointLightSphere(const PointLight& light);
-
 		static RenderingEngine* _instance;
 
 		GBuffer* _gbuffer;

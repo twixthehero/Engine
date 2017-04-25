@@ -189,6 +189,8 @@ namespace VoxEngine
 
 		for (PointLight* light : _pointLights)
 		{
+			if (!light->IsEnabled()) continue;
+
 			StencilPass(light);
 			PointLightPass(light);
 		}
@@ -249,11 +251,10 @@ namespace VoxEngine
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
-		float scale = CalcPointLightSphere(*light);
 
 		nullShader->SetUniformMatrix4fv("mvp", viewProjection *
 			(glm::translate(glm::mat4(), light->gameObject->transform->position) *
-				glm::scale(glm::mat4(), glm::vec3(scale))
+				glm::scale(glm::mat4(), glm::vec3(light->range))
 			)
 		);
 
@@ -290,12 +291,10 @@ namespace VoxEngine
 		pointShader->SetUniform1f("pointLight.range", light->range);
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
-		float scale = CalcPointLightSphere(*light);
-		Logger::WriteLine("scale: " + std::to_string(scale));
 
 		pointShader->SetUniformMatrix4fv("mvp", viewProjection *
 			(glm::translate(glm::mat4(), light->gameObject->transform->position) *
-				glm::scale(glm::mat4(), glm::vec3(scale))
+				glm::scale(glm::mat4(), glm::vec3(light->range))
 			)
 		);
 
@@ -304,27 +303,6 @@ namespace VoxEngine
 		glCullFace(GL_BACK);
 
 		glDisable(GL_BLEND);
-	}
-	
-	float RenderingEngine::CalcPointLightSphere(const PointLight& light)
-	{
-		float maxChannel = fmax(fmax(light.color.x, light.color.y), light.color.z);
-
-		/*
-
-		atten = 256 * maxChannel * intensity
-
-		atten = clamp(1.0 - distance^2 / range^2, 0, 1)
-
-		1.0 + distance^2 / -(range^2) = 256 * maxChannel * intensity
-
-		distance^2 = (256 * maxChannel * intensity - 1) * -(range^2)
-
-		distance = sqrtf((256 * maxChannel * light.intensity - 1) * light.range * light.range)
-
-		*/
-		//return sqrtf((1.0 - 256 * maxChannel * light.intensity) * (light.range * light.range));
-		return sqrtf((256 * maxChannel * light.intensity - 1) * light.range * light.range);
 	}
 	
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
@@ -339,6 +317,30 @@ namespace VoxEngine
 		_gbuffer->BindForFinalPass();
 
 		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+		Shader* lightingDebug = ShaderManager::GetInstance()->UseShader("lightingDebug");
+		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		for (PointLight* light : _pointLights)
+		{
+			if (!light->IsEnabled()) continue;
+
+			lightingDebug->SetUniform3f("color", glm::vec3(0.0f, 1.0f, 0.0f));
+
+			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
+				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+					glm::scale(glm::mat4(), glm::vec3(light->range))
+				)
+			);
+
+			_sphere->Render();
+		}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void RenderingEngine::SetCamera(Camera* camera)
