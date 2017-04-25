@@ -66,6 +66,12 @@ namespace VoxEngine
 		directionalLight->AttachShader(GL_FRAGMENT_SHADER, "directionalLight.fs");
 		directionalLight->Finish();
 		AddShader("directionalLight", directionalLight);*/
+
+		Shader* null = new Shader(_nextShaderIndex++);
+		null->AttachShader(GL_VERTEX_SHADER, "null.vs");
+		null->AttachShader(GL_FRAGMENT_SHADER, "null.fs");
+		null->Finish();
+		AddShader("null", null);
 	}
 
 	ShaderManager::~ShaderManager()

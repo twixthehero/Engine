@@ -35,10 +35,10 @@ namespace VoxEngine
 		void Deferred(GameObject* gameObject);
 
 		void GeometryPass(GameObject* gameObject);
-		void BeginLightingPasses();
-		void AmbientLightPass(GameObject* gameObject);
+		void StencilPass(PointLight* pointLight);
+		void PointLightPass(PointLight* pointLight);
 		void DirectionalLightPass(GameObject* gameObject);
-		void PointLightPass(GameObject* gameObject);
+		void FinalPass();
 
 		float CalcPointLightSphere(const PointLight& light);
 
