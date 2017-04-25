@@ -9,5 +9,7 @@ namespace VoxEngine
 	public:
 		Servant();
 		virtual ~Servant();
+
+		void Init() override;
 	};
 }

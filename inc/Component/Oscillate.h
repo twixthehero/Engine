@@ -1,5 +1,6 @@
 #pragma once
 #include "Component\Servant.h"
+#include <glm\glm.hpp>
 
 namespace VoxEngine
 {
@@ -13,9 +14,11 @@ namespace VoxEngine
 		Oscillate(EAxis axis, float distance);
 		~Oscillate();
 
+		void Init() override;
 		void Update() override;
 
 		EAxis axis = EAxis::NONE;
 		float distance;
+		glm::vec3 centerPosition;
 	};
 }

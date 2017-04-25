@@ -71,6 +71,8 @@ namespace VoxEngine
 	{
 		component->gameObject = this;
 		_components.push_back(component);
+
+		component->Init();
 	}
 
 	Component* GameObject::GetComponent(EComponentType type)

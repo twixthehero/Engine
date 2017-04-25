@@ -10,4 +10,9 @@ namespace VoxEngine
 	Servant::~Servant()
 	{
 	}
+
+	void Servant::Init()
+	{
+
+	}
 }

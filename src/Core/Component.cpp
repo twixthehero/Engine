@@ -15,6 +15,11 @@ namespace VoxEngine
 		return _componentType;
 	}
 
+	void Component::Init()
+	{
+
+	}
+
 	void Component::Update()
 	{
 

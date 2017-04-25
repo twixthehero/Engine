@@ -12,6 +12,7 @@ namespace VoxEngine
 
 		EComponentType GetType();
 
+		virtual void Init();
 		virtual void Update();
 		virtual void Render();
 
