@@ -96,6 +96,7 @@ namespace VoxEngine
 
 		_scene = new Scene();
 		GameObject* cameraObject = new GameObject("Camera");
+		cameraObject->transform->position.y = 3;
 		cameraObject->transform->position.z = 10;
 		cameraObject->name = "MainCamera";
 		cameraObject->tag = "MainCamera";
@@ -115,6 +116,7 @@ namespace VoxEngine
 		//Mesh* mesh_quad = MeshManager::GetInstance()->GetMesh("quad");
 
 		GameObject* emmaCube = new GameObject("EmmaCube");
+		emmaCube->transform->position.y = 3;
 		Material* mat_emma = new Material(TextureManager::GetInstance()->GetTexture("emma.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
@@ -127,6 +129,8 @@ namespace VoxEngine
 		_scene->AddObject(emmaQuad);*/
 
 		GameObject* danielCube = new GameObject("DanielCube");
+		danielCube->transform->position.x = 3;
+		danielCube->transform->position.y = 3;
 		Material* mat_daniel = new Material(TextureManager::GetInstance()->GetTexture("daniel.png"));
 		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh_cube, mat_daniel);
 		danielCube->AddComponent(meshRenderer2);
@@ -155,6 +159,16 @@ namespace VoxEngine
 		DirectionalLight* directionalLight = new DirectionalLight();
 		directionalLightOrigin->AddComponent(directionalLight);*/
 		//_scene->AddObject(directionalLightOrigin);
+
+		GameObject* ground = new GameObject("Ground");
+		ground->transform->scale.x = 100;
+		ground->transform->scale.y = 100;
+		ground->transform->scale.z = 100;
+		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
+		Material* mat_grass = new Material(TextureManager::GetInstance()->GetTexture("grass.png"));
+		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_plane, mat_grass);
+		ground->AddComponent(meshRenderer3);
+		_scene->AddObject(ground);
 
 		while (_running)
 		{

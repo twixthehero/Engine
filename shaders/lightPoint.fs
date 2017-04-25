@@ -6,18 +6,11 @@ struct Light
 	float intensity;
 };
 
-struct Attenuation
-{
-	float constant;
-	float linear;
-	float exponent;
-};
-
 struct PointLight
 {
 	Light light;
 	vec3 position;
-	Attenuation attenuation;
+	float range;
 };
 
 uniform vec2 screenSize;
@@ -69,9 +62,8 @@ vec4 CalcPointLight(vec3 worldPos, vec3 normal)
 
 	vec4 color = CalcLightInternal(pointLight.light, lightDirection, worldPos, normal);
 
-	float atten = pointLight.attenuation.constant +
-				pointLight.attenuation.linear * distance +
-				pointLight.attenuation.exponent * distance * distance;
+	float atten = clamp(1.0 - distance * distance / (pointLight.range * pointLight.range), 0, 1);
+	atten *= atten;
 
 	atten = max(1.0, atten);
 
