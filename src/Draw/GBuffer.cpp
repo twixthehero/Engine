@@ -9,6 +9,7 @@ namespace VoxEngine
 
 	GBuffer::~GBuffer()
 	{
+		glDeleteFramebuffers(1, &_fbo);
 	}
 
 	bool GBuffer::Init(int width, int height)
@@ -32,7 +33,7 @@ namespace VoxEngine
 		}
 
 		glBindTexture(GL_TEXTURE_2D, _depthTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _depthTexture, 0);
 
 		glBindTexture(GL_TEXTURE_2D, _finalTexture);

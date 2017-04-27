@@ -21,6 +21,10 @@ namespace VoxEngine
 		static RenderingEngine* GetInstance();
 		static void Shutdown();
 
+		bool GetShowLightingDebug();
+		void SetShowLightingDebug(bool show);
+
+		ERenderingMode GetRenderingMode();
 		void SetRenderingMode(ERenderingMode mode);
 		void Render(GameObject* gameObject);
 
@@ -46,6 +50,7 @@ namespace VoxEngine
 		Window* _window;
 		int _windowWidth;
 		int _windowHeight;
+		bool _showLightingDebug = false;
 
 		ERenderingMode _renderingMode = ERenderingMode::DEFERRED;
 		Camera* _camera;

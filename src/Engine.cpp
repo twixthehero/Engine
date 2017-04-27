@@ -182,7 +182,7 @@ namespace VoxEngine
 		pointLightObject->transform->position.y = 5;
 		pointLightObject->transform->position.z = 0;
 		PointLight* pointLight = new PointLight();
-		pointLight->range = 10;
+		pointLight->range = 30;
 		pointLightObject->AddComponent(pointLight);
 		_scene->AddObject(pointLightObject);
 		
@@ -244,6 +244,14 @@ namespace VoxEngine
 
 		if (_window->ShouldClose() || Input::GetKeyUp(KeyCode::Escape))
 			_running = false;
+
+		if (Input::GetKeyUp(KeyCode::F4))
+			_renderingEngine->SetShowLightingDebug(!_renderingEngine->GetShowLightingDebug());
+
+		if (Input::GetKeyUp(KeyCode::F5))
+			_renderingEngine->SetRenderingMode(RenderingEngine::ERenderingMode::FORWARD);
+		if (Input::GetKeyUp(KeyCode::F6))
+			_renderingEngine->SetRenderingMode(RenderingEngine::ERenderingMode::DEFERRED);
 
 		_scene->Update();
 	}

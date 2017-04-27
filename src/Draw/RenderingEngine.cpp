@@ -70,8 +70,26 @@ namespace VoxEngine
 		}
 	}
 
+	bool RenderingEngine::GetShowLightingDebug()
+	{
+		return _showLightingDebug;
+	}
+
+	void RenderingEngine::SetShowLightingDebug(bool show)
+	{
+		Logger::WriteLine("_showLightingDebug: " + std::to_string(_showLightingDebug) + " => " + std::to_string(show));
+
+		_showLightingDebug = show;
+	}
+
+	RenderingEngine::ERenderingMode RenderingEngine::GetRenderingMode()
+	{
+		return _renderingMode;
+	}
+
 	void RenderingEngine::SetRenderingMode(ERenderingMode mode)
 	{
+		Logger::WriteLine("_renderingMode: " + std::to_string(_renderingMode) + " => " + std::to_string(mode));
 		_renderingMode = mode;
 	}
 
@@ -80,13 +98,17 @@ namespace VoxEngine
 		if (_camera != Camera::main)
 			SetCamera(Camera::main);
 
-		if (_renderingMode == ERenderingMode::FORWARD)
+		switch (_renderingMode)
 		{
-			Forward(gameObject);
-		}
-		else if (_renderingMode == ERenderingMode::DEFERRED)
-		{
-			Deferred(gameObject);
+			case ERenderingMode::FORWARD:
+				Forward(gameObject);
+				break;
+			case ERenderingMode::DEFERRED:
+				Deferred(gameObject);
+				break;
+			default:
+				Logger::WriteLine("Error! Unknown rendering mode: " + std::to_string(_renderingMode));
+				break;
 		}
 	}
 
@@ -125,7 +147,7 @@ namespace VoxEngine
 		Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
 		shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
 		shader->SetUniform3f("ambientColor", _ambientLight->color);
-		
+
 		for (MeshRenderer* renderer : _meshRenderers)
 		{
 			modelMatrix = renderer->gameObject->transform->GetTransformation();
@@ -134,7 +156,7 @@ namespace VoxEngine
 		}
 
 		//point
-		
+
 		shader = ShaderManager::GetInstance()->UseShader("forward-point");
 		for (PointLight* point : _pointLights)
 		{
@@ -152,9 +174,9 @@ namespace VoxEngine
 				renderer->Render();
 			}
 		}
-		
+
 		//directional
-		
+
 		shader = ShaderManager::GetInstance()->UseShader("forward-directional");
 		for (DirectionalLight* dirLight : _directionalLights)
 		{
@@ -284,7 +306,7 @@ namespace VoxEngine
 		pointShader->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
 		pointShader->SetUniform1i("colorMap", GBuffer::GBufferTextureType::Diffuse);
 		pointShader->SetUniform1i("normalMap", GBuffer::GBufferTextureType::Normal);
-		
+
 		pointShader->SetUniform3f("pointLight.light.color", light->color);
 		pointShader->SetUniform1f("pointLight.light.intensity", light->intensity);
 		pointShader->SetUniform3f("pointLight.position", light->gameObject->transform->position);
@@ -304,7 +326,7 @@ namespace VoxEngine
 
 		glDisable(GL_BLEND);
 	}
-	
+
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
 	{
 		//ShaderManager::GetInstance()->UseShader("directionalLight");
@@ -316,31 +338,35 @@ namespace VoxEngine
 	{
 		_gbuffer->BindForFinalPass();
 
-		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		//also copy depth info for rendering the point light spheres
+		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 		Shader* lightingDebug = ShaderManager::GetInstance()->UseShader("lightingDebug");
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		for (PointLight* light : _pointLights)
+		if (_showLightingDebug)
 		{
-			if (!light->IsEnabled()) continue;
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glEnable(GL_DEPTH_TEST);
 
-			lightingDebug->SetUniform3f("color", glm::vec3(0.0f, 1.0f, 0.0f));
+			for (PointLight* light : _pointLights)
+			{
+				if (!light->IsEnabled()) continue;
 
-			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
-				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
-					glm::scale(glm::mat4(), glm::vec3(light->range))
-				)
-			);
+				lightingDebug->SetUniform3f("color", glm::vec3(0.0f, 1.0f, 0.0f));
 
-			_sphere->Render();
+				lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
+					(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+						glm::scale(glm::mat4(), glm::vec3(light->range))
+						)
+				);
+
+				_sphere->Render();
+			}
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glDisable(GL_DEPTH_TEST);
 		}
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void RenderingEngine::SetCamera(Camera* camera)
