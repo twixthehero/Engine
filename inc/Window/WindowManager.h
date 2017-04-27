@@ -13,6 +13,7 @@ namespace VoxEngine
 
 		Window* CreateNewWindow(unsigned int windowMode, int width, int height);
 		Window* CreateNewWindow(unsigned int windowMode, int width, int height, const char* title);
+		Window* CreateNewWindow(unsigned int windowMode, int width, int height, const char* title, int samples);
 		void DestroyWindow(Window* window);
 		void DestroyWindow(int id);
 

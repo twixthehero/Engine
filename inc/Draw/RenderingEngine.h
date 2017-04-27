@@ -46,6 +46,7 @@ namespace VoxEngine
 		void DirectionalLightPass(GameObject* gameObject);
 		void FinalPass();
 
+		void ShowLightingDebug();
 		void RenderSkybox();
 
 		static RenderingEngine* _instance;

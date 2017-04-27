@@ -44,20 +44,18 @@ namespace VoxEngine
 
 	Window* WindowManager::CreateNewWindow(unsigned int windowMode, int width, int height)
 	{
-		Window* newWindow = new Window(_nextWindowId++, windowMode, width, height);
-
-		if (!newWindow->Create())
-			return nullptr;
-
-		_mainWindow = newWindow;
-		_windows.insert(std::pair<int, Window*>(newWindow->GetID(), newWindow));
-
-		return newWindow;
+		return CreateNewWindow(windowMode, width, height, "Engine");
 	}
 
 	Window* WindowManager::CreateNewWindow(unsigned int windowMode, int width, int height, const char* title)
 	{
+		return CreateNewWindow(windowMode, width, height, title, 0);
+	}
+	
+	Window* WindowManager::CreateNewWindow(unsigned int windowMode, int width, int height, const char* title, int samples)
+	{
 		Window* newWindow = new Window(_nextWindowId++, windowMode, width, height, title);
+		newWindow->SetMultiSamples(samples);
 
 		if (!newWindow->Create())
 			return nullptr;

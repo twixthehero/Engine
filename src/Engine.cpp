@@ -53,7 +53,7 @@ namespace VoxEngine
 		WindowManager::Init();
 		_windowManager = WindowManager::GetInstance();
 
-		_window = _windowManager->CreateNewWindow(EWindowMode::WINDOWED, 1280, 720, "Engine");
+		_window = _windowManager->CreateNewWindow(EWindowMode::WINDOWED, 1280, 720, "Engine", 4);
 
 		if (_window == nullptr)
 		{

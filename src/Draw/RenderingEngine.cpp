@@ -206,6 +206,9 @@ namespace VoxEngine
 			}
 		}
 
+		if (_showLightingDebug)
+			ShowLightingDebug();
+
 		RenderSkybox();
 	}
 
@@ -359,32 +362,35 @@ namespace VoxEngine
 		//also copy depth info for rendering the point light spheres
 		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
+		if (_showLightingDebug)
+			ShowLightingDebug();
+	}
+
+	void RenderingEngine::ShowLightingDebug()
+	{
 		Shader* lightingDebug = ShaderManager::GetInstance()->UseShader("lightingDebug");
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		if (_showLightingDebug)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glEnable(GL_DEPTH_TEST);
+
+		for (PointLight* light : _pointLights)
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glEnable(GL_DEPTH_TEST);
+			if (!light->IsEnabled()) continue;
 
-			for (PointLight* light : _pointLights)
-			{
-				if (!light->IsEnabled()) continue;
+			lightingDebug->SetUniform3f("color", glm::vec3(0.0f, 1.0f, 0.0f));
 
-				lightingDebug->SetUniform3f("color", glm::vec3(0.0f, 1.0f, 0.0f));
+			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
+				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+					glm::scale(glm::mat4(), glm::vec3(light->range))
+					)
+			);
 
-				lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
-					(glm::translate(glm::mat4(), light->gameObject->transform->position) *
-						glm::scale(glm::mat4(), glm::vec3(light->range))
-						)
-				);
-
-				_sphere->Render();
-			}
-
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glDisable(GL_DEPTH_TEST);
+			_sphere->Render();
 		}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	void RenderingEngine::RenderSkybox()
