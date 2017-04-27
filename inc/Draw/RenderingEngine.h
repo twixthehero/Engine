@@ -12,6 +12,7 @@ namespace VoxEngine
 	class Component;
 	class MeshRenderer;
 	class Window;
+	class Material;
 	class RenderingEngine
 	{
 	public:
@@ -31,6 +32,7 @@ namespace VoxEngine
 		void SetCamera(Camera* camera);
 		Camera* GetCamera();
 		Light* GetAmbientLight();
+		void SetSkybox(Material* skybox);
 	private:
 		RenderingEngine();
 		~RenderingEngine();
@@ -44,6 +46,8 @@ namespace VoxEngine
 		void DirectionalLightPass(GameObject* gameObject);
 		void FinalPass();
 
+		void RenderSkybox();
+
 		static RenderingEngine* _instance;
 
 		GBuffer* _gbuffer;
@@ -56,9 +60,11 @@ namespace VoxEngine
 		Camera* _camera;
 		MeshRenderer* _quad;
 		MeshRenderer* _sphere;
+		MeshRenderer* _skyboxMesh = nullptr;
 		std::vector<Component*> _renderingComponents;
 
 		Light* _ambientLight;
+		Material* _skybox;
 		std::vector<PointLight*> _pointLights;
 		std::vector<DirectionalLight*> _directionalLights;
 

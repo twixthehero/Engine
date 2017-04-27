@@ -28,10 +28,10 @@ namespace VoxEngine
 		}
 	}
 
-	Texture* Material::GetTexture()
+	Texture* Material::GetTexture(std::string name)
 	{
-		if (_textures.size() > 0)
-			return _textures[0];
+		if (_textures.find(name) != _textures.end())
+			return _textures[name];
 
 		return nullptr;
 	}

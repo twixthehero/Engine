@@ -11,10 +11,10 @@ namespace VoxEngine
 		Material(Texture* texture);
 		~Material();
 
-		void Use();
+		virtual void Use();
 
-		Texture* GetTexture();
-	private:
+		Texture* GetTexture(std::string name);
+	protected:
 		std::map<std::string, Texture*> _textures = std::map<std::string, Texture*>();
 	};
 }

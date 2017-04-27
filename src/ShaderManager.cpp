@@ -25,6 +25,12 @@ namespace VoxEngine
 
 	ShaderManager::ShaderManager()
 	{
+		Shader* skybox = new Shader(_nextShaderIndex++);
+		skybox->AttachShader(GL_VERTEX_SHADER, "skybox.vs");
+		skybox->AttachShader(GL_FRAGMENT_SHADER, "skybox.fs");
+		skybox->Finish();
+		AddShader("skybox", skybox);
+
 		Shader* forwardAmbient = new Shader(_nextShaderIndex++);
 		forwardAmbient->AttachShader(GL_VERTEX_SHADER, "forward-ambient.vs");
 		forwardAmbient->AttachShader(GL_FRAGMENT_SHADER, "forward-ambient.fs");

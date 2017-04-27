@@ -12,6 +12,7 @@
 #include "MeshManager.h"
 #include <iostream>
 #include "Core\Material.h"
+#include "Core\MaterialSkybox.h"
 #include "Component\MeshRenderer.h"
 #include "Component\Transform.h"
 #include "Component\FlyMove.h"
@@ -93,6 +94,8 @@ namespace VoxEngine
 	void Engine::Run()
 	{
 		_running = true;
+
+		_renderingEngine->SetSkybox(new MaterialSkybox("skybox\\ThickCloudsWater"));
 
 		_scene = new Scene();
 		GameObject* cameraObject = new GameObject("Camera");

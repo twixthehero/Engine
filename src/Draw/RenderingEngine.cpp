@@ -6,6 +6,7 @@
 #include "Component\PointLight.h"
 #include "Component\DirectionalLight.h"
 #include "Core\GameObject.h"
+#include "Core\MaterialSkybox.h"
 #include "Component\Transform.h"
 #include "Component\Camera.h"
 #include "Component\MeshRenderer.h"
@@ -204,6 +205,8 @@ namespace VoxEngine
 				renderer->Render();
 			}
 		}
+
+		RenderSkybox();
 	}
 
 	void RenderingEngine::Deferred(GameObject* gameObject)
@@ -233,6 +236,8 @@ namespace VoxEngine
 		//DirectionalLightPass(gameObject);
 
 		FinalPass();
+
+		RenderSkybox();
 	}
 
 	void RenderingEngine::GeometryPass(GameObject* gameObject)
@@ -382,6 +387,21 @@ namespace VoxEngine
 		}
 	}
 
+	void RenderingEngine::RenderSkybox()
+	{
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		Shader* skyboxShader = ShaderManager::GetInstance()->UseShader("skybox");
+
+		skyboxShader->SetUniformMatrix4fv("projection", _camera->GetProjectionMatrix());
+		skyboxShader->SetUniformMatrix4fv("view", glm::mat4(glm::mat3(_camera->GetViewMatrix())));
+
+		_skyboxMesh->Render();
+
+		glDisable(GL_DEPTH_TEST);
+	}
+
 	void RenderingEngine::SetCamera(Camera* camera)
 	{
 		_camera = camera;
@@ -395,5 +415,13 @@ namespace VoxEngine
 	Light* RenderingEngine::GetAmbientLight()
 	{
 		return _ambientLight;
+	}
+	void RenderingEngine::SetSkybox(Material* skybox)
+	{
+		if (_skyboxMesh != nullptr)
+			delete _skyboxMesh;
+
+		_skybox = skybox;
+		_skyboxMesh = new MeshRenderer(MeshManager::GetInstance()->GetMesh("cubeInvert"), nullptr);
 	}
 }

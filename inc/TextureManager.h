@@ -14,6 +14,12 @@ namespace VoxEngine
 		static void Shutdown();
 
 		Texture* GetTexture(std::string name);
+		Texture* GetTextureCube(std::string name);
+
+		bool LoadTextureCube(std::string name,
+			std::string front, std::string back,
+			std::string left, std::string right,
+			std::string top, std::string bottom);
 	private:
 		TextureManager();
 		~TextureManager();
@@ -23,6 +29,7 @@ namespace VoxEngine
 		static TextureManager* _instance;
 
 		Texture* _missingTexture;
+		Texture* _missingTextureCube;
 		std::map<std::string, Texture*> _textures;
 
 		GLenum _minificationFilter = GL_LINEAR;
