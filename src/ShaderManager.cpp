@@ -69,7 +69,7 @@ namespace VoxEngine
 
 		/*Shader* directionalLight = new Shader(_nextShaderIndex++);
 		directionalLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
-		directionalLight->AttachShader(GL_FRAGMENT_SHADER, "directionalLight.fs");
+		directionalLight->AttachShader(GL_FRAGMENT_SHADER, "lightDirectional.fs");
 		directionalLight->Finish();
 		AddShader("directionalLight", directionalLight);*/
 

@@ -22,8 +22,8 @@ void main()
 	diffuseFactor = clamp(diffuseFactor, 0, 1);
 
 	vec4 preAttenuationColor = vec4(lightColor * lightIntensity * diffuseFactor, 1.0) * texture(diffuse, uv);
-	float attenuation = clamp(1.0 - distance * distance / (range * range), 0, 1);
-	attenuation *= attenuation;
+	float modDistance = distance / range;
+	float attenuation = 1.0 / (1.0 + 25 * modDistance * modDistance);
 
-	glFragColor = preAttenuationColor / attenuation;
+	glFragColor = preAttenuationColor * attenuation;
 }

@@ -42,6 +42,7 @@ namespace VoxEngine
 		_ambientLight->color.r = 0.2f;
 		_ambientLight->color.g = 0.2f;
 		_ambientLight->color.b = 0.2f;
+		_ambientLight->intensity = 0.2f;
 	}
 
 	RenderingEngine::~RenderingEngine()
@@ -77,8 +78,10 @@ namespace VoxEngine
 
 	void RenderingEngine::SetShowLightingDebug(bool show)
 	{
-		Logger::WriteLine("_showLightingDebug: " + std::to_string(_showLightingDebug) + " => " + std::to_string(show));
+		if (_showLightingDebug == show)
+			return;
 
+		Logger::WriteLine("_showLightingDebug: " + std::to_string(_showLightingDebug) + " => " + std::to_string(show));
 		_showLightingDebug = show;
 	}
 
@@ -89,6 +92,9 @@ namespace VoxEngine
 
 	void RenderingEngine::SetRenderingMode(ERenderingMode mode)
 	{
+		if (_renderingMode == mode)
+			return;
+
 		Logger::WriteLine("_renderingMode: " + std::to_string(_renderingMode) + " => " + std::to_string(mode));
 		_renderingMode = mode;
 	}
@@ -114,10 +120,14 @@ namespace VoxEngine
 
 	void RenderingEngine::Forward(GameObject* gameObject)
 	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LEQUAL);
 		glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_CULL_FACE); glCullFace(GL_BACK);
+		glDepthMask(GL_TRUE);
 
 		//fetch components - meshrenderers, lights
 
@@ -126,7 +136,7 @@ namespace VoxEngine
 		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, _renderingComponents);
 		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
 			_meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
-
+		
 		_renderingComponents.clear();
 		_pointLights.clear();
 		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
@@ -138,7 +148,7 @@ namespace VoxEngine
 		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
 		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
 			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
-
+		
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 		glm::mat4 modelMatrix;
 
@@ -150,13 +160,14 @@ namespace VoxEngine
 
 		for (MeshRenderer* renderer : _meshRenderers)
 		{
-			modelMatrix = renderer->gameObject->transform->GetTransformation();
-			shader->SetUniformMatrix4fv("mvp", viewProjection * modelMatrix);
+			if (!renderer->IsEnabled()) continue;
+
+			shader->SetUniformMatrix4fv("mvp", viewProjection * renderer->gameObject->transform->GetTransformation());
 			renderer->Render();
 		}
 
 		//point
-
+		
 		shader = ShaderManager::GetInstance()->UseShader("forward-point");
 		for (PointLight* point : _pointLights)
 		{
@@ -248,6 +259,8 @@ namespace VoxEngine
 
 		for (MeshRenderer* renderer : _meshRenderers)
 		{
+			if (!renderer->IsEnabled()) continue;
+
 			shader->SetUniformMatrix4fv("mvp", viewProjection * renderer->gameObject->transform->GetTransformation());
 			renderer->Render();
 		}
