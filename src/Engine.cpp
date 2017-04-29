@@ -194,15 +194,15 @@ namespace VoxEngine
 		directionalLightOrigin->transform->position.x = 0;
 		directionalLightOrigin->transform->position.y = 3.5f;
 		directionalLightOrigin->transform->position.z = 0;
-		//directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
-		//directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
+		directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
+		directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
 		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
 		Material* mat_missing = new Material(TextureManager::GetInstance()->GetTexture("missing.png"));
 		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_arrow, mat_missing);
 		directionalLightOrigin->AddComponent(meshRenderer3);
 		DirectionalLight* directionalLight = new DirectionalLight();
 		directionalLightOrigin->AddComponent(directionalLight);
-		Rotate* rotate = new Rotate(60);
+		Rotate* rotate = new Rotate(Rotate::EAxis::Y, 60);
 		directionalLightOrigin->AddComponent(rotate);
 		_scene->AddObject(directionalLightOrigin);
 		

@@ -206,10 +206,10 @@ namespace VoxEngine
 			}
 		}
 
+		RenderSkybox();
+
 		if (_showLightingDebug)
 			ShowLightingDebug();
-
-		RenderSkybox();
 	}
 
 	void RenderingEngine::Deferred(GameObject* gameObject)
@@ -239,8 +239,6 @@ namespace VoxEngine
 		DirectionalLightPass(gameObject);
 
 		FinalPass();
-
-		RenderSkybox();
 	}
 
 	void RenderingEngine::GeometryPass(GameObject* gameObject)
@@ -397,6 +395,8 @@ namespace VoxEngine
 
 		//also copy depth info for rendering the point light spheres
 		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+		RenderSkybox();
 
 		if (_showLightingDebug)
 			ShowLightingDebug();

@@ -7,11 +7,14 @@ namespace VoxEngine
 		public Servant
 	{
 	public:
-		Rotate(float rotateSpeed);
+		enum EAxis { NONE, X, Y, Z };
+
+		Rotate(EAxis axis, float rotateSpeed);
 		~Rotate();
 
 		void Update() override;
 
+		EAxis axis = EAxis::NONE;
 		float rotateSpeed;
 	};
 }
