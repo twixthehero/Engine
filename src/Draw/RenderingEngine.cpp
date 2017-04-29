@@ -236,7 +236,7 @@ namespace VoxEngine
 
 		glDisable(GL_STENCIL_TEST);
 
-		//DirectionalLightPass(gameObject);
+		DirectionalLightPass(gameObject);
 
 		FinalPass();
 
@@ -350,9 +350,45 @@ namespace VoxEngine
 
 	void RenderingEngine::DirectionalLightPass(GameObject* gameObject)
 	{
-		//ShaderManager::GetInstance()->UseShader("directionalLight");
+		_gbuffer->BindForLightPass();
 
-		_quad->Render();
+		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		_renderingComponents.clear();
+		_directionalLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
+
+		Shader* directional = ShaderManager::GetInstance()->UseShader("directionalLight");
+		directional->SetUniform2f("screenSize", _windowWidth, _windowHeight);
+		directional->SetUniform1f("ambientIntensity", _ambientLight->intensity);
+		directional->SetUniform3f("ambientColor", _ambientLight->color);
+		directional->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
+
+		directional->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
+		directional->SetUniform1i("colorMap", GBuffer::GBufferTextureType::Diffuse);
+		directional->SetUniform1i("normalMap", GBuffer::GBufferTextureType::Normal);
+
+		for (DirectionalLight* light : _directionalLights)
+		{
+			if (!light->IsEnabled()) continue;
+
+			directional->SetUniform3f("directionalLight.light.color", light->color);
+			directional->SetUniform1f("directionalLight.light.intensity", light->intensity);
+			directional->SetUniform3f("directionalLight.direction", light->gameObject->transform->GetForward());
+
+			directional->SetUniformMatrix4fv("mvp", glm::mat4());
+
+			_quad->Render();
+		}
+
+		glDisable(GL_BLEND);
 	}
 
 	void RenderingEngine::FinalPass()
@@ -383,7 +419,7 @@ namespace VoxEngine
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
 				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
 					glm::scale(glm::mat4(), glm::vec3(light->range))
-					)
+				)
 			);
 
 			_sphere->Render();
@@ -422,6 +458,7 @@ namespace VoxEngine
 	{
 		return _ambientLight;
 	}
+
 	void RenderingEngine::SetSkybox(Material* skybox)
 	{
 		if (_skyboxMesh != nullptr)

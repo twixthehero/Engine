@@ -21,6 +21,7 @@
 #include "Component\Oscillate.h"
 #include "Component\PointLight.h"
 #include "Component\DirectionalLight.h"
+#include "Component\Rotate.h"
 
 namespace VoxEngine
 {
@@ -116,7 +117,6 @@ namespace VoxEngine
 		_scene->AddObject(cameraObject);
 
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
-		//Mesh* mesh_quad = MeshManager::GetInstance()->GetMesh("quad");
 
 		GameObject* cube;
 		Material* mat_test = new Material(TextureManager::GetInstance()->GetTexture("test.png"));
@@ -165,7 +165,8 @@ namespace VoxEngine
 		_scene->AddObject(emmaCube);
 
 		/*GameObject* emmaQuad = new GameObject("EmmaQuad");
-		emmaQuad->transform->position.x = -5;
+		emmaQuad->transform->position.y = 10;
+		Mesh* mesh_quad = MeshManager::GetInstance()->GetMesh("quad");
 		MeshRenderer* meshRendererQuad = new MeshRenderer(mesh_quad, mat_emma);
 		emmaQuad->AddComponent(meshRendererQuad);
 		_scene->AddObject(emmaQuad);*/
@@ -188,20 +189,38 @@ namespace VoxEngine
 		pointLight->range = 30;
 		pointLightObject->AddComponent(pointLight);
 		_scene->AddObject(pointLightObject);
-		
-		/*GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
-		directionalLightOrigin->transform->position.x = -3;
-		directionalLightOrigin->transform->position.y = 3;
-		directionalLightOrigin->transform->position.z = 3;
-		directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
-		directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
+
+		GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
+		directionalLightOrigin->transform->position.x = 0;
+		directionalLightOrigin->transform->position.y = 3.5f;
+		directionalLightOrigin->transform->position.z = 0;
+		//directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
+		//directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
 		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
 		Material* mat_missing = new Material(TextureManager::GetInstance()->GetTexture("missing.png"));
 		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_arrow, mat_missing);
 		directionalLightOrigin->AddComponent(meshRenderer3);
 		DirectionalLight* directionalLight = new DirectionalLight();
-		directionalLightOrigin->AddComponent(directionalLight);*/
-		//_scene->AddObject(directionalLightOrigin);
+		directionalLightOrigin->AddComponent(directionalLight);
+		Rotate* rotate = new Rotate(60);
+		directionalLightOrigin->AddComponent(rotate);
+		_scene->AddObject(directionalLightOrigin);
+		
+		GameObject* arrow;
+		MeshRenderer* renderer2;
+
+		for (int i = 0; i < 8; i++)
+		{
+			arrow = new GameObject(std::to_string(i + 1));
+			arrow->transform->position.x = sin(glm::radians(i * 45.0f)) * 5;
+			arrow->transform->position.y = 1;
+			arrow->transform->position.z = cos(glm::radians(i * 45.0f)) * 5;
+			arrow->transform->Rotate(glm::vec3(0, 1, 0), i * 45);
+
+			renderer2 = new MeshRenderer(mesh_arrow, mat_test);
+			arrow->AddComponent(renderer2);
+			_scene->AddObject(arrow);
+		}
 
 		GameObject* ground = new GameObject("Ground");
 		ground->transform->scale.x = 100;
@@ -209,8 +228,8 @@ namespace VoxEngine
 		ground->transform->scale.z = 100;
 		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
 		Material* mat_grass = new Material(TextureManager::GetInstance()->GetTexture("grass.png"));
-		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_plane, mat_grass);
-		ground->AddComponent(meshRenderer3);
+		MeshRenderer* meshRenderer4 = new MeshRenderer(mesh_plane, mat_grass);
+		ground->AddComponent(meshRenderer4);
 		_scene->AddObject(ground);
 
 		while (_running)
