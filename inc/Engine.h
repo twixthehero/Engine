@@ -30,6 +30,10 @@ namespace VoxEngine
 		bool _running;
 		double _lastTime;
 
+		float _secondTime;
+		int _fps;
+		int _frameCounter;
+
 		WindowManager* _windowManager;
 		Window* _window;
 

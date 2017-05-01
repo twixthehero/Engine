@@ -119,7 +119,7 @@ namespace VoxEngine
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
 
 		GameObject* cube;
-		Material* mat_test = new Material(TextureManager::GetInstance()->GetTexture("test.png"));
+		Material* mat_test = new Material("diffuse", TextureManager::GetInstance()->GetTexture("test.png"));
 		MeshRenderer* renderer;
 
 		for (int i = -3; i < 12; i++)
@@ -159,7 +159,7 @@ namespace VoxEngine
 
 		GameObject* emmaCube = new GameObject("EmmaCube");
 		emmaCube->transform->position.y = 0.5f;
-		Material* mat_emma = new Material(TextureManager::GetInstance()->GetTexture("emma.png"));
+		Material* mat_emma = new Material("diffuse", TextureManager::GetInstance()->GetTexture("emma.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
 		_scene->AddObject(emmaCube);
@@ -170,16 +170,6 @@ namespace VoxEngine
 		MeshRenderer* meshRendererQuad = new MeshRenderer(mesh_quad, mat_emma);
 		emmaQuad->AddComponent(meshRendererQuad);
 		_scene->AddObject(emmaQuad);*/
-
-		/*GameObject* danielCube = new GameObject("DanielCube");
-		danielCube->transform->position.x = 5;
-		danielCube->transform->position.y = 5;
-		Material* mat_daniel = new Material(TextureManager::GetInstance()->GetTexture("daniel.png"));
-		MeshRenderer* meshRenderer2 = new MeshRenderer(mesh_cube, mat_daniel);
-		danielCube->AddComponent(meshRenderer2);
-		Oscillate* oscillate = new Oscillate(Oscillate::EAxis::Y, 4);
-		danielCube->AddComponent(oscillate);
-		_scene->AddObject(danielCube);*/
 		
 		GameObject* pointLightObject = new GameObject("PointLight");
 		pointLightObject->transform->position.x = 0;
@@ -196,10 +186,6 @@ namespace VoxEngine
 		directionalLightOrigin->transform->position.z = 0;
 		directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
 		directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
-		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
-		Material* mat_missing = new Material(TextureManager::GetInstance()->GetTexture("missing.png"));
-		MeshRenderer* meshRenderer3 = new MeshRenderer(mesh_arrow, mat_missing);
-		directionalLightOrigin->AddComponent(meshRenderer3);
 		DirectionalLight* directionalLight = new DirectionalLight();
 		directionalLightOrigin->AddComponent(directionalLight);
 		Rotate* rotate = new Rotate(Rotate::EAxis::Y, 60);
@@ -208,6 +194,7 @@ namespace VoxEngine
 		
 		GameObject* arrow;
 		MeshRenderer* renderer2;
+		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -227,10 +214,14 @@ namespace VoxEngine
 		ground->transform->scale.y = 100;
 		ground->transform->scale.z = 100;
 		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
-		Material* mat_grass = new Material(TextureManager::GetInstance()->GetTexture("grass.png"));
+		Material* mat_grass = new Material("diffuse", TextureManager::GetInstance()->GetTexture("grass.png"));
 		MeshRenderer* meshRenderer4 = new MeshRenderer(mesh_plane, mat_grass);
 		ground->AddComponent(meshRenderer4);
 		_scene->AddObject(ground);
+
+		_fps = -1;
+		_frameCounter = 0;
+		_secondTime = (float)glfwGetTime();
 
 		while (_running)
 		{
@@ -238,6 +229,8 @@ namespace VoxEngine
 			Render();
 
 			_window->SwapBuffers();
+
+			_frameCounter++;
 
 			glfwPollEvents();
 		}
@@ -261,6 +254,16 @@ namespace VoxEngine
 		Time::time = (float)time;
 		Time::deltaTime = (float)(time - _lastTime);
 		_lastTime = time;
+
+		if (Time::time - _secondTime > 1)
+		{
+			_secondTime = Time::time;
+			_fps = _frameCounter;
+			_frameCounter = 0;
+
+			std::string fps = "Engine - " + std::to_string(_fps);
+			_window->SetTitle(fps.c_str());
+		}
 
 		Input::Update();
 
