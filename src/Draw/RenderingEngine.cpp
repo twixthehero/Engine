@@ -38,6 +38,7 @@ namespace VoxEngine
 
 		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
 		_sphere = new MeshRenderer(MeshManager::GetInstance()->GetMesh("sphere"), nullptr);
+		_arrow = new MeshRenderer(MeshManager::GetInstance()->GetMesh("arrow"), nullptr);
 
 		_ambientLight = new Light();
 		_ambientLight->color.r = 0.2f;
@@ -54,7 +55,6 @@ namespace VoxEngine
 	{
 		_instance = new RenderingEngine();
 
-		//glClearColor(0.2f, 0.4f, 0.85f, 1.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
@@ -423,6 +423,17 @@ namespace VoxEngine
 			);
 
 			_sphere->Render();
+		}
+
+		for (DirectionalLight* light : _directionalLights)
+		{
+			if (!light->IsEnabled()) continue;
+
+			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 1.0f, 0.0f));
+
+			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection * light->gameObject->transform->GetTransformation());
+
+			_arrow->Render();
 		}
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

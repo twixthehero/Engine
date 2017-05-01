@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <vector>
 
 namespace VoxEngine
 {
@@ -8,13 +9,14 @@ namespace VoxEngine
 	{
 	public:
 		Material();
-		Material(Texture* texture);
+		Material(std::string name, Texture* texture);
 		~Material();
 
 		virtual void Use();
 
 		Texture* GetTexture(std::string name);
 	protected:
+		std::vector<std::string> _names = std::vector<std::string>();
 		std::map<std::string, Texture*> _textures = std::map<std::string, Texture*>();
 	};
 }

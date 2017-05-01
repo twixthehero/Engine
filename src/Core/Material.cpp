@@ -9,9 +9,10 @@ namespace VoxEngine
 	{
 	}
 
-	Material::Material(Texture* diffuseTexture)
+	Material::Material(std::string name, Texture* texture)
 	{
-		_textures.insert(std::pair<std::string, Texture*>("diffuse", diffuseTexture));
+		_names.push_back(name);
+		_textures.insert(std::pair<std::string, Texture*>(name, texture));
 	}
 
 	Material::~Material()
@@ -20,11 +21,15 @@ namespace VoxEngine
 
 	void Material::Use()
 	{
-		if (_textures.find("diffuse") != _textures.end())
+		int textureIndex = 0;
+		for (auto name : _names)
 		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, _textures["diffuse"]->GetID());
-			ShaderManager::GetInstance()->GetCurrentShader()->SetUniform1i("diffuse", 0);
+			if (_textures.find(name) != _textures.end())
+			{
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, _textures[name]->GetID());
+				ShaderManager::GetInstance()->GetCurrentShader()->SetUniform1i(name, textureIndex++);
+			}
 		}
 	}
 

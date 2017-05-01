@@ -61,6 +61,7 @@ namespace VoxEngine
 		Camera* _camera;
 		MeshRenderer* _quad;
 		MeshRenderer* _sphere;
+		MeshRenderer* _arrow;
 		MeshRenderer* _skyboxMesh = nullptr;
 		std::vector<Component*> _renderingComponents;
 
