@@ -321,6 +321,8 @@ namespace VoxEngine
 		pointShader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
 		pointShader->SetUniform3f("ambientColor", _ambientLight->color);
 		pointShader->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
+		pointShader->SetUniform1f("shininess", 2.0f);
+		pointShader->SetUniform1f("specularStrength", 0.1f);
 
 		pointShader->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
 		pointShader->SetUniform1i("colorMap", GBuffer::GBufferTextureType::Diffuse);

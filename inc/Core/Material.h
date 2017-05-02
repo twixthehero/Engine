@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include <vector>
+#include <GL\gl3w.h>
 
 namespace VoxEngine
 {
@@ -9,14 +9,12 @@ namespace VoxEngine
 	{
 	public:
 		Material();
-		Material(std::string name, Texture* texture);
-		~Material();
+		virtual ~Material();
 
-		virtual void Use();
+		virtual void Use() = 0;
 
-		Texture* GetTexture(std::string name);
+		GLuint GetTexture(std::string name);
 	protected:
-		std::vector<std::string> _names = std::vector<std::string>();
 		std::map<std::string, Texture*> _textures = std::map<std::string, Texture*>();
 	};
 }

@@ -64,7 +64,7 @@ namespace VoxEngine
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _fbo);
 
-		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 		glDrawBuffers(GBufferTextureType::NumTextures, drawBuffers);
 	}
 

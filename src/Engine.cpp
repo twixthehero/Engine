@@ -11,7 +11,7 @@
 #include "Component\Camera.h"
 #include "MeshManager.h"
 #include <iostream>
-#include "Core\Material.h"
+#include "Core\MaterialDefault.h"
 #include "Core\MaterialSkybox.h"
 #include "Component\MeshRenderer.h"
 #include "Component\Transform.h"
@@ -117,9 +117,9 @@ namespace VoxEngine
 		_scene->AddObject(cameraObject);
 
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
-
+		MaterialDefault* mat_test = new MaterialDefault(TextureManager::GetInstance()->GetTexture("test.png"), nullptr);
+		/*
 		GameObject* cube;
-		Material* mat_test = new Material("diffuse", TextureManager::GetInstance()->GetTexture("test.png"));
 		MeshRenderer* renderer;
 
 		for (int i = -3; i < 12; i++)
@@ -155,14 +155,14 @@ namespace VoxEngine
 			renderer = new MeshRenderer(mesh_cube, mat_test);
 			cube->AddComponent(renderer);
 			_scene->AddObject(cube);
-		}
+		}*/
 
-		GameObject* emmaCube = new GameObject("EmmaCube");
+		/*GameObject* emmaCube = new GameObject("EmmaCube");
 		emmaCube->transform->position.y = 0.5f;
-		Material* mat_emma = new Material("diffuse", TextureManager::GetInstance()->GetTexture("emma.png"));
+		MaterialDefault* mat_emma = new MaterialDefault(TextureManager::GetInstance()->GetTexture("emma.png"), nullptr);
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
 		emmaCube->AddComponent(meshRenderer);
-		_scene->AddObject(emmaCube);
+		_scene->AddObject(emmaCube);*/
 
 		/*GameObject* emmaQuad = new GameObject("EmmaQuad");
 		emmaQuad->transform->position.y = 10;
@@ -173,14 +173,14 @@ namespace VoxEngine
 		
 		GameObject* pointLightObject = new GameObject("PointLight");
 		pointLightObject->transform->position.x = 0;
-		pointLightObject->transform->position.y = 5;
+		pointLightObject->transform->position.y = 12;
 		pointLightObject->transform->position.z = 0;
 		PointLight* pointLight = new PointLight();
 		pointLight->range = 30;
 		pointLightObject->AddComponent(pointLight);
 		_scene->AddObject(pointLightObject);
 
-		GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
+		/*GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
 		directionalLightOrigin->transform->position.x = 0;
 		directionalLightOrigin->transform->position.y = 3.5f;
 		directionalLightOrigin->transform->position.z = 0;
@@ -190,7 +190,7 @@ namespace VoxEngine
 		directionalLightOrigin->AddComponent(directionalLight);
 		Rotate* rotate = new Rotate(Rotate::EAxis::Y, 60);
 		directionalLightOrigin->AddComponent(rotate);
-		_scene->AddObject(directionalLightOrigin);
+		_scene->AddObject(directionalLightOrigin);*/
 		
 		GameObject* arrow;
 		MeshRenderer* renderer2;
@@ -214,7 +214,8 @@ namespace VoxEngine
 		ground->transform->scale.y = 100;
 		ground->transform->scale.z = 100;
 		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
-		Material* mat_grass = new Material("diffuse", TextureManager::GetInstance()->GetTexture("grass.png"));
+		//MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("grass.png"), nullptr);
+		MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte.png"), nullptr);
 		MeshRenderer* meshRenderer4 = new MeshRenderer(mesh_plane, mat_grass);
 		ground->AddComponent(meshRenderer4);
 		_scene->AddObject(ground);

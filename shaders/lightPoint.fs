@@ -13,18 +13,27 @@ struct PointLight
 	float range;
 };
 
+struct Material
+{
+	vec3 albedo;
+	vec3 specular;
+};
+
 uniform vec2 screenSize;
 uniform sampler2D positionMap;
-uniform sampler2D colorMap;
+uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
+uniform sampler2D specularMap;
 uniform PointLight pointLight;
+
+uniform Material material;
 
 uniform vec3 ambientColor;
 uniform float ambientIntensity;
 
 uniform vec3 eyeWorldPos;
-uniform float specularPower;
-uniform float matSpecularIntensity;
+uniform float shininess; //powers of 2
+uniform float specularStrength;
 
 out vec4 glFragColor;
 
@@ -42,13 +51,8 @@ vec4 CalcLightInternal(Light light, vec3 lightDirection, vec3 worldPos, vec3 nor
 
 		vec3 vertexToEye = normalize(eyeWorldPos - worldPos);
 		vec3 lightReflect = normalize(reflect(lightDirection, normal));
-		float specularFactor = dot(vertexToEye, lightReflect);
-
-		if (specularFactor > 0)
-		{
-			specularFactor = pow(specularFactor, specularPower);
-			specularColor = vec4(light.color * matSpecularIntensity * specularFactor, 1.0);
-		}
+		float specular = pow(max(dot(vertexToEye, lightReflect), 0), shininess);
+		specularColor = vec4(light.color * specularStrength * specular, 1.0);
 	}
 
 	return ambient + diffuseColor + specularColor;
@@ -77,7 +81,7 @@ void main()
 {
 	vec2 texCoord = CalcTexCoord();
 	vec3 worldPos = texture(positionMap, texCoord).xyz;
-	vec3 color = texture(colorMap, texCoord).xyz;
+	vec3 color = texture(albedoMap, texCoord).xyz;
 	vec3 normal = texture(normalMap, texCoord).xyz;
 	normal = normalize(normal);
 

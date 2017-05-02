@@ -156,6 +156,7 @@ xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\Component\DirectionalLight.h" />
+    <ClInclude Include="inc\Core\MaterialDefault.h" />
     <ClInclude Include="inc\Draw\GBuffer.h" />
     <ClInclude Include="inc\Component\FreeLook.h" />
     <ClInclude Include="inc\Component\FlyMove.h" />
@@ -193,6 +194,7 @@ xcopy /d /y "$(ProjectDir)shaders\*" "$(OutDir)shaders"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Component\Rotate.cpp" />
+    <ClCompile Include="src\Core\MaterialDefault.cpp" />
     <ClCompile Include="src\Core\MaterialSkybox.cpp" />
     <ClCompile Include="src\Draw\ShaderStruct.cpp" />
     <ClCompile Include="src\Component\DirectionalLight.cpp" />

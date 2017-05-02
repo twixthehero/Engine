@@ -8,7 +8,7 @@ namespace VoxEngine
 	public:
 		enum GBufferTextureType
 		{
-			Position, Diffuse, Normal, NumTextures
+			Position, Diffuse, Normal, Specular, NumTextures
 		};
 
 		GBuffer();
