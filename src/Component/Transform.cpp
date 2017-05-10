@@ -19,17 +19,17 @@ namespace VoxEngine
 
 	glm::vec3 Transform::GetForward()
 	{
-		return glm::normalize(rotation * glm::vec3(0, 0, -1));
+		return glm::normalize(GetTransformedRotation() * glm::vec3(0, 0, -1));
 	}
 
 	glm::vec3 Transform::GetRight()
 	{
-		return glm::normalize(rotation * glm::vec3(1, 0, 0));
+		return glm::normalize(GetTransformedRotation() * glm::vec3(1, 0, 0));
 	}
 
 	glm::vec3 Transform::GetUp()
 	{
-		return glm::normalize(rotation * glm::vec3(0, 1, 0));
+		return glm::normalize(GetTransformedRotation() * glm::vec3(0, 1, 0));
 	}
 
 	glm::mat4 Transform::GetModelMatrix()
@@ -49,6 +49,16 @@ namespace VoxEngine
 	glm::vec3 Transform::GetTransformedPosition()
 	{
 		return GetParentTransformation() * glm::vec4(position, 1);
+	}
+
+	glm::quat Transform::GetTransformedRotation()
+	{
+		GameObject* parent = gameObject->GetParent();
+
+		if (parent != nullptr)
+			return parent->transform->GetTransformedRotation() * rotation;
+
+		return rotation;
 	}
 
 	glm::mat4 Transform::GetParentTransformation()

@@ -79,6 +79,12 @@ namespace VoxEngine
 		directionalLight->Finish();
 		AddShader("directionalLight", directionalLight);
 
+		Shader* spotLight = new Shader(_nextShaderIndex++);
+		spotLight->AttachShader(GL_VERTEX_SHADER, "light.vs");
+		spotLight->AttachShader(GL_FRAGMENT_SHADER, "lightSpot.fs");
+		spotLight->Finish();
+		AddShader("spotLight", spotLight);
+
 		Shader* null = new Shader(_nextShaderIndex++);
 		null->AttachShader(GL_VERTEX_SHADER, "null.vs");
 		null->AttachShader(GL_FRAGMENT_SHADER, "null.fs");

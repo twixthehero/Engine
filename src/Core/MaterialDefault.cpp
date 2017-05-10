@@ -23,18 +23,22 @@ namespace VoxEngine
 
 	void MaterialDefault::Use()
 	{
+		Shader* shader = ShaderManager::GetInstance()->GetCurrentShader();
+		shader->SetUniform3f("albedoColor", albedoColor);
+		shader->SetUniform3f("specularColor", specularColor);
+
 		if (GetTexture("albedo") != -1)
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, GetTexture("albedo"));
-			ShaderManager::GetInstance()->GetCurrentShader()->SetUniform1i("albedo", 0);
+			shader->SetUniform1i("albedo", 0);
 		}
 
 		if (GetTexture("specular") != -1)
 		{
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, GetTexture("specular"));
-			ShaderManager::GetInstance()->GetCurrentShader()->SetUniform1i("specular", 1);
+			shader->SetUniform1i("specular", 1);
 		}
 	}
 }

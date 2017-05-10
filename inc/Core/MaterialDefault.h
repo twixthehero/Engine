@@ -15,6 +15,6 @@ namespace VoxEngine
 		void Use() override;
 
 		glm::vec3 albedoColor = glm::vec3(1.0f);
-		glm::vec3 specularColor = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 specularColor = glm::vec3(51 / 255.0f);
 	};
 }

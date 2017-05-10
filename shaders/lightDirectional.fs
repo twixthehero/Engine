@@ -14,48 +14,40 @@ struct DirectionalLight
 
 uniform vec2 screenSize;
 uniform sampler2D positionMap;
-uniform sampler2D colorMap;
+uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
+uniform sampler2D specularMap;
 uniform DirectionalLight directionalLight;
 
 uniform vec3 ambientColor;
 uniform float ambientIntensity;
 
 uniform vec3 eyeWorldPos;
-uniform float specularPower;
-uniform float matSpecularIntensity;
+uniform float shininess; //powers of 2
 
 out vec4 glFragColor;
 
-vec4 CalcLightInternal(Light light, vec3 lightDirection, vec3 worldPos, vec3 normal)
+vec4 CalcLightInternal(vec3 matAlbedo, vec3 matSpecular, Light light, vec3 lightDirection, vec3 worldPos, vec3 normal)
 {
-	vec4 ambient = vec4(ambientColor * ambientIntensity, 1.0);
-	float diffuseFactor = dot(normal, -lightDirection);
+	//ambient
+	vec3 ambient = light.color * (0.1f * matAlbedo);
 
-	vec4 diffuseColor = vec4(0, 0, 0, 0);
-	vec4 specularColor = vec4(0, 0, 0, 0);
+	//diffuse
+	float diffuseFactor = max(dot(normal, -lightDirection), 0);
+	vec3 diffuse = light.color * light.intensity * (diffuseFactor * matAlbedo);
 
-	if (diffuseFactor > 0)
-	{
-		diffuseColor = vec4(light.color * light.intensity * diffuseFactor, 1.0);
+	//specular
+	vec3 vertexToEye = normalize(eyeWorldPos - worldPos);
+	vec3 lightReflect = normalize(reflect(lightDirection, normal));
+	float specularFactor = pow(max(dot(vertexToEye, lightReflect), 0), shininess);
+	vec3 specular = light.color * (specularFactor * matSpecular);
 
-		vec3 vertexToEye = normalize(eyeWorldPos - worldPos);
-		vec3 lightReflect = normalize(reflect(lightDirection, normal));
-		float specularFactor = dot(vertexToEye, lightReflect);
-
-		if (specularFactor > 0)
-		{
-			specularFactor = pow(specularFactor, specularPower);
-			specularColor = vec4(light.color * matSpecularIntensity * specularFactor, 1.0);
-		}
-	}
-
-	return ambient + diffuseColor + specularColor;
+	return vec4((ambient + diffuse + specular) * matAlbedo, 1.0);
 }
 
-vec4 CalcDirectionalLight(vec3 worldPos, vec3 normal)
+vec4 CalcDirectionalLight(vec3 matAlbedo, vec3 matSpecular, vec3 worldPos, vec3 normal)
 {
-	return CalcLightInternal(directionalLight.light,
+	return CalcLightInternal(matAlbedo, matSpecular, directionalLight.light,
 							 directionalLight.direction,
 							 worldPos,
 							 normal);
@@ -70,9 +62,10 @@ void main()
 {
 	vec2 texCoord = CalcTexCoord();
 	vec3 worldPos = texture(positionMap, texCoord).xyz;
-	vec3 color = texture(colorMap, texCoord).xyz;
+	vec3 matAlbedo = texture(albedoMap, texCoord).xyz;
 	vec3 normal = texture(normalMap, texCoord).xyz;
 	normal = normalize(normal);
+	vec3 matSpecular = texture(specularMap, texCoord).xyz;
 
-	glFragColor = vec4(color, 1) * CalcDirectionalLight(worldPos, normal);
+	glFragColor = vec4(matAlbedo, 1) * CalcDirectionalLight(matAlbedo, matSpecular, worldPos, normal);
 }

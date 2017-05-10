@@ -5,6 +5,7 @@
 #include "Component\Light.h"
 #include "Component\PointLight.h"
 #include "Component\DirectionalLight.h"
+#include "Component\SpotLight.h"
 #include "Core\GameObject.h"
 #include "Core\MaterialSkybox.h"
 #include "Component\Transform.h"
@@ -38,6 +39,7 @@ namespace VoxEngine
 
 		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
 		_sphere = new MeshRenderer(MeshManager::GetInstance()->GetMesh("sphere"), nullptr);
+		_cone = new MeshRenderer(MeshManager::GetInstance()->GetMesh("cone2"), nullptr);
 		_arrow = new MeshRenderer(MeshManager::GetInstance()->GetMesh("arrow"), nullptr);
 
 		_ambientLight = new Light();
@@ -137,7 +139,7 @@ namespace VoxEngine
 		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, _renderingComponents);
 		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
 			_meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
-		
+
 		_renderingComponents.clear();
 		_pointLights.clear();
 		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
@@ -149,7 +151,7 @@ namespace VoxEngine
 		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
 		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
 			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
-		
+
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 		glm::mat4 modelMatrix;
 
@@ -168,7 +170,7 @@ namespace VoxEngine
 		}
 
 		//point
-		
+
 		shader = ShaderManager::GetInstance()->UseShader("forward-point");
 		for (PointLight* point : _pointLights)
 		{
@@ -218,20 +220,25 @@ namespace VoxEngine
 
 		GeometryPass(gameObject);
 
+		//gather all components
+		UpdateComponents(gameObject);
+
 		glEnable(GL_STENCIL_TEST);
 
-		_renderingComponents.clear();
-		_pointLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_pointLights.push_back(dynamic_cast<PointLight*>(*it));
-
-		for (PointLight* light : _pointLights)
+		for (PointLight* pointLight : _pointLights)
 		{
-			if (!light->IsEnabled()) continue;
+			if (!pointLight->IsEnabled()) continue;
 
-			StencilPass(light);
-			PointLightPass(light);
+			StencilPassPoint(pointLight);
+			PointLightPass(pointLight);
+		}
+
+		for (SpotLight* spotLight : _spotLights)
+		{
+			if (!spotLight->IsEnabled()) continue;
+
+			StencilPassSpot(spotLight);
+			SpotLightPass(spotLight);
 		}
 
 		glDisable(GL_STENCIL_TEST);
@@ -274,7 +281,7 @@ namespace VoxEngine
 		glDepthMask(GL_FALSE);
 	}
 
-	void RenderingEngine::StencilPass(PointLight* light)
+	void RenderingEngine::StencilPassPoint(PointLight* light)
 	{
 		Shader* nullShader = ShaderManager::GetInstance()->UseShader("null");
 
@@ -294,9 +301,9 @@ namespace VoxEngine
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
 		nullShader->SetUniformMatrix4fv("mvp", viewProjection *
-			(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 				glm::scale(glm::mat4(), glm::vec3(light->range))
-			)
+				)
 		);
 
 		_sphere->Render();
@@ -321,24 +328,119 @@ namespace VoxEngine
 		pointShader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
 		pointShader->SetUniform3f("ambientColor", _ambientLight->color);
 		pointShader->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
-		pointShader->SetUniform1f("shininess", 2.0f);
-		pointShader->SetUniform1f("specularStrength", 0.1f);
+		pointShader->SetUniform1f("shininess", 32.0f);
 
 		pointShader->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
-		pointShader->SetUniform1i("colorMap", GBuffer::GBufferTextureType::Diffuse);
+		pointShader->SetUniform1i("albedoMap", GBuffer::GBufferTextureType::Diffuse);
 		pointShader->SetUniform1i("normalMap", GBuffer::GBufferTextureType::Normal);
+		pointShader->SetUniform1i("specularMap", GBuffer::GBufferTextureType::Specular);
 
 		pointShader->SetUniform3f("pointLight.light.color", light->color);
 		pointShader->SetUniform1f("pointLight.light.intensity", light->intensity);
-		pointShader->SetUniform3f("pointLight.position", light->gameObject->transform->position);
+		pointShader->SetUniform3f("pointLight.position", light->gameObject->transform->GetTransformedPosition());
 		pointShader->SetUniform1f("pointLight.range", light->range);
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
 		pointShader->SetUniformMatrix4fv("mvp", viewProjection *
-			(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 				glm::scale(glm::mat4(), glm::vec3(light->range))
+				)
+		);
+
+		_sphere->Render();
+
+		glCullFace(GL_BACK);
+
+		glDisable(GL_BLEND);
+	}
+
+	void RenderingEngine::StencilPassSpot(SpotLight* light)
+	{
+		Shader* nullShader = ShaderManager::GetInstance()->UseShader("null");
+
+		_gbuffer->BindForStencilPass();
+
+		glEnable(GL_DEPTH_TEST);
+
+		glDisable(GL_CULL_FACE);
+
+		glClear(GL_STENCIL_BUFFER_BIT);
+
+		glStencilFunc(GL_ALWAYS, 0, 0);
+
+		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+
+		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+
+		/*nullShader->SetUniformMatrix4fv("mvp", viewProjection *
+			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
+				glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
+				glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3((1 / 90.0f) * (light->angle + 2.5f), (1 / 90.0f) * (light->angle + 2.5f), 1))
 			)
+		);
+
+		_cone->Render();*/
+
+		nullShader->SetUniformMatrix4fv("mvp", viewProjection *
+			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
+				glm::scale(glm::mat4(), glm::vec3(light->range))
+				)
+		);
+
+		_sphere->Render();
+	}
+
+	void RenderingEngine::SpotLightPass(SpotLight* light)
+	{
+		_gbuffer->BindForLightPass();
+
+		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+
+		Shader* spotLight = ShaderManager::GetInstance()->UseShader("spotLight");
+		spotLight->SetUniform2f("screenSize", _windowWidth, _windowHeight);
+		spotLight->SetUniform1f("ambientIntensity", _ambientLight->intensity);
+		spotLight->SetUniform3f("ambientColor", _ambientLight->color);
+		spotLight->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
+		spotLight->SetUniform1f("shininess", 32.0f);
+
+		spotLight->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
+		spotLight->SetUniform1i("albedoMap", GBuffer::GBufferTextureType::Diffuse);
+		spotLight->SetUniform1i("normalMap", GBuffer::GBufferTextureType::Normal);
+		spotLight->SetUniform1i("specularMap", GBuffer::GBufferTextureType::Specular);
+
+		spotLight->SetUniform3f("spotLight.light.color", light->color);
+		spotLight->SetUniform1f("spotLight.light.intensity", light->intensity);
+		spotLight->SetUniform3f("spotLight.position", light->gameObject->transform->GetTransformedPosition());
+		spotLight->SetUniform3f("spotLight.direction", light->gameObject->transform->GetForward());
+		spotLight->SetUniform1f("spotLight.range", light->range);
+		spotLight->SetUniform1f("spotLight.angle", glm::cos(glm::radians(light->angle - 2.5f)));
+		spotLight->SetUniform1f("spotLight.cutoffAngle", glm::cos(glm::radians(light->angle + 2.5f)));
+
+		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+
+		/*spotLight->SetUniformMatrix4fv("mvp", viewProjection *
+			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
+				glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
+				glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3(light->angle + 2.5f, light->angle + 2.5f, 1))
+			)
+		);
+
+		_cone->Render();*/
+
+		spotLight->SetUniformMatrix4fv("mvp", viewProjection *
+			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
+				glm::scale(glm::mat4(), glm::vec3(light->range * light->angle + 2.5f))
+				)
 		);
 
 		_sphere->Render();
@@ -359,21 +461,17 @@ namespace VoxEngine
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 
-		_renderingComponents.clear();
-		_directionalLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
-
 		Shader* directional = ShaderManager::GetInstance()->UseShader("directionalLight");
 		directional->SetUniform2f("screenSize", _windowWidth, _windowHeight);
 		directional->SetUniform1f("ambientIntensity", _ambientLight->intensity);
 		directional->SetUniform3f("ambientColor", _ambientLight->color);
 		directional->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
+		directional->SetUniform1f("shininess", 32.0f);
 
 		directional->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
-		directional->SetUniform1i("colorMap", GBuffer::GBufferTextureType::Diffuse);
+		directional->SetUniform1i("albedoMap", GBuffer::GBufferTextureType::Diffuse);
 		directional->SetUniform1i("normalMap", GBuffer::GBufferTextureType::Normal);
+		directional->SetUniform1i("specularMap", GBuffer::GBufferTextureType::Specular);
 
 		for (DirectionalLight* light : _directionalLights)
 		{
@@ -404,24 +502,55 @@ namespace VoxEngine
 			ShowLightingDebug();
 	}
 
+	void RenderingEngine::UpdateComponents(GameObject* gameObject)
+	{
+		_renderingComponents.clear();
+		_pointLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_pointLights.push_back(dynamic_cast<PointLight*>(*it));
+
+		_renderingComponents.clear();
+		_directionalLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
+
+		_renderingComponents.clear();
+		_spotLights.clear();
+		gameObject->GetComponentsInChildren(EComponentType::LIGHT_SPOT, _renderingComponents);
+		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
+			_spotLights.push_back(dynamic_cast<SpotLight*>(*it));
+	}
+
 	void RenderingEngine::ShowLightingDebug()
 	{
 		Shader* lightingDebug = ShaderManager::GetInstance()->UseShader("lightingDebug");
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+		lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 1.0f, 0.0f));
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glEnable(GL_DEPTH_TEST);
+		//glDisable(GL_CULL_FACE);
 
 		for (PointLight* light : _pointLights)
 		{
 			if (!light->IsEnabled()) continue;
 
-			lightingDebug->SetUniform3f("color", glm::vec3(0.0f, 1.0f, 0.0f));
-
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
 				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
 					glm::scale(glm::mat4(), glm::vec3(light->range))
-				)
+					)
+			);
+
+			_sphere->Render();
+
+			//render center point
+
+			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
+				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+					glm::scale(glm::mat4(), glm::vec3(0.1f))
+					)
 			);
 
 			_sphere->Render();
@@ -431,15 +560,41 @@ namespace VoxEngine
 		{
 			if (!light->IsEnabled()) continue;
 
-			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 1.0f, 0.0f));
-
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection * light->gameObject->transform->GetTransformation());
 
 			_arrow->Render();
 		}
 
+		for (SpotLight* light : _spotLights)
+		{
+			if (!light->IsEnabled()) continue;
+
+			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 1.0f, 0.0f));
+
+			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
+				(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
+					glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
+					glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3((light->angle - 2.5f) / 90, (light->angle - 2.5f) / 90, 1))
+					)
+			);
+
+			_cone->Render();
+
+			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
+
+			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
+				(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
+					glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
+					glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3((light->angle + 2.5f) / 90, (light->angle + 2.5f) / 90, 1))
+					)
+			);
+
+			_cone->Render();
+		}
+
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDisable(GL_DEPTH_TEST);
+		//glEnable(GL_CULL_FACE);
 	}
 
 	void RenderingEngine::RenderSkybox()

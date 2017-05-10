@@ -21,6 +21,7 @@
 #include "Component\Oscillate.h"
 #include "Component\PointLight.h"
 #include "Component\DirectionalLight.h"
+#include "Component\SpotLight.h"
 #include "Component\Rotate.h"
 
 namespace VoxEngine
@@ -114,11 +115,37 @@ namespace VoxEngine
 		cameraObject->AddComponent(flyMove);
 		FreeLook* freeLook = new FreeLook();
 		cameraObject->AddComponent(freeLook);
+		GameObject* spotLightObject = new GameObject("SpotLight");
+		spotLightObject->transform->position.x = 0;
+		spotLightObject->transform->position.y = 2;
+		spotLightObject->transform->position.z = 5;
+		//spotLightObject->transform->Rotate(glm::vec3(1, 0, 0), 90);
+		SpotLight* spotLight = new SpotLight();
+		spotLight->range = 15;
+		spotLight->intensity = 1.0f;
+		//spotLight->angle = 35.0f;
+		spotLightObject->AddComponent(spotLight);
+		//spotLightObject->SetParent(cameraObject);
+		_scene->AddObject(spotLightObject);
+		
 		_scene->AddObject(cameraObject);
 
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
 		MaterialDefault* mat_test = new MaterialDefault(TextureManager::GetInstance()->GetTexture("test.png"), nullptr);
-		/*
+
+		/*GameObject* pistol = new GameObject("Pistol");
+		pistol->transform->position.x = 0.5f;
+		pistol->transform->position.y = -0.8f;
+		pistol->transform->position.z = -1;
+		pistol->transform->Rotate(glm::vec3(0, 1, 0), 90);
+		Mesh* mesh_pistol = MeshManager::GetInstance()->GetMesh("pistol2");
+		MaterialDefault* mat_pistol = new MaterialDefault(TextureManager::GetInstance()->GetTexture("pistol.png"),
+			TextureManager::GetInstance()->GetTexture("pistolSpecular.png"));
+		MeshRenderer* pistolRenderer = new MeshRenderer(mesh_pistol, mat_pistol);
+		pistol->AddComponent(pistolRenderer);
+		pistol->SetParent(cameraObject);*/
+		//_scene->AddObject(pistol);
+
 		GameObject* cube;
 		MeshRenderer* renderer;
 
@@ -155,14 +182,28 @@ namespace VoxEngine
 			renderer = new MeshRenderer(mesh_cube, mat_test);
 			cube->AddComponent(renderer);
 			_scene->AddObject(cube);
-		}*/
+		}
 
-		/*GameObject* emmaCube = new GameObject("EmmaCube");
-		emmaCube->transform->position.y = 0.5f;
-		MaterialDefault* mat_emma = new MaterialDefault(TextureManager::GetInstance()->GetTexture("emma.png"), nullptr);
-		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_emma);
-		emmaCube->AddComponent(meshRenderer);
-		_scene->AddObject(emmaCube);*/
+		GameObject* crate = new GameObject("Crate");
+		crate->transform->position.y = 0.5f;
+		MaterialDefault* mat_crate = new MaterialDefault(TextureManager::GetInstance()->GetTexture("crate.png"),
+			TextureManager::GetInstance()->GetTexture("crateSpecular.png"));
+		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_crate);
+		crate->AddComponent(meshRenderer);
+		_scene->AddObject(crate);
+
+		/*Mesh* mesh_cone = MeshManager::GetInstance()->GetMesh("cone2");
+		GameObject* cone = new GameObject("Cone");
+		cone->transform->position.x = 0.0f;
+		cone->transform->position.y = 2.0f;
+		cone->transform->position.z = 0.0f;
+		cone->transform->scale.x = 5 * (1.0f / 3);
+		cone->transform->scale.y = 5 * (1.0f / 3);
+		cone->transform->scale.z = 5;
+		MaterialDefault* mat_cone = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\red.png"), nullptr);
+		MeshRenderer* meshRenderercone = new MeshRenderer(mesh_cone, mat_cone);
+		cone->AddComponent(meshRenderercone);
+		_scene->AddObject(cone);*/
 
 		/*GameObject* emmaQuad = new GameObject("EmmaQuad");
 		emmaQuad->transform->position.y = 10;
@@ -171,14 +212,17 @@ namespace VoxEngine
 		emmaQuad->AddComponent(meshRendererQuad);
 		_scene->AddObject(emmaQuad);*/
 		
-		GameObject* pointLightObject = new GameObject("PointLight");
+		/*GameObject* pointLightObject = new GameObject("PointLight");
 		pointLightObject->transform->position.x = 0;
-		pointLightObject->transform->position.y = 12;
+		pointLightObject->transform->position.y = 2;
 		pointLightObject->transform->position.z = 0;
 		PointLight* pointLight = new PointLight();
 		pointLight->range = 30;
+		pointLight->intensity = 5.0f;
 		pointLightObject->AddComponent(pointLight);
-		_scene->AddObject(pointLightObject);
+		Oscillate* os = new Oscillate(Oscillate::EAxis::X, 5);
+		pointLightObject->AddComponent(os);
+		_scene->AddObject(pointLightObject);*/
 
 		/*GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
 		directionalLightOrigin->transform->position.x = 0;
@@ -192,9 +236,12 @@ namespace VoxEngine
 		directionalLightOrigin->AddComponent(rotate);
 		_scene->AddObject(directionalLightOrigin);*/
 		
-		GameObject* arrow;
+		/*GameObject* arrow;
 		MeshRenderer* renderer2;
 		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
+		MaterialDefault* mat_red = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\red.png"), nullptr);
+		MaterialDefault* mat_blue = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\blue.png"), nullptr);
+		MaterialDefault* mat_purple = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\purple.png"), nullptr);
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -204,10 +251,16 @@ namespace VoxEngine
 			arrow->transform->position.z = cos(glm::radians(i * 45.0f)) * 5;
 			arrow->transform->Rotate(glm::vec3(0, 1, 0), i * 45);
 
-			renderer2 = new MeshRenderer(mesh_arrow, mat_test);
+			if (i % 3 == 0)
+				renderer2 = new MeshRenderer(mesh_arrow, mat_red);
+			else if (i % 3 == 1)
+				renderer2 = new MeshRenderer(mesh_arrow, mat_blue);
+			else
+				renderer2 = new MeshRenderer(mesh_arrow, mat_purple);
+
 			arrow->AddComponent(renderer2);
 			_scene->AddObject(arrow);
-		}
+		}*/
 
 		GameObject* ground = new GameObject("Ground");
 		ground->transform->scale.x = 100;
@@ -215,7 +268,7 @@ namespace VoxEngine
 		ground->transform->scale.z = 100;
 		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
 		//MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("grass.png"), nullptr);
-		MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte.png"), nullptr);
+		MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\green.png"), nullptr);
 		MeshRenderer* meshRenderer4 = new MeshRenderer(mesh_plane, mat_grass);
 		ground->AddComponent(meshRenderer4);
 		_scene->AddObject(ground);
