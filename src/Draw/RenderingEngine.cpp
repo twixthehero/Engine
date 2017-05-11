@@ -374,7 +374,7 @@ namespace VoxEngine
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		float xyScaleOuter = 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
+		float xyScaleOuter = CalculateSpotLightScale(light);
 		nullShader->SetUniformMatrix4fv("mvp", viewProjection *
 			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 				glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
@@ -421,7 +421,7 @@ namespace VoxEngine
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		float xyScaleOuter = 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
+		float xyScaleOuter = CalculateSpotLightScale(light);
 		spotLight->SetUniformMatrix4fv("mvp", viewProjection *
 			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 				glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
@@ -507,6 +507,11 @@ namespace VoxEngine
 		gameObject->GetComponentsInChildren(EComponentType::LIGHT_SPOT, _renderingComponents);
 		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
 			_spotLights.push_back(dynamic_cast<SpotLight*>(*it));
+	}
+
+	float RenderingEngine::CalculateSpotLightScale(SpotLight* light)
+	{
+		return 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
 	}
 
 	void RenderingEngine::ShowLightingDebug()

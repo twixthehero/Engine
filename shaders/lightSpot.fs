@@ -60,9 +60,9 @@ vec4 CalcSpotLight(vec3 matAlbedo, vec3 matSpecular, vec3 worldPos, vec3 normal)
 	float intensity = max((theta - spotLight.cutoffAngle) / epsilon, 0);
 	vec4 color = CalcLightInternal(matAlbedo, matSpecular, spotLight.light, lightDirection, worldPos, normal) * intensity;
 
-	float atten = max(spotLight.range - distance, 0) / spotLight.range;
+	float atten = max(pow(cos(1.5 * spotLight.range), 3), 0);
 
-	return color * spotLight.light.intensity;// * atten;
+	return color * spotLight.light.intensity * atten;
 }
 
 vec2 CalcTexCoord()

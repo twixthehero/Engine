@@ -118,13 +118,13 @@ namespace VoxEngine
 		cameraObject->AddComponent(freeLook);
 		GameObject* spotLightObject = new GameObject("SpotLight");
 		spotLightObject->transform->position.x = 0;
-		spotLightObject->transform->position.y = 1;
-		spotLightObject->transform->position.z = 5;
+		spotLightObject->transform->position.y = 0;
+		spotLightObject->transform->position.z = 0;
 		//spotLightObject->transform->Rotate(glm::vec3(1, 0, 0), 90);
 		SpotLight* spotLight = new SpotLight();
 		spotLight->range = 15;
 		spotLight->intensity = 1.0f;
-		spotLight->angle = 35.0f;
+		spotLight->angle = 30.0f;
 		spotLightObject->AddComponent(spotLight);
 		spotLightObject->SetParent(cameraObject);
 		//_scene->AddObject(spotLightObject);

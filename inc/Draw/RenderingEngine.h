@@ -51,6 +51,8 @@ namespace VoxEngine
 
 		void UpdateComponents(GameObject* gameObject);
 
+		float CalculateSpotLightScale(SpotLight* light);
+
 		void ShowLightingDebug();
 		void RenderSkybox();
 
