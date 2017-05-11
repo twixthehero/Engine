@@ -80,6 +80,7 @@ namespace VoxEngine
 
 		//setup debug callback
 		glDebugMessageCallbackARB(&Engine::DebugCallback, NULL);
+		glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, 0, GL_FALSE);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
 		Input::Init();
@@ -117,16 +118,16 @@ namespace VoxEngine
 		cameraObject->AddComponent(freeLook);
 		GameObject* spotLightObject = new GameObject("SpotLight");
 		spotLightObject->transform->position.x = 0;
-		spotLightObject->transform->position.y = 2;
+		spotLightObject->transform->position.y = 1;
 		spotLightObject->transform->position.z = 5;
 		//spotLightObject->transform->Rotate(glm::vec3(1, 0, 0), 90);
 		SpotLight* spotLight = new SpotLight();
 		spotLight->range = 15;
 		spotLight->intensity = 1.0f;
-		//spotLight->angle = 35.0f;
+		spotLight->angle = 35.0f;
 		spotLightObject->AddComponent(spotLight);
-		//spotLightObject->SetParent(cameraObject);
-		_scene->AddObject(spotLightObject);
+		spotLightObject->SetParent(cameraObject);
+		//_scene->AddObject(spotLightObject);
 		
 		_scene->AddObject(cameraObject);
 
@@ -192,18 +193,15 @@ namespace VoxEngine
 		crate->AddComponent(meshRenderer);
 		_scene->AddObject(crate);
 
-		/*Mesh* mesh_cone = MeshManager::GetInstance()->GetMesh("cone2");
+		Mesh* mesh_cone = MeshManager::GetInstance()->GetMesh("cone");
 		GameObject* cone = new GameObject("Cone");
 		cone->transform->position.x = 0.0f;
 		cone->transform->position.y = 2.0f;
 		cone->transform->position.z = 0.0f;
-		cone->transform->scale.x = 5 * (1.0f / 3);
-		cone->transform->scale.y = 5 * (1.0f / 3);
-		cone->transform->scale.z = 5;
 		MaterialDefault* mat_cone = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\red.png"), nullptr);
 		MeshRenderer* meshRenderercone = new MeshRenderer(mesh_cone, mat_cone);
 		cone->AddComponent(meshRenderercone);
-		_scene->AddObject(cone);*/
+		_scene->AddObject(cone);
 
 		/*GameObject* emmaQuad = new GameObject("EmmaQuad");
 		emmaQuad->transform->position.y = 10;

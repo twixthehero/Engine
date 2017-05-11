@@ -39,7 +39,7 @@ namespace VoxEngine
 
 		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
 		_sphere = new MeshRenderer(MeshManager::GetInstance()->GetMesh("sphere"), nullptr);
-		_cone = new MeshRenderer(MeshManager::GetInstance()->GetMesh("cone2"), nullptr);
+		_cone = new MeshRenderer(MeshManager::GetInstance()->GetMesh("coneSpotlight"), nullptr);
 		_arrow = new MeshRenderer(MeshManager::GetInstance()->GetMesh("arrow"), nullptr);
 
 		_ambientLight = new Light();
@@ -374,22 +374,15 @@ namespace VoxEngine
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		/*nullShader->SetUniformMatrix4fv("mvp", viewProjection *
+		float xyScaleOuter = 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
+		nullShader->SetUniformMatrix4fv("mvp", viewProjection *
 			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 				glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
-				glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3((1 / 90.0f) * (light->angle + 2.5f), (1 / 90.0f) * (light->angle + 2.5f), 1))
+				glm::scale(glm::mat4(), glm::vec3(xyScaleOuter, xyScaleOuter, light->range))
 			)
 		);
 
-		_cone->Render();*/
-
-		nullShader->SetUniformMatrix4fv("mvp", viewProjection *
-			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
-				glm::scale(glm::mat4(), glm::vec3(light->range))
-				)
-		);
-
-		_sphere->Render();
+		_cone->Render();
 	}
 
 	void RenderingEngine::SpotLightPass(SpotLight* light)
@@ -423,27 +416,20 @@ namespace VoxEngine
 		spotLight->SetUniform3f("spotLight.position", light->gameObject->transform->GetTransformedPosition());
 		spotLight->SetUniform3f("spotLight.direction", light->gameObject->transform->GetForward());
 		spotLight->SetUniform1f("spotLight.range", light->range);
-		spotLight->SetUniform1f("spotLight.angle", glm::cos(glm::radians(light->angle - 2.5f)));
-		spotLight->SetUniform1f("spotLight.cutoffAngle", glm::cos(glm::radians(light->angle + 2.5f)));
+		spotLight->SetUniform1f("spotLight.angle", glm::cos(glm::radians((light->angle - 2.5f) / 2)));
+		spotLight->SetUniform1f("spotLight.cutoffAngle", glm::cos(glm::radians((light->angle + 2.5f) / 2)));
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
-		/*spotLight->SetUniformMatrix4fv("mvp", viewProjection *
+		float xyScaleOuter = 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
+		spotLight->SetUniformMatrix4fv("mvp", viewProjection *
 			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 				glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
-				glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3(light->angle + 2.5f, light->angle + 2.5f, 1))
+				glm::scale(glm::mat4(), glm::vec3(xyScaleOuter, xyScaleOuter, light->range))
 			)
 		);
 
-		_cone->Render();*/
-
-		spotLight->SetUniformMatrix4fv("mvp", viewProjection *
-			(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
-				glm::scale(glm::mat4(), glm::vec3(light->range * light->angle + 2.5f))
-				)
-		);
-
-		_sphere->Render();
+		_cone->Render();
 
 		glCullFace(GL_BACK);
 
@@ -571,10 +557,11 @@ namespace VoxEngine
 
 			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 1.0f, 0.0f));
 
+			float xyScaleInner = 2 * light->range * glm::tan(glm::radians((light->angle - 2.5f) / 2));
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
 				(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 					glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
-					glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3((light->angle - 2.5f) / 90, (light->angle - 2.5f) / 90, 1))
+					glm::scale(glm::mat4(), glm::vec3(xyScaleInner, xyScaleInner, light->range))
 					)
 			);
 
@@ -582,10 +569,11 @@ namespace VoxEngine
 
 			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
 
+			float xyScaleOuter = 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
 				(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 					glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
-					glm::scale(glm::mat4(), glm::vec3(light->range) * glm::vec3((light->angle + 2.5f) / 90, (light->angle + 2.5f) / 90, 1))
+					glm::scale(glm::mat4(), glm::vec3(xyScaleOuter, xyScaleOuter, light->range))
 					)
 			);
 

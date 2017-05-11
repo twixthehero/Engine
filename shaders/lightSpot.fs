@@ -53,33 +53,12 @@ vec4 CalcSpotLight(vec3 matAlbedo, vec3 matSpecular, vec3 worldPos, vec3 normal)
 {
 	vec3 lightDirection = worldPos - spotLight.position;
 	float distance = length(lightDirection);
-	lightDirection = normalize(lightDirection);
+	lightDirection /= distance;
 
 	float theta = dot(spotLight.direction, lightDirection);
-	//float theta = dot(-spotLight.direction, normalize(spotLight.position - worldPos));
 	float epsilon = spotLight.angle - spotLight.cutoffAngle;
-	//float intensity = clamp((theta - spotLight.cutoffAngle) / epsilon, 0, 1);
-	float intensity = (theta - spotLight.cutoffAngle) / epsilon;
-	//intensity = max(intensity, 0);
-
-	vec4 color;
-
-	//if (dot(lightDirection, spotLight.direction) > spotLight.angle)
-	//{
-		//color = CalcLightInternal(matAlbedo, matSpecular, spotLight.light, lightDirection, worldPos, normal);
-	//}
-	//else
-	//{
-		//color = vec4(0, 1, 0, 1);
-	//}
-
-	if (intensity < 0) //outside the cone
-		color = vec4(1, 0, 0, 1);
-	else if (intensity > 1) //inside the cone
-		color = vec4(0, 0, 1, 1);
-	else //between inner/outer cutoff angle
-		color = vec4(0, intensity, 0, 1);
-	//vec4 color = CalcLightInternal(matAlbedo, matSpecular, spotLight.light, lightDirection, worldPos, normal) * intensity;
+	float intensity = max((theta - spotLight.cutoffAngle) / epsilon, 0);
+	vec4 color = CalcLightInternal(matAlbedo, matSpecular, spotLight.light, lightDirection, worldPos, normal) * intensity;
 
 	float atten = max(spotLight.range - distance, 0) / spotLight.range;
 
