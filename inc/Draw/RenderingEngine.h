@@ -78,6 +78,7 @@ namespace VoxEngine
 		std::vector<PointLight*> _pointLights;
 		std::vector<DirectionalLight*> _directionalLights;
 		std::vector<SpotLight*> _spotLights;
+		float _falloff = 2.5f;
 
 		std::vector<MeshRenderer*> _meshRenderers;
 	};

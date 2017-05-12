@@ -39,18 +39,18 @@ vec4 CalcLightInternal(vec3 matAlbedo, vec3 matSpecular, Light light, vec3 light
 
 	//specular
 	vec3 vertexToEye = normalize(eyeWorldPos - worldPos);
-	vec3 lightReflect = normalize(reflect(lightDirection, normal));
-	float specularFactor = pow(max(dot(vertexToEye, lightReflect), 0), shininess);
+	vec3 halfwayDir = normalize(-lightDirection + vertexToEye);
+	float specularFactor = pow(max(dot(normal, halfwayDir), 0), shininess);
 	vec3 specular = light.color * (specularFactor * matSpecular);
 
-	return vec4((ambient + diffuse + specular) * matAlbedo, 1.0);
+	return vec4(ambient + diffuse + specular, 1.0);
 }
 
 vec4 CalcPointLight(vec3 matAlbedo, vec3 matSpecular, vec3 worldPos, vec3 normal)
 {
 	vec3 lightDirection = worldPos - pointLight.position;
 	float distance = length(lightDirection);
-	lightDirection = normalize(lightDirection);
+	lightDirection /= distance;
 
 	vec4 color = CalcLightInternal(matAlbedo, matSpecular, pointLight.light, lightDirection, worldPos, normal);
 

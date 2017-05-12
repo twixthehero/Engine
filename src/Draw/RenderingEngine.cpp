@@ -416,8 +416,8 @@ namespace VoxEngine
 		spotLight->SetUniform3f("spotLight.position", light->gameObject->transform->GetTransformedPosition());
 		spotLight->SetUniform3f("spotLight.direction", light->gameObject->transform->GetForward());
 		spotLight->SetUniform1f("spotLight.range", light->range);
-		spotLight->SetUniform1f("spotLight.angle", glm::cos(glm::radians((light->angle - 2.5f) / 2)));
-		spotLight->SetUniform1f("spotLight.cutoffAngle", glm::cos(glm::radians((light->angle + 2.5f) / 2)));
+		spotLight->SetUniform1f("spotLight.angle", glm::cos(glm::radians((light->angle - _falloff) / 2)));
+		spotLight->SetUniform1f("spotLight.cutoffAngle", glm::cos(glm::radians((light->angle + _falloff) / 2)));
 
 		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
 
@@ -511,7 +511,7 @@ namespace VoxEngine
 
 	float RenderingEngine::CalculateSpotLightScale(SpotLight* light)
 	{
-		return 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
+		return 2 * light->range * glm::tan(glm::radians((light->angle + _falloff) / 2));
 	}
 
 	void RenderingEngine::ShowLightingDebug()
@@ -562,7 +562,7 @@ namespace VoxEngine
 
 			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 1.0f, 0.0f));
 
-			float xyScaleInner = 2 * light->range * glm::tan(glm::radians((light->angle - 2.5f) / 2));
+			float xyScaleInner = 2 * light->range * glm::tan(glm::radians((light->angle - _falloff) / 2));
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
 				(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 					glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *
@@ -574,7 +574,7 @@ namespace VoxEngine
 
 			lightingDebug->SetUniform3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
 
-			float xyScaleOuter = 2 * light->range * glm::tan(glm::radians((light->angle + 2.5f) / 2));
+			float xyScaleOuter = CalculateSpotLightScale(light);
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
 				(glm::translate(glm::mat4(), light->gameObject->transform->GetTransformedPosition()) *
 					glm::mat4_cast(light->gameObject->transform->GetTransformedRotation()) *

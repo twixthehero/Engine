@@ -117,40 +117,44 @@ namespace VoxEngine
 		FreeLook* freeLook = new FreeLook();
 		cameraObject->AddComponent(freeLook);
 		GameObject* spotLightObject = new GameObject("SpotLight");
-		spotLightObject->transform->position.x = 0;
-		spotLightObject->transform->position.y = 0;
-		spotLightObject->transform->position.z = 0;
-		//spotLightObject->transform->Rotate(glm::vec3(1, 0, 0), 90);
+		//spotLightObject->transform->position.x = -10.0f;
+		//spotLightObject->transform->position.y = 10;
+		//spotLightObject->transform->position.z = 10;
+		//spotLightObject->transform->Rotate(glm::vec3(1, 0, 0), -45);
+		//spotLightObject->transform->Rotate(glm::vec3(0, 1, 0), -45);
 		SpotLight* spotLight = new SpotLight();
-		spotLight->range = 15;
+		//spotLight->color = glm::vec3(0, 0, 1);
+		spotLight->range = 30;
 		spotLight->intensity = 1.0f;
 		spotLight->angle = 30.0f;
 		spotLightObject->AddComponent(spotLight);
-		spotLightObject->SetParent(cameraObject);
+		//spotLightObject->SetParent(cameraObject);
 		//_scene->AddObject(spotLightObject);
 		
 		_scene->AddObject(cameraObject);
 
+		GameObject* spotLightObject2 = new GameObject("SpotLight");
+		//spotLightObject2->transform->position.x = 10;
+		spotLightObject2->transform->position.y = 10;
+		//spotLightObject2->transform->position.z = 10;
+		//spotLightObject2->transform->Rotate(glm::vec3(1, 0, 0), -45);
+		//spotLightObject2->transform->Rotate(glm::vec3(0, 1, 0), 45);
+		spotLightObject2->transform->Rotate(glm::vec3(1, 0, 0), -90);
+		SpotLight* spotLight2 = new SpotLight();
+		spotLight2->range = 35;
+		spotLight2->intensity = 1.0f;
+		//spotLight2->color = glm::vec3(1, 0, 0);
+		spotLight2->angle = 60.0f;
+		spotLightObject2->AddComponent(spotLight2);
+		_scene->AddObject(spotLightObject2);
+
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
 		MaterialDefault* mat_test = new MaterialDefault(TextureManager::GetInstance()->GetTexture("test.png"), nullptr);
-
-		/*GameObject* pistol = new GameObject("Pistol");
-		pistol->transform->position.x = 0.5f;
-		pistol->transform->position.y = -0.8f;
-		pistol->transform->position.z = -1;
-		pistol->transform->Rotate(glm::vec3(0, 1, 0), 90);
-		Mesh* mesh_pistol = MeshManager::GetInstance()->GetMesh("pistol2");
-		MaterialDefault* mat_pistol = new MaterialDefault(TextureManager::GetInstance()->GetTexture("pistol.png"),
-			TextureManager::GetInstance()->GetTexture("pistolSpecular.png"));
-		MeshRenderer* pistolRenderer = new MeshRenderer(mesh_pistol, mat_pistol);
-		pistol->AddComponent(pistolRenderer);
-		pistol->SetParent(cameraObject);*/
-		//_scene->AddObject(pistol);
 
 		GameObject* cube;
 		MeshRenderer* renderer;
 
-		for (int i = -3; i < 12; i++)
+		for (int i = -1; i < 11; i++)
 		{
 			cube = new GameObject("Cube++-" + std::to_string(i));
 			cube->transform->position.x = 5;
@@ -184,10 +188,24 @@ namespace VoxEngine
 			cube->AddComponent(renderer);
 			_scene->AddObject(cube);
 		}
+		
+		GameObject* light;
+		PointLight* pl;
+
+		/*for (int i = 0; i < 50; i++)
+		{
+			light = new GameObject("Light " + std::to_string(i + 1));
+			light->transform->position = glm::vec3(rand() % 100 - 50, 1 + rand() % 5, rand() % 100 - 50);
+			pl = new PointLight();
+			pl->color = glm::vec3(rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f);
+			pl->range = 10;
+			light->AddComponent(pl);
+			_scene->AddObject(light);
+		}*/
 
 		GameObject* crate = new GameObject("Crate");
 		crate->transform->position.y = 0.5f;
-		MaterialDefault* mat_crate = new MaterialDefault(TextureManager::GetInstance()->GetTexture("crate.png"),
+		MaterialDefault* mat_crate = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\white.png"),
 			TextureManager::GetInstance()->GetTexture("crateSpecular.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_crate);
 		crate->AddComponent(meshRenderer);
@@ -216,10 +234,10 @@ namespace VoxEngine
 		pointLightObject->transform->position.z = 0;
 		PointLight* pointLight = new PointLight();
 		pointLight->range = 30;
-		pointLight->intensity = 5.0f;
+		pointLight->intensity = 1.0f;
 		pointLightObject->AddComponent(pointLight);
-		Oscillate* os = new Oscillate(Oscillate::EAxis::X, 5);
-		pointLightObject->AddComponent(os);
+		//Oscillate* os = new Oscillate(Oscillate::EAxis::X, 5);
+		//pointLightObject->AddComponent(os);
 		_scene->AddObject(pointLightObject);*/
 
 		/*GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
@@ -230,6 +248,7 @@ namespace VoxEngine
 		directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
 		DirectionalLight* directionalLight = new DirectionalLight();
 		directionalLightOrigin->AddComponent(directionalLight);
+		directionalLight->intensity = 0.4f;
 		Rotate* rotate = new Rotate(Rotate::EAxis::Y, 60);
 		directionalLightOrigin->AddComponent(rotate);
 		_scene->AddObject(directionalLightOrigin);*/
@@ -261,12 +280,12 @@ namespace VoxEngine
 		}*/
 
 		GameObject* ground = new GameObject("Ground");
-		ground->transform->scale.x = 100;
-		ground->transform->scale.y = 100;
-		ground->transform->scale.z = 100;
+		ground->transform->scale.x = 10;
+		ground->transform->scale.y = 10;
+		ground->transform->scale.z = 10;
 		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
 		//MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("grass.png"), nullptr);
-		MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\green.png"), nullptr);
+		MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("wood.png"), TextureManager::GetInstance()->GetTexture("woodSpecular.png"));
 		MeshRenderer* meshRenderer4 = new MeshRenderer(mesh_plane, mat_grass);
 		ground->AddComponent(meshRenderer4);
 		_scene->AddObject(ground);
