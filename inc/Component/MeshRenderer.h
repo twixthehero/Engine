@@ -13,20 +13,12 @@ namespace VoxEngine
 		MeshRenderer(Mesh* mesh, Material* material);
 		~MeshRenderer();
 
-		void Render() override;
+		bool operator<(const MeshRenderer& otherRenderer) const
+		{
+			return mesh < otherRenderer.mesh && material < otherRenderer.material;
+		}
 
-		void Reupload();
-	private:
-		void CreateBuffers();
-		void DeleteBuffers();
-		void BufferData();
-
-		Mesh* _mesh = nullptr;
-		Material* _material = nullptr;
-
-		bool _needReupload = false;
-		GLuint vao;
-		GLuint vbo;
-		GLuint ibo;
+		Mesh* mesh = nullptr;
+		Material* material = nullptr;
 	};
 }

@@ -12,9 +12,10 @@ namespace VoxEngine
 	{
 		if (albedo != nullptr)
 			_textures.insert(std::pair<std::string, Texture*>("albedo", albedo));
-
 		if (specular != nullptr)
 			_textures.insert(std::pair<std::string, Texture*>("specular", specular));
+
+		Finalize();
 	}
 
 	MaterialDefault::~MaterialDefault()

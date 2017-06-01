@@ -25,11 +25,6 @@ namespace VoxEngine
 
 	}
 
-	void Component::Render()
-	{
-
-	}
-
 	bool Component::IsEnabled()
 	{
 		return _enabled;

@@ -102,8 +102,7 @@ namespace VoxEngine
 
 		_scene = new Scene();
 		GameObject* cameraObject = new GameObject("Camera");
-		cameraObject->transform->position.y = 3;
-		cameraObject->transform->position.z = 10;
+		cameraObject->transform->SetPosition(glm::vec3(0, 3, 10));
 		cameraObject->name = "MainCamera";
 		cameraObject->tag = "MainCamera";
 		Camera* camera = new Camera();
@@ -133,7 +132,7 @@ namespace VoxEngine
 		
 		_scene->AddObject(cameraObject);
 
-		GameObject* spotLightObject2 = new GameObject("SpotLight");
+		/*GameObject* spotLightObject2 = new GameObject("SpotLight");
 		//spotLightObject2->transform->position.x = 10;
 		spotLightObject2->transform->position.y = 10;
 		//spotLightObject2->transform->position.z = 10;
@@ -146,7 +145,7 @@ namespace VoxEngine
 		//spotLight2->color = glm::vec3(1, 0, 0);
 		spotLight2->angle = 60.0f;
 		spotLightObject2->AddComponent(spotLight2);
-		_scene->AddObject(spotLightObject2);
+		_scene->AddObject(spotLightObject2);*/
 
 		Mesh* mesh_cube = MeshManager::GetInstance()->GetMesh("cube");
 		MaterialDefault* mat_test = new MaterialDefault(TextureManager::GetInstance()->GetTexture("test.png"), nullptr);
@@ -154,7 +153,17 @@ namespace VoxEngine
 		GameObject* cube;
 		MeshRenderer* renderer;
 
-		for (int i = -1; i < 11; i++)
+		for (int i = 0; i < 4723; i++)
+		//for (int i = 0; i < 1235; i++)//causes weird tri on screen
+		{
+			cube = new GameObject("Cube++-" + std::to_string(i));
+			cube->transform->SetPosition(glm::vec3(rand() % 777 - 777 / 2.0f, 1 + rand() % 25, rand() % 777 - 777 / 2.0f));
+			renderer = new MeshRenderer(mesh_cube, mat_test);
+			cube->AddComponent(renderer);
+			_scene->AddObject(cube);
+		}
+
+		/*for (int i = -1; i < 11; i++)
 		{
 			cube = new GameObject("Cube++-" + std::to_string(i));
 			cube->transform->position.x = 5;
@@ -187,7 +196,7 @@ namespace VoxEngine
 			renderer = new MeshRenderer(mesh_cube, mat_test);
 			cube->AddComponent(renderer);
 			_scene->AddObject(cube);
-		}
+		}*/
 		
 		GameObject* light;
 		PointLight* pl;
@@ -203,7 +212,7 @@ namespace VoxEngine
 			_scene->AddObject(light);
 		}*/
 
-		GameObject* crate = new GameObject("Crate");
+		/*GameObject* crate = new GameObject("Crate");
 		crate->transform->position.y = 0.5f;
 		MaterialDefault* mat_crate = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\white.png"),
 			TextureManager::GetInstance()->GetTexture("crateSpecular.png"));
@@ -219,7 +228,7 @@ namespace VoxEngine
 		MaterialDefault* mat_cone = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\red.png"), nullptr);
 		MeshRenderer* meshRenderercone = new MeshRenderer(mesh_cone, mat_cone);
 		cone->AddComponent(meshRenderercone);
-		_scene->AddObject(cone);
+		_scene->AddObject(cone);*/
 
 		/*GameObject* emmaQuad = new GameObject("EmmaQuad");
 		emmaQuad->transform->position.y = 10;
@@ -240,10 +249,8 @@ namespace VoxEngine
 		//pointLightObject->AddComponent(os);
 		_scene->AddObject(pointLightObject);*/
 
-		/*GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
-		directionalLightOrigin->transform->position.x = 0;
-		directionalLightOrigin->transform->position.y = 3.5f;
-		directionalLightOrigin->transform->position.z = 0;
+		GameObject* directionalLightOrigin = new GameObject("DirectionalLight");
+		directionalLightOrigin->transform->SetPosition(glm::vec3(0, 3.5f, 0));
 		directionalLightOrigin->transform->Rotate(glm::vec3(0, 1, 0), -45);
 		directionalLightOrigin->transform->Rotate(glm::vec3(1, 0, 0), -45);
 		DirectionalLight* directionalLight = new DirectionalLight();
@@ -251,7 +258,7 @@ namespace VoxEngine
 		directionalLight->intensity = 0.4f;
 		Rotate* rotate = new Rotate(Rotate::EAxis::Y, 60);
 		directionalLightOrigin->AddComponent(rotate);
-		_scene->AddObject(directionalLightOrigin);*/
+		_scene->AddObject(directionalLightOrigin);
 		
 		/*GameObject* arrow;
 		MeshRenderer* renderer2;
@@ -279,16 +286,14 @@ namespace VoxEngine
 			_scene->AddObject(arrow);
 		}*/
 
-		GameObject* ground = new GameObject("Ground");
-		ground->transform->scale.x = 10;
-		ground->transform->scale.y = 10;
-		ground->transform->scale.z = 10;
+		/*GameObject* ground = new GameObject("Ground");
+		ground->transform->SetScale(glm::vec3(10));
 		Mesh* mesh_plane = MeshManager::GetInstance()->GetMesh("plane");
 		//MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("grass.png"), nullptr);
 		MaterialDefault* mat_grass = new MaterialDefault(TextureManager::GetInstance()->GetTexture("wood.png"), TextureManager::GetInstance()->GetTexture("woodSpecular.png"));
 		MeshRenderer* meshRenderer4 = new MeshRenderer(mesh_plane, mat_grass);
 		ground->AddComponent(meshRenderer4);
-		_scene->AddObject(ground);
+		_scene->AddObject(ground);*/
 
 		_fps = -1;
 		_frameCounter = 0;

@@ -55,7 +55,7 @@ namespace VoxEngine
 			mode_t mode = 0733;
 			createError = mkdir(path, mode);
 #endif
-
+			
 			if (createError != 0)
 				_WriteLine("Error creating logs/ directory: " + std::string(strerror(errno)));
 			else

@@ -118,8 +118,8 @@ namespace VoxEngine
 
 	glm::mat4 Camera::GetViewMatrix()
 	{
-		return glm::mat4_cast(glm::conjugate(gameObject->transform->rotation)) *
-			glm::translate(glm::mat4(), -gameObject->transform->position);
+		return glm::mat4_cast(glm::conjugate(gameObject->transform->GetRotation())) *
+			glm::translate(glm::mat4(), -gameObject->transform->GetPosition());
 	}
 
 	glm::mat4 Camera::GetViewProjectionMatrix()

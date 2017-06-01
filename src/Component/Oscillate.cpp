@@ -22,22 +22,26 @@ namespace VoxEngine
 
 	void Oscillate::Init()
 	{
-		centerPosition = gameObject->transform->position;
+		centerPosition = gameObject->transform->GetPosition();
 	}
 
 	void Oscillate::Update()
 	{
+		glm::vec3 pos = gameObject->transform->GetPosition();
+
 		switch (axis)
 		{
 			case EAxis::X:
-				gameObject->transform->position.x = centerPosition.x + sin(Time::time) * distance;
+				pos.x = centerPosition.x + sin(Time::time) * distance;
 				break;
 			case EAxis::Y:
-				gameObject->transform->position.y = centerPosition.y + sin(Time::time) * distance;
+				pos.y = centerPosition.y + sin(Time::time) * distance;
 				break;
 			case EAxis::Z:
-				gameObject->transform->position.z = centerPosition.z + sin(Time::time) * distance;
+				pos.z = centerPosition.z + sin(Time::time) * distance;
 				break;
 		}
+
+		gameObject->transform->SetPosition(pos);
 	}
 }

@@ -8,9 +8,9 @@ namespace VoxEngine
 	{
 		_componentType = EComponentType::TRANSFORM;
 
-		position = glm::vec3(0);
-		rotation = glm::quat();
-		scale = glm::vec3(1);
+		_position = glm::vec3(0);
+		_rotation = glm::quat();
+		_scale = glm::vec3(1);
 	}
 
 	Transform::~Transform()
@@ -32,23 +32,19 @@ namespace VoxEngine
 		return glm::normalize(GetTransformedRotation() * glm::vec3(0, 1, 0));
 	}
 
-	glm::mat4 Transform::GetModelMatrix()
+	inline glm::mat4 Transform::GetModelMatrix()
 	{
-		glm::mat4 transMatrix = glm::translate(glm::mat4(), position);
-		glm::mat4 rotMatrix = glm::mat4_cast(rotation);
-		glm::mat4 scaleMatrix = glm::scale(glm::mat4(), scale);
-
-		return transMatrix * rotMatrix * scaleMatrix;
+		return _model;
 	}
 
-	glm::mat4 Transform::GetTransformation()
+	inline glm::mat4 Transform::GetTransformation()
 	{
-		return GetParentTransformation() * GetModelMatrix();
+		return _transformation;
 	}
 
 	glm::vec3 Transform::GetTransformedPosition()
 	{
-		return GetParentTransformation() * glm::vec4(position, 1);
+		return _parentModel * glm::vec4(_position, 1);
 	}
 
 	glm::quat Transform::GetTransformedRotation()
@@ -56,19 +52,36 @@ namespace VoxEngine
 		GameObject* parent = gameObject->GetParent();
 
 		if (parent != nullptr)
-			return parent->transform->GetTransformedRotation() * rotation;
+			return parent->transform->GetTransformedRotation() * _rotation;
 
-		return rotation;
+		return _rotation;
 	}
 
 	glm::mat4 Transform::GetParentTransformation()
 	{
+		return _parentModel;
+	}
+
+	void Transform::Update()
+	{
+		//update parent model matrix
 		GameObject* parent = gameObject->GetParent();
 
+		//parent is only null on the Scene's root object
 		if (parent != nullptr)
-			return parent->transform->GetTransformation();
+		{
+			//recalc matrices if dirty
+			if (gameObject->IsDirty())
+			{
+				CalcModelMatrix();
+			}
 
-		return glm::mat4();
+			if (parent->IsDirty())
+			{
+				_parentModel = parent->transform->GetTransformation();
+				CalcTransformation();
+			}
+		}
 	}
 
 	void Transform::Rotate(glm::vec3 axis, float angle, bool isRadians)
@@ -78,11 +91,63 @@ namespace VoxEngine
 			angle = glm::radians(angle);
 		}
 
-		rotation = glm::normalize(glm::angleAxis(angle, axis) * rotation);
+		_rotation = glm::normalize(glm::angleAxis(angle, axis) * _rotation);
+		CalcModelMatrix();
 	}
 
 	void Transform::Translate(glm::vec3 translation)
 	{
-		position += translation;
+		_position += translation;
+		CalcModelMatrix();
+	}
+
+	glm::vec3 Transform::GetPosition()
+	{
+		return _position;
+	}
+
+	glm::quat Transform::GetRotation()
+	{
+		return _rotation;
+	}
+
+	glm::vec3 Transform::GetScale()
+	{
+		return _scale;
+	}
+
+	void Transform::SetPosition(glm::vec3 position)
+	{
+		_position = position;
+		CalcModelMatrix();
+	}
+
+	void Transform::SetRotation(glm::quat rotation)
+	{
+		_rotation = rotation;
+		CalcModelMatrix();
+	}
+
+	void Transform::SetScale(glm::vec3 scale)
+	{
+		_scale = scale;
+		CalcModelMatrix();
+	}
+
+	inline void Transform::CalcModelMatrix()
+	{
+		_model = glm::translate(glm::mat4(), _position) *
+			glm::mat4_cast(_rotation) * glm::scale(glm::mat4(), _scale);
+		CalcTransformation();
+
+		if (!gameObject->IsDirty())
+		{
+			gameObject->MarkDirty();
+		}
+	}
+
+	inline void Transform::CalcTransformation()
+	{
+		_transformation = _parentModel * _model;
 	}
 }

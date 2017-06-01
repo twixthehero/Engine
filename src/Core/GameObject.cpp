@@ -34,6 +34,8 @@ namespace VoxEngine
 
 		for (int i = 0; i < _children.size(); i++)
 			_children[i]->Update();
+
+		MarkClean();
 	}
 
 	void GameObject::AddChild(GameObject* child)
@@ -156,5 +158,20 @@ namespace VoxEngine
 	void GameObject::SetActive(bool active)
 	{
 		_active = active;
+	}
+
+	bool GameObject::IsDirty()
+	{
+		return _dirty;
+	}
+
+	void GameObject::MarkDirty()
+	{
+		_dirty = true;
+	}
+
+	void GameObject::MarkClean()
+	{
+		_dirty = false;
 	}
 }

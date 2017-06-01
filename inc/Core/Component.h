@@ -14,7 +14,6 @@ namespace VoxEngine
 
 		virtual void Init();
 		virtual void Update();
-		virtual void Render();
 
 		bool IsEnabled();
 		void SetEnabled(bool active);

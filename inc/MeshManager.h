@@ -22,5 +22,6 @@ namespace VoxEngine
 		static MeshManager* _instance;
 
 		std::map<std::string, Mesh*> _meshes;
+		int _nextMeshId = 0;
 	};
 }

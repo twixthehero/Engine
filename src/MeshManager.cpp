@@ -200,9 +200,10 @@ namespace VoxEngine
 			}
 		}
 
-		Mesh* mesh = new Mesh();
+		Mesh* mesh = new Mesh(++_nextMeshId);
 		mesh->vertices = vertex;
 		mesh->indices = indices;
+		mesh->Finalize();
 
 		_meshes.insert(std::pair<std::string, Mesh*>(name, mesh));
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <glm\glm.hpp>
 
 namespace VoxEngine
 {
@@ -11,6 +12,7 @@ namespace VoxEngine
 	class SpotLight;
 	class Camera;
 	class Component;
+	class Mesh;
 	class MeshRenderer;
 	class Window;
 	class Material;
@@ -28,6 +30,16 @@ namespace VoxEngine
 
 		ERenderingMode GetRenderingMode();
 		void SetRenderingMode(ERenderingMode mode);
+
+		void AddRenderer(MeshRenderer* renderer);
+		void RemoveRenderer(MeshRenderer* renderer);
+		void AddPointLight(PointLight* light);
+		void RemovePointLight(PointLight* light);
+		void AddDirectionalLight(DirectionalLight* light);
+		void RemoveDirectionalLight(DirectionalLight* light);
+		void AddSpotLight(SpotLight* light);
+		void RemoveSpotLight(SpotLight* light);
+
 		void Render(GameObject* gameObject);
 
 		void SetCamera(Camera* camera);
@@ -49,8 +61,6 @@ namespace VoxEngine
 		void DirectionalLightPass(GameObject* gameObject);
 		void FinalPass();
 
-		void UpdateComponents(GameObject* gameObject);
-
 		float CalculateSpotLightScale(SpotLight* light);
 
 		void ShowLightingDebug();
@@ -66,11 +76,11 @@ namespace VoxEngine
 
 		ERenderingMode _renderingMode = ERenderingMode::DEFERRED;
 		Camera* _camera;
-		MeshRenderer* _quad;
-		MeshRenderer* _sphere;
-		MeshRenderer* _cone;
-		MeshRenderer* _arrow;
-		MeshRenderer* _skyboxMesh = nullptr;
+		Mesh* _quad;
+		Mesh* _sphere;
+		Mesh* _cone;
+		Mesh* _arrow;
+		Mesh* _skyboxMesh = nullptr;
 		std::vector<Component*> _renderingComponents;
 
 		Light* _ambientLight;
@@ -81,5 +91,6 @@ namespace VoxEngine
 		float _falloff = 2.5f;
 
 		std::vector<MeshRenderer*> _meshRenderers;
+		std::vector<glm::mat4> _modelMatrices;
 	};
 }

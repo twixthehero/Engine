@@ -18,4 +18,16 @@ namespace VoxEngine
 
 		return -1;
 	}
+
+	void Material::Finalize()
+	{
+		std::string content = "";
+
+		for (auto it = _textures.begin(); it != _textures.end(); it++)
+		{
+			content += (*it).first;
+		}
+
+		_hash = std::hash<std::string>{}(content);
+	}
 }

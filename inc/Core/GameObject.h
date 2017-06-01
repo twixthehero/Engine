@@ -31,6 +31,10 @@ namespace VoxEngine
 		bool IsActive();
 		void SetActive(bool active);
 
+		bool IsDirty();
+		void MarkDirty();
+		void MarkClean();
+
 		std::string name = "Default Name";
 		std::string tag = "Untagged";
 
@@ -45,5 +49,6 @@ namespace VoxEngine
 		std::vector<Component*> _components;
 
 		bool _active;
+		bool _dirty = false;
 	};
 }

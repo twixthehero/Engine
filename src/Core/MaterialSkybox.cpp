@@ -15,6 +15,7 @@ namespace VoxEngine
 	{
 		TextureManager::GetInstance()->LoadTextureCube(name, front, back, left, right, top, bottom);
 		_textures.insert(std::pair<std::string, Texture*>("skybox", TextureManager::GetInstance()->GetTexture(name)));
+		Finalize();
 	}
 
 	MaterialSkybox::~MaterialSkybox()

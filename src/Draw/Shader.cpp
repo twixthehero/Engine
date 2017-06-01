@@ -137,25 +137,63 @@ namespace VoxEngine
 						std::vector<std::string> parts = Utils::Split(line, ' ');
 
 						std::string uniformType = parts[1];
-						std::string uniformName = parts[2].substr(0, parts[2].length() - 1);
+						std::string uniformName;
 
-						Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
-
-						if (structs.find(uniformType) != structs.end())
+						//check if uniform is an array
+						int beginChar = parts[2].find("[");
+						int endChar = parts[2].find("]");
+						if (beginChar != -1 && endChar != -1)
 						{
-							Logger::WriteLine("is struct!");
-							ShaderStruct* usedStruct = structs[uniformType];
+							std::string name = parts[2].substr(0, beginChar);
+							std::string size = parts[2].substr(beginChar + 1, endChar - beginChar - 1);
+							int arraySize = std::stoi(size);
 
-							for (int i = 0; i < usedStruct->uniformNames.size(); i++)
+							Logger::WriteLine("new uniform array: " + uniformType + " " + name + "[" + size + "]");
+
+							for (int i = 0; i < arraySize; i++)
 							{
-								_uniformTypes.push_back(usedStruct->uniformTypes[i]);
-								_uniformNames.push_back(uniformName + "." + usedStruct->uniformNames[i]);
+								uniformName = name + "[" + std::to_string(i) + "]";
+
+								if (structs.find(uniformType) != structs.end())
+								{
+									Logger::WriteLine("is struct!");
+									ShaderStruct* usedStruct = structs[uniformType];
+
+									for (int i = 0; i < usedStruct->uniformNames.size(); i++)
+									{
+										_uniformTypes.push_back(usedStruct->uniformTypes[i]);
+										_uniformNames.push_back(uniformName + "." + usedStruct->uniformNames[i]);
+									}
+								}
+								else
+								{
+									_uniformTypes.push_back(uniformType);
+									_uniformNames.push_back(uniformName);
+								}
 							}
 						}
 						else
 						{
-							_uniformTypes.push_back(uniformType);
-							_uniformNames.push_back(uniformName);
+							uniformName = parts[2].substr(0, parts[2].length() - 1);
+
+							Logger::WriteLine("new uniform: " + uniformType + " " + uniformName);
+
+							if (structs.find(uniformType) != structs.end())
+							{
+								Logger::WriteLine("is struct!");
+								ShaderStruct* usedStruct = structs[uniformType];
+
+								for (int i = 0; i < usedStruct->uniformNames.size(); i++)
+								{
+									_uniformTypes.push_back(usedStruct->uniformTypes[i]);
+									_uniformNames.push_back(uniformName + "." + usedStruct->uniformNames[i]);
+								}
+							}
+							else
+							{
+								_uniformTypes.push_back(uniformType);
+								_uniformNames.push_back(uniformName);
+							}
 						}
 					}
 				}

@@ -14,11 +14,13 @@
 #include "MeshManager.h"
 #include "Draw\GBuffer.h"
 #include "Draw\Shader.h"
+#include "Draw\Mesh.h"
 #include "Window\WindowManager.h"
 #include "Window\Window.h"
 #include "Logger.h"
 #include "Utils.h"
 #include <iostream>
+#include <algorithm>
 
 namespace VoxEngine
 {
@@ -37,10 +39,10 @@ namespace VoxEngine
 			Logger::WriteLine("Failed to initialize the GBuffer!");
 		}
 
-		_quad = new MeshRenderer(MeshManager::GetInstance()->GetMesh("quad"), nullptr);
-		_sphere = new MeshRenderer(MeshManager::GetInstance()->GetMesh("sphere"), nullptr);
-		_cone = new MeshRenderer(MeshManager::GetInstance()->GetMesh("coneSpotlight"), nullptr);
-		_arrow = new MeshRenderer(MeshManager::GetInstance()->GetMesh("arrow"), nullptr);
+		_quad = MeshManager::GetInstance()->GetMesh("quad");
+		_sphere = MeshManager::GetInstance()->GetMesh("sphere");
+		_cone = MeshManager::GetInstance()->GetMesh("coneSpotlight");
+		_arrow = MeshManager::GetInstance()->GetMesh("arrow");
 
 		_ambientLight = new Light();
 		_ambientLight->color.r = 0.2f;
@@ -102,6 +104,75 @@ namespace VoxEngine
 		_renderingMode = mode;
 	}
 
+	void RenderingEngine::AddRenderer(MeshRenderer* renderer)
+	{
+		//todo - change to dictionary with ids
+		_meshRenderers.push_back(renderer);
+	}
+
+	void RenderingEngine::RemoveRenderer(MeshRenderer* renderer)
+	{
+		for (auto it = _meshRenderers.begin(); it != _meshRenderers.end(); it++)
+		{
+			if (*it == renderer)
+			{
+				_meshRenderers.erase(it);
+				break;
+			}
+		}
+	}
+
+	void RenderingEngine::AddPointLight(PointLight* light)
+	{
+		_pointLights.push_back(light);
+	}
+
+	void RenderingEngine::RemovePointLight(PointLight* light)
+	{
+		for (auto it = _pointLights.begin(); it != _pointLights.end(); it++)
+		{
+			if (*it == light)
+			{
+				_pointLights.erase(it);
+				break;
+			}
+		}
+	}
+
+	void RenderingEngine::AddDirectionalLight(DirectionalLight* light)
+	{
+		_directionalLights.push_back(light);
+	}
+
+	void RenderingEngine::RemoveDirectionalLight(DirectionalLight* light)
+	{
+		for (auto it = _directionalLights.begin(); it != _directionalLights.end(); it++)
+		{
+			if (*it == light)
+			{
+				_directionalLights.erase(it);
+				break;
+			}
+		}
+	}
+
+	void RenderingEngine::AddSpotLight(SpotLight* light)
+	{
+		_spotLights.push_back(light);
+	}
+
+	void RenderingEngine::RemoveSpotLight(SpotLight* light)
+	{
+		for (auto it = _spotLights.begin(); it != _spotLights.end(); it++)
+		{
+			if (*it == light)
+			{
+				_spotLights.erase(it);
+				break;
+			}
+		}
+	}
+
 	void RenderingEngine::Render(GameObject* gameObject)
 	{
 		if (_camera != Camera::main)
@@ -132,79 +203,160 @@ namespace VoxEngine
 		glEnable(GL_CULL_FACE); glCullFace(GL_BACK);
 		glDepthMask(GL_TRUE);
 
-		//fetch components - meshrenderers, lights
-
-		_renderingComponents.clear();
-		_meshRenderers.clear();
-		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
-
-		_renderingComponents.clear();
-		_pointLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_pointLights.push_back(dynamic_cast<PointLight*>(*it));
-
-		_renderingComponents.clear();
-		_directionalLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
-
-		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
-		glm::mat4 modelMatrix;
-
-		//ambient
-
-		Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
-		shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
-		shader->SetUniform3f("ambientColor", _ambientLight->color);
-
-		for (MeshRenderer* renderer : _meshRenderers)
+		if (_meshRenderers.size() > 0)
 		{
-			if (!renderer->IsEnabled()) continue;
+			_modelMatrices.clear();
+			//ambient
 
-			shader->SetUniformMatrix4fv("mvp", viewProjection * renderer->gameObject->transform->GetTransformation());
-			renderer->Render();
-		}
+			Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
+			shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
+			shader->SetUniform3f("ambientColor", _ambientLight->color);
 
-		//point
+			glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+			shader->SetUniformMatrix4fv("vp", viewProjection);
 
-		shader = ShaderManager::GetInstance()->UseShader("forward-point");
-		for (PointLight* point : _pointLights)
-		{
-			if (!point->IsEnabled()) continue;
+			//sort meshrenderers into groups;
+			std::sort(_meshRenderers.begin(), _meshRenderers.end());
 
-			shader->SetUniform3f("lightPosition", point->gameObject->transform->GetTransformedPosition());
-			shader->SetUniform3f("lightColor", point->color);
-			shader->SetUniform1f("lightIntensity", point->intensity);
-			shader->SetUniform1f("range", point->range);
+			//get first enabled renderer
+			int firstEnabled;
+			for (firstEnabled = 0; firstEnabled < _meshRenderers.size(); firstEnabled++)
+				if (_meshRenderers[firstEnabled]->IsEnabled())
+					break;
 
-			for (MeshRenderer* renderer : _meshRenderers)
+			Mesh* currentMesh = _meshRenderers[firstEnabled]->mesh;
+			Material* currentMaterial = _meshRenderers[firstEnabled]->material;
+			MeshRenderer* renderer;
+			int instanceCount = 1;
+
+			for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
 			{
-				modelMatrix = renderer->gameObject->transform->GetTransformation();
-				shader->SetUniformMatrix4fv("mvp", viewProjection * modelMatrix);
-				renderer->Render();
+				if (!_meshRenderers[i]->IsEnabled()) continue;
+
+				renderer = _meshRenderers[i];
+
+				//if we changed meshes, we can now call draw on the previous one
+				//since we buffered all its info
+				if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 250)
+				{
+					const glm::mat4* data = &_modelMatrices[0];
+					currentMesh->Render(instanceCount, currentMaterial, data);
+					_modelMatrices.clear();
+
+					currentMesh = renderer->mesh;
+					currentMaterial = renderer->material;
+					instanceCount = 1;
+				}
+				else
+				{
+					//increase how many we'll be instancing
+					instanceCount++;
+				}
+
+				shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",
+					renderer->gameObject->transform->GetTransformation());
 			}
-		}
 
-		//directional
+			const glm::mat4* data = &_modelMatrices[0];
+			currentMesh->Render(instanceCount, currentMaterial, data);
 
-		shader = ShaderManager::GetInstance()->UseShader("forward-directional");
-		for (DirectionalLight* dirLight : _directionalLights)
-		{
-			if (!dirLight->IsEnabled()) continue;
+			//point
 
-			shader->SetUniform3f("lightDirection", dirLight->gameObject->transform->GetForward());
-			shader->SetUniform3f("lightColor", dirLight->color);
-			shader->SetUniform1f("lightIntensity", dirLight->intensity);
-
-			for (MeshRenderer* renderer : _meshRenderers)
+			shader = ShaderManager::GetInstance()->UseShader("forward-point");
+			shader->SetUniformMatrix4fv("vp", viewProjection);
+			for (PointLight* point : _pointLights)
 			{
-				modelMatrix = renderer->gameObject->transform->GetTransformation();
-				shader->SetUniformMatrix4fv("mvp", viewProjection * modelMatrix);
-				renderer->Render();
+				if (!point->IsEnabled()) continue;
+
+				shader->SetUniform3f("lightPosition", point->gameObject->transform->GetTransformedPosition());
+				shader->SetUniform3f("lightColor", point->color);
+				shader->SetUniform1f("lightIntensity", point->intensity);
+				shader->SetUniform1f("range", point->range);
+
+				currentMesh = _meshRenderers[firstEnabled]->mesh;
+				currentMaterial = _meshRenderers[firstEnabled]->material;
+				renderer;
+				instanceCount = 1;
+
+				for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+				{
+					if (!_meshRenderers[i]->IsEnabled()) continue;
+
+					renderer = _meshRenderers[i];
+
+					//if we changed meshes, we can now call draw on the previous one
+					//since we buffered all its info
+					if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 250)
+					{
+						const glm::mat4* data = &_modelMatrices[0];
+						currentMesh->Render(instanceCount, currentMaterial, data);
+						_modelMatrices.clear();
+
+						currentMesh = renderer->mesh;
+						currentMaterial = renderer->material;
+						instanceCount = 1;
+					}
+					else
+					{
+						//increase how many we'll be instancing
+						instanceCount++;
+					}
+
+					shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",
+						renderer->gameObject->transform->GetTransformation());
+				}
+
+				const glm::mat4* data = &_modelMatrices[0];
+				currentMesh->Render(instanceCount, currentMaterial, data);
+			}
+
+			//directional
+
+			shader = ShaderManager::GetInstance()->UseShader("forward-directional");
+			shader->SetUniformMatrix4fv("vp", viewProjection);
+			for (DirectionalLight* dirLight : _directionalLights)
+			{
+				if (!dirLight->IsEnabled()) continue;
+
+				shader->SetUniform3f("lightDirection", dirLight->gameObject->transform->GetForward());
+				shader->SetUniform3f("lightColor", dirLight->color);
+				shader->SetUniform1f("lightIntensity", dirLight->intensity);
+
+				currentMesh = _meshRenderers[firstEnabled]->mesh;
+				currentMaterial = _meshRenderers[firstEnabled]->material;
+				renderer;
+				instanceCount = 1;
+
+				for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+				{
+					if (!_meshRenderers[i]->IsEnabled()) continue;
+
+					renderer = _meshRenderers[i];
+
+					//if we changed meshes, we can now call draw on the previous one
+					//since we buffered all its info
+					if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 250)
+					{
+						const glm::mat4* data = &_modelMatrices[0];
+						currentMesh->Render(instanceCount, currentMaterial, data);
+						_modelMatrices.clear();
+
+						currentMesh = renderer->mesh;
+						currentMaterial = renderer->material;
+						instanceCount = 1;
+					}
+					else
+					{
+						//increase how many we'll be instancing
+						instanceCount++;
+					}
+
+					shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",
+						renderer->gameObject->transform->GetTransformation());
+				}
+
+				const glm::mat4* data = &_modelMatrices[0];
+				currentMesh->Render(instanceCount, currentMaterial, data);
 			}
 		}
 
@@ -219,9 +371,6 @@ namespace VoxEngine
 		_gbuffer->StartFrame();
 
 		GeometryPass(gameObject);
-
-		//gather all components
-		UpdateComponents(gameObject);
 
 		glEnable(GL_STENCIL_TEST);
 
@@ -260,22 +409,59 @@ namespace VoxEngine
 
 		glEnable(GL_DEPTH_TEST);
 
-		_renderingComponents.clear();
-		_meshRenderers.clear();
-		gameObject->GetComponentsInChildren(EComponentType::MESH_RENDERER, _renderingComponents);
-
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_meshRenderers.push_back(dynamic_cast<MeshRenderer*>(*it));
-
-		glm::mat4 mvp;
-		glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
-
-		for (MeshRenderer* renderer : _meshRenderers)
+		if (_meshRenderers.size() > 0)
 		{
-			if (!renderer->IsEnabled()) continue;
+			_modelMatrices.clear();
 
-			shader->SetUniformMatrix4fv("mvp", viewProjection * renderer->gameObject->transform->GetTransformation());
-			renderer->Render();
+			//sort meshrenderers into groups
+			std::sort(_meshRenderers.begin(), _meshRenderers.end());
+
+			glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+			shader->SetUniformMatrix4fv("vp", viewProjection);
+
+			//get first enabled renderer
+			int firstEnabled;
+			for (firstEnabled = 0; firstEnabled < _meshRenderers.size(); firstEnabled++)
+				if (_meshRenderers[firstEnabled]->IsEnabled())
+					break;
+
+			Mesh* currentMesh = _meshRenderers[firstEnabled]->mesh;
+			Material* currentMaterial = _meshRenderers[firstEnabled]->material;
+			MeshRenderer* renderer;
+			int instanceCount = 1;
+
+			for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+			{
+				if (!_meshRenderers[i]->IsEnabled()) continue;
+
+				renderer = _meshRenderers[i];
+
+				//if we changed meshes, we can now call draw on the previous one
+				//since we buffered all its info
+				if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 1000)
+				{
+					//Logger::WriteLine("drawing mesh " + std::to_string(instanceCount) + " times");
+					const glm::mat4* data = &_modelMatrices[0];
+					currentMesh->Render(instanceCount, currentMaterial, data);
+
+					_modelMatrices.clear();
+					currentMesh = renderer->mesh;
+					currentMaterial = renderer->material;
+					instanceCount = 1;
+				}
+				else
+				{
+					//increase how many we'll be instancing
+					instanceCount++;
+				}
+
+				_modelMatrices.push_back(renderer->gameObject->transform->GetTransformation());
+				//shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",	);
+			}
+
+			//Logger::WriteLine("drawing mesh " + std::to_string(instanceCount) + " times");
+			const glm::mat4* data = &_modelMatrices[0];
+			currentMesh->Render(instanceCount, currentMaterial, data);
 		}
 
 		glDepthMask(GL_FALSE);
@@ -488,27 +674,6 @@ namespace VoxEngine
 			ShowLightingDebug();
 	}
 
-	void RenderingEngine::UpdateComponents(GameObject* gameObject)
-	{
-		_renderingComponents.clear();
-		_pointLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_POINT, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_pointLights.push_back(dynamic_cast<PointLight*>(*it));
-
-		_renderingComponents.clear();
-		_directionalLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_DIRECTIONAL, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_directionalLights.push_back(dynamic_cast<DirectionalLight*>(*it));
-
-		_renderingComponents.clear();
-		_spotLights.clear();
-		gameObject->GetComponentsInChildren(EComponentType::LIGHT_SPOT, _renderingComponents);
-		for (auto it = _renderingComponents.begin(); it != _renderingComponents.end(); it++)
-			_spotLights.push_back(dynamic_cast<SpotLight*>(*it));
-	}
-
 	float RenderingEngine::CalculateSpotLightScale(SpotLight* light)
 	{
 		return 2 * light->range * glm::tan(glm::radians((light->angle + _falloff) / 2));
@@ -529,7 +694,7 @@ namespace VoxEngine
 			if (!light->IsEnabled()) continue;
 
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
-				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+				(glm::translate(glm::mat4(), light->gameObject->transform->GetPosition()) *
 					glm::scale(glm::mat4(), glm::vec3(light->range))
 					)
 			);
@@ -539,7 +704,7 @@ namespace VoxEngine
 			//render center point
 
 			lightingDebug->SetUniformMatrix4fv("mvp", viewProjection *
-				(glm::translate(glm::mat4(), light->gameObject->transform->position) *
+				(glm::translate(glm::mat4(), light->gameObject->transform->GetPosition()) *
 					glm::scale(glm::mat4(), glm::vec3(0.1f))
 					)
 			);
@@ -626,6 +791,6 @@ namespace VoxEngine
 			delete _skyboxMesh;
 
 		_skybox = skybox;
-		_skyboxMesh = new MeshRenderer(MeshManager::GetInstance()->GetMesh("cubeInvert"), nullptr);
+		_skyboxMesh = MeshManager::GetInstance()->GetMesh("cubeInvert");
 	}
 }
