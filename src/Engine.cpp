@@ -41,6 +41,7 @@ namespace VoxEngine
 
 	Engine::~Engine()
 	{
+		
 	}
 
 	int Engine::Init()
@@ -155,8 +156,9 @@ namespace VoxEngine
 
 		for (int i = 0; i < 4723; i++)
 		//for (int i = 0; i < 1235; i++)//causes weird tri on screen
+		//for (int i = 0; i < 11; i++)
 		{
-			cube = new GameObject("Cube++-" + std::to_string(i));
+			cube = new GameObject("Cube " + std::to_string(i));
 			cube->transform->SetPosition(glm::vec3(rand() % 777 - 777 / 2.0f, 1 + rand() % 25, rand() % 777 - 777 / 2.0f));
 			renderer = new MeshRenderer(mesh_cube, mat_test);
 			cube->AddComponent(renderer);
@@ -198,9 +200,6 @@ namespace VoxEngine
 			_scene->AddObject(cube);
 		}*/
 		
-		GameObject* light;
-		PointLight* pl;
-
 		/*for (int i = 0; i < 50; i++)
 		{
 			light = new GameObject("Light " + std::to_string(i + 1));
@@ -314,6 +313,8 @@ namespace VoxEngine
 
 	void Engine::Shutdown()
 	{
+		delete _scene;
+
 		TextureManager::Shutdown();
 		RenderingEngine::Shutdown();
 		MeshManager::Shutdown();

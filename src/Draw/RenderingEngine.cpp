@@ -53,6 +53,8 @@ namespace VoxEngine
 
 	RenderingEngine::~RenderingEngine()
 	{
+		delete _gbuffer;
+		delete _ambientLight;
 	}
 
 	void RenderingEngine::Init()
@@ -237,7 +239,7 @@ namespace VoxEngine
 
 				//if we changed meshes, we can now call draw on the previous one
 				//since we buffered all its info
-				if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 250)
+				if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 1000)
 				{
 					const glm::mat4* data = &_modelMatrices[0];
 					currentMesh->Render(instanceCount, currentMaterial, data);
@@ -253,8 +255,7 @@ namespace VoxEngine
 					instanceCount++;
 				}
 
-				shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",
-					renderer->gameObject->transform->GetTransformation());
+				_modelMatrices.push_back(renderer->gameObject->transform->GetTransformation());
 			}
 
 			const glm::mat4* data = &_modelMatrices[0];
@@ -286,7 +287,7 @@ namespace VoxEngine
 
 					//if we changed meshes, we can now call draw on the previous one
 					//since we buffered all its info
-					if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 250)
+					if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 1000)
 					{
 						const glm::mat4* data = &_modelMatrices[0];
 						currentMesh->Render(instanceCount, currentMaterial, data);
@@ -302,8 +303,7 @@ namespace VoxEngine
 						instanceCount++;
 					}
 
-					shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",
-						renderer->gameObject->transform->GetTransformation());
+					_modelMatrices.push_back(renderer->gameObject->transform->GetTransformation());
 				}
 
 				const glm::mat4* data = &_modelMatrices[0];
@@ -335,7 +335,7 @@ namespace VoxEngine
 
 					//if we changed meshes, we can now call draw on the previous one
 					//since we buffered all its info
-					if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 250)
+					if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 1000)
 					{
 						const glm::mat4* data = &_modelMatrices[0];
 						currentMesh->Render(instanceCount, currentMaterial, data);
@@ -351,8 +351,7 @@ namespace VoxEngine
 						instanceCount++;
 					}
 
-					shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",
-						renderer->gameObject->transform->GetTransformation());
+					_modelMatrices.push_back(renderer->gameObject->transform->GetTransformation());
 				}
 
 				const glm::mat4* data = &_modelMatrices[0];
@@ -440,7 +439,6 @@ namespace VoxEngine
 				//since we buffered all its info
 				if (currentMesh != renderer->mesh || currentMaterial != renderer->material || instanceCount >= 1000)
 				{
-					//Logger::WriteLine("drawing mesh " + std::to_string(instanceCount) + " times");
 					const glm::mat4* data = &_modelMatrices[0];
 					currentMesh->Render(instanceCount, currentMaterial, data);
 
@@ -456,10 +454,8 @@ namespace VoxEngine
 				}
 
 				_modelMatrices.push_back(renderer->gameObject->transform->GetTransformation());
-				//shader->SetUniformMatrix4fv("modelMatrix[" + std::to_string(instanceCount - 1) + "]",	);
 			}
 
-			//Logger::WriteLine("drawing mesh " + std::to_string(instanceCount) + " times");
 			const glm::mat4* data = &_modelMatrices[0];
 			currentMesh->Render(instanceCount, currentMaterial, data);
 		}
