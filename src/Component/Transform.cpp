@@ -37,7 +37,7 @@ namespace VoxEngine
 		return _model;
 	}
 
-	inline glm::mat4 Transform::GetTransformation()
+	glm::mat4 Transform::GetTransformation()
 	{
 		return _transformation;
 	}

@@ -1,8 +1,9 @@
 #include "Logger.h"
 #include <ctime>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <iostream>
+#include <cstring>
 
 namespace VoxEngine
 {
@@ -57,7 +58,7 @@ namespace VoxEngine
 #endif
 			
 			if (createError != 0)
-				_WriteLine("Error creating logs/ directory: " + std::string(strerror(errno)));
+				_WriteLine("Error creating logs/ directory: " + std::string(std::strerror(errno)));
 			else
 				_WriteLine("success!");
 		}
