@@ -13,8 +13,7 @@ namespace VoxEngine
 		std::string left, std::string right,
 		std::string top, std::string bottom)
 	{
-		TextureManager::GetInstance()->LoadTextureCube(name, front, back, left, right, top, bottom);
-		_textures.insert(std::pair<std::string, Texture*>("skybox", TextureManager::GetInstance()->GetTexture(name)));
+		_textures.insert(std::pair<std::string, Texture*>("skybox", TextureManager::GetInstance()->GetTextureCube(name)));
 		Finalize();
 	}
 

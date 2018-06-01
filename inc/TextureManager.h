@@ -13,18 +13,22 @@ namespace VoxEngine
 		static TextureManager* GetInstance();
 		static void Shutdown();
 
-		Texture* GetTexture(std::string name);
-		Texture* GetTextureCube(std::string name);
-
-		bool LoadTextureCube(std::string name,
+		Texture* GetTexture(std::string name, bool srgb = true);
+		Texture* GetTextureCube(std::string name, bool srgb = true);
+		Texture* GetTextureCube(std::string name,
 			std::string front, std::string back,
 			std::string left, std::string right,
-			std::string top, std::string bottom);
+			std::string top, std::string bottom, bool srgb);
+
 	private:
 		TextureManager();
 		~TextureManager();
 
-		bool LoadTexture(std::string name);
+		bool LoadTexture(std::string name, bool srgb);
+		bool LoadTextureCube(std::string name,
+			std::string front, std::string back,
+			std::string left, std::string right,
+			std::string top, std::string bottom, bool srgb);
 
 		static TextureManager* _instance;
 

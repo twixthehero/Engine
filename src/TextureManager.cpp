@@ -47,18 +47,18 @@ namespace VoxEngine
 		FreeImage_DeInitialise();
 	}
 
-	Texture* TextureManager::GetTexture(std::string name)
+	Texture* TextureManager::GetTexture(std::string name, bool srgb)
 	{
 		if (_textures.find(name) == _textures.end())
-			if (!LoadTexture(name))
+			if (!LoadTexture(name, srgb))
 				return _missingTexture;
 
 		return _textures[name];
 	}
 
 	//http://r3dux.org/2014/10/how-to-load-an-opengl-texture-using-the-freeimage-library-or-freeimageplus-technically/
-	bool TextureManager::LoadTexture(std::string name)
-	{
+	bool TextureManager::LoadTexture(std::string name, bool srgb)
+	{	
 #if defined _WIN32
 		std::string path = "textures\\" + name;
 #else
@@ -118,7 +118,7 @@ namespace VoxEngine
 		glGenTextures(1, &tempTextureId);
 		glBindTexture(GL_TEXTURE_2D, tempTextureId);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, textureData);
+		glTexImage2D(GL_TEXTURE_2D, 0, srgb ? GL_SRGB_ALPHA : GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, textureData);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minificationFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magnificationFilter);
 
@@ -151,22 +151,30 @@ namespace VoxEngine
 		return true;
 	}
 
-	Texture* TextureManager::GetTextureCube(std::string name)
+	Texture* TextureManager::GetTextureCube(std::string name, bool srgb)
 	{
-		if (_textures.find(name) != _textures.end())
-			return _textures[name];
+		return GetTextureCube(name, "front.png", "back.png", "left.png", "right.png", "top.png", "bottom.png", srgb);
+	}
 
-		return nullptr;
+	Texture* TextureManager::GetTextureCube(std::string name,
+		std::string front, std::string back,
+		std::string left, std::string right,
+		std::string top, std::string bottom,
+		bool srgb)
+	{
+		if (_textures.find(name) == _textures.end())
+			if (!LoadTextureCube(name, front, back, left, right, top, bottom, srgb))
+				return _missingTextureCube;
+
+		return _textures[name];
 	}
 
 	bool TextureManager::LoadTextureCube(std::string name,
 		std::string front, std::string back,
 		std::string left, std::string right,
-		std::string top, std::string bottom)
+		std::string top, std::string bottom,
+		bool srgb)
 	{
-		if (_textures.find(name) != _textures.end())
-			return false;
-
 		std::vector<std::string> names;
 		names.push_back(left);
 		names.push_back(right);
@@ -243,7 +251,7 @@ namespace VoxEngine
 
 			GLubyte* textureData = FreeImage_GetBits(bitmap32);
 
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, textureData);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, srgb ? GL_SRGB_ALPHA : GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, textureData);
 
 			if (Utils::CheckGLError("Error loading texture: " + path))
 				Logger::WriteLine("See https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml for further details");
