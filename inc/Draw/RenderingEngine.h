@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
+#include <string>
 
 namespace VoxEngine
 {
@@ -50,10 +51,12 @@ namespace VoxEngine
 		RenderingEngine();
 		~RenderingEngine();
 
+		std::string GetRenderingModeString(ERenderingMode mode);
+
 		void Forward(GameObject* gameObject);
 		void Deferred(GameObject* gameObject);
 
-		void GeometryPass(GameObject* gameObject);
+		void GeometryPass();
 		void StencilPassPoint(PointLight* pointLight);
 		void PointLightPass(PointLight* pointLight);
 		void StencilPassSpot(SpotLight* spotLight);
@@ -68,23 +71,23 @@ namespace VoxEngine
 
 		static RenderingEngine* _instance;
 
-		GBuffer* _gbuffer;
-		Window* _window;
+		GBuffer* _gbuffer = nullptr;
+		Window* _window = nullptr;
 		int _windowWidth;
 		int _windowHeight;
 		bool _showLightingDebug = false;
 
 		ERenderingMode _renderingMode = ERenderingMode::DEFERRED;
-		Camera* _camera;
-		Mesh* _quad;
-		Mesh* _sphere;
-		Mesh* _cone;
-		Mesh* _arrow;
+		Camera* _camera = nullptr;
+		Mesh* _quad = nullptr;
+		Mesh* _sphere = nullptr;
+		Mesh* _cone = nullptr;
+		Mesh* _arrow = nullptr;
 		Mesh* _skyboxMesh = nullptr;
 		std::vector<Component*> _renderingComponents;
 
-		Light* _ambientLight;
-		Material* _skybox;
+		Light* _ambientLight = nullptr;
+		Material* _skybox = nullptr;
 		std::vector<PointLight*> _pointLights;
 		std::vector<DirectionalLight*> _directionalLights;
 		std::vector<SpotLight*> _spotLights;

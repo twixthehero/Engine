@@ -49,6 +49,8 @@ namespace VoxEngine
 		_ambientLight->color.g = 0.2f;
 		_ambientLight->color.b = 0.2f;
 		_ambientLight->intensity = 0.2f;
+
+		Logger::WriteLine("Rending mode: " + GetRenderingModeString(_renderingMode));
 	}
 
 	RenderingEngine::~RenderingEngine()
@@ -102,8 +104,19 @@ namespace VoxEngine
 		if (_renderingMode == mode)
 			return;
 
-		Logger::WriteLine("_renderingMode: " + std::to_string(_renderingMode) + " => " + std::to_string(mode));
+		Logger::WriteLine("_renderingMode: " + GetRenderingModeString(_renderingMode) + " => " + GetRenderingModeString(mode));
 		_renderingMode = mode;
+	}
+
+	std::string RenderingEngine::GetRenderingModeString(ERenderingMode mode)
+	{
+		switch (mode)
+		{
+			case NONE: return "None";
+			case FORWARD: return "Forward";
+			case DEFERRED: return "Deferred";
+			default: return "Unknown";
+		}
 	}
 
 	void RenderingEngine::AddRenderer(MeshRenderer* renderer)
@@ -208,14 +221,6 @@ namespace VoxEngine
 		if (_meshRenderers.size() > 0)
 		{
 			_modelMatrices.clear();
-			//ambient
-
-			Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
-			shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
-			shader->SetUniform3f("ambientColor", _ambientLight->color);
-
-			glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
-			shader->SetUniformMatrix4fv("vp", viewProjection);
 
 			//sort meshrenderers into groups;
 			std::sort(_meshRenderers.begin(), _meshRenderers.end());
@@ -226,12 +231,21 @@ namespace VoxEngine
 				if (_meshRenderers[firstEnabled]->IsEnabled())
 					break;
 
+			//ambient
+
+			Shader* shader = ShaderManager::GetInstance()->UseShader("forward-ambient");
+			shader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
+			shader->SetUniform3f("ambientColor", _ambientLight->color);
+
+			glm::mat4 viewProjection = _camera->GetViewProjectionMatrix();
+			shader->SetUniformMatrix4fv("vp", viewProjection);
+
 			Mesh* currentMesh = _meshRenderers[firstEnabled]->mesh;
 			Material* currentMaterial = _meshRenderers[firstEnabled]->material;
 			MeshRenderer* renderer;
 			int instanceCount = 1;
 
-			for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+			for (int i = firstEnabled; i < _meshRenderers.size(); i++)
 			{
 				if (!_meshRenderers[i]->IsEnabled()) continue;
 
@@ -279,7 +293,7 @@ namespace VoxEngine
 				renderer;
 				instanceCount = 1;
 
-				for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+				for (int i = firstEnabled; i < _meshRenderers.size(); i++)
 				{
 					if (!_meshRenderers[i]->IsEnabled()) continue;
 
@@ -327,7 +341,7 @@ namespace VoxEngine
 				renderer;
 				instanceCount = 1;
 
-				for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+				for (int i = firstEnabled; i < _meshRenderers.size(); i++)
 				{
 					if (!_meshRenderers[i]->IsEnabled()) continue;
 
@@ -359,7 +373,10 @@ namespace VoxEngine
 			}
 		}
 
-		RenderSkybox();
+		if (_skybox != nullptr)
+		{
+			RenderSkybox();
+		}
 
 		if (_showLightingDebug)
 			ShowLightingDebug();
@@ -369,7 +386,7 @@ namespace VoxEngine
 	{
 		_gbuffer->StartFrame();
 
-		GeometryPass(gameObject);
+		GeometryPass();
 
 		glEnable(GL_STENCIL_TEST);
 
@@ -396,7 +413,7 @@ namespace VoxEngine
 		FinalPass();
 	}
 
-	void RenderingEngine::GeometryPass(GameObject* gameObject)
+	void RenderingEngine::GeometryPass()
 	{
 		Shader* shader = ShaderManager::GetInstance()->UseShader("geometry");
 
@@ -429,7 +446,7 @@ namespace VoxEngine
 			MeshRenderer* renderer;
 			int instanceCount = 1;
 
-			for (int i = firstEnabled + 1; i < _meshRenderers.size(); i++)
+			for (int i = firstEnabled; i < _meshRenderers.size(); i++)
 			{
 				if (!_meshRenderers[i]->IsEnabled()) continue;
 
@@ -664,7 +681,10 @@ namespace VoxEngine
 		//also copy depth info for rendering the point light spheres
 		glBlitFramebuffer(0, 0, _windowWidth, _windowHeight, 0, 0, _windowWidth, _windowHeight, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
-		RenderSkybox();
+		if (_skybox != nullptr)
+		{
+			RenderSkybox();
+		}
 
 		if (_showLightingDebug)
 			ShowLightingDebug();

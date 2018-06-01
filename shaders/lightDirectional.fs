@@ -67,5 +67,5 @@ void main()
 	normal = normalize(normal);
 	vec3 matSpecular = texture(specularMap, texCoord).xyz;
 
-	glFragColor = vec4(matAlbedo, 1) * CalcDirectionalLight(matAlbedo, matSpecular, worldPos, normal);
+	glFragColor = (vec4(matAlbedo, 1) * CalcDirectionalLight(matAlbedo, matSpecular, worldPos, normal), vec4(1.0 / 2.2));
 }

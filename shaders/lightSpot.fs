@@ -79,5 +79,5 @@ void main()
 	normal = normalize(normal);
 	vec3 specular = texture(specularMap, texCoord).xyz;
 
-	glFragColor = vec4(albedo, 1) * CalcSpotLight(albedo, specular, worldPos, normal);
+	glFragColor = pow(vec4(albedo, 1) * CalcSpotLight(albedo, specular, worldPos, normal), vec4(1.0 / 2.2));
 }

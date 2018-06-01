@@ -351,9 +351,16 @@ namespace VoxEngine
 			_renderingEngine->SetShowLightingDebug(!_renderingEngine->GetShowLightingDebug());
 
 		if (Input::GetKeyUp(KeyCode::F5))
-			_renderingEngine->SetRenderingMode(RenderingEngine::ERenderingMode::FORWARD);
-		if (Input::GetKeyUp(KeyCode::F6))
-			_renderingEngine->SetRenderingMode(RenderingEngine::ERenderingMode::DEFERRED);
+		{
+			if (_renderingEngine->GetRenderingMode() == RenderingEngine::ERenderingMode::FORWARD)
+			{
+				_renderingEngine->SetRenderingMode(RenderingEngine::ERenderingMode::DEFERRED);
+			}
+			else
+			{
+				_renderingEngine->SetRenderingMode(RenderingEngine::ERenderingMode::FORWARD);
+			}
+		}
 
 		_scene->Update();
 	}
