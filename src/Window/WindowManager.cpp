@@ -1,6 +1,6 @@
-#include "Window\WindowManager.h"
+#include "Window/WindowManager.h"
 #include <iostream>
-#include "Window\Window.h"
+#include "Window/Window.h"
 #include "Logger.h"
 
 namespace VoxEngine

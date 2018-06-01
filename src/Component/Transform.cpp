@@ -1,6 +1,6 @@
-#include "Component\Transform.h"
-#include <glm\gtc\matrix_transform.hpp>
-#include "Core\GameObject.h"
+#include "Component/Transform.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include "Core/GameObject.h"
 
 namespace VoxEngine
 {

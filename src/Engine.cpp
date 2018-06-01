@@ -1,28 +1,28 @@
 #include "Engine.h"
 #include "Logger.h"
-#include "Window\Window.h"
-#include "Window\WindowManager.h"
+#include "Window/Window.h"
+#include "Window/WindowManager.h"
 #include "Input.h"
-#include "Draw\RenderingEngine.h"
+#include "Draw/RenderingEngine.h"
 #include "ShaderManager.h"
 #include "TextureManager.h"
 #include "Scene.h"
-#include "Core\GameObject.h"
-#include "Component\Camera.h"
+#include "Core/GameObject.h"
+#include "Component/Camera.h"
 #include "MeshManager.h"
 #include <iostream>
-#include "Core\MaterialDefault.h"
-#include "Core\MaterialSkybox.h"
-#include "Component\MeshRenderer.h"
-#include "Component\Transform.h"
-#include "Component\FlyMove.h"
+#include "Core/MaterialDefault.h"
+#include "Core/MaterialSkybox.h"
+#include "Component/MeshRenderer.h"
+#include "Component/Transform.h"
+#include "Component/FlyMove.h"
 #include "EngineTime.h"
-#include "Component\FreeLook.h"
-#include "Component\Oscillate.h"
-#include "Component\PointLight.h"
-#include "Component\DirectionalLight.h"
-#include "Component\SpotLight.h"
-#include "Component\Rotate.h"
+#include "Component/FreeLook.h"
+#include "Component/Oscillate.h"
+#include "Component/PointLight.h"
+#include "Component/DirectionalLight.h"
+#include "Component/SpotLight.h"
+#include "Component/Rotate.h"
 
 namespace VoxEngine
 {
@@ -99,7 +99,7 @@ namespace VoxEngine
 	{
 		_running = true;
 
-		_renderingEngine->SetSkybox(new MaterialSkybox("skybox\\ThickCloudsWater"));
+		_renderingEngine->SetSkybox(new MaterialSkybox("skybox/ThickCloudsWater"));
 
 		_scene = new Scene();
 		GameObject* cameraObject = new GameObject("Camera");
@@ -213,7 +213,7 @@ namespace VoxEngine
 
 		/*GameObject* crate = new GameObject("Crate");
 		crate->transform->position.y = 0.5f;
-		MaterialDefault* mat_crate = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\white.png"),
+		MaterialDefault* mat_crate = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte/white.png"),
 			TextureManager::GetInstance()->GetTexture("crateSpecular.png"));
 		MeshRenderer* meshRenderer = new MeshRenderer(mesh_cube, mat_crate);
 		crate->AddComponent(meshRenderer);
@@ -224,7 +224,7 @@ namespace VoxEngine
 		cone->transform->position.x = 0.0f;
 		cone->transform->position.y = 2.0f;
 		cone->transform->position.z = 0.0f;
-		MaterialDefault* mat_cone = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\red.png"), nullptr);
+		MaterialDefault* mat_cone = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte/red.png"), nullptr);
 		MeshRenderer* meshRenderercone = new MeshRenderer(mesh_cone, mat_cone);
 		cone->AddComponent(meshRenderercone);
 		_scene->AddObject(cone);*/
@@ -262,9 +262,9 @@ namespace VoxEngine
 		/*GameObject* arrow;
 		MeshRenderer* renderer2;
 		Mesh* mesh_arrow = MeshManager::GetInstance()->GetMesh("arrow");
-		MaterialDefault* mat_red = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\red.png"), nullptr);
-		MaterialDefault* mat_blue = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\blue.png"), nullptr);
-		MaterialDefault* mat_purple = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte\\purple.png"), nullptr);
+		MaterialDefault* mat_red = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte/red.png"), nullptr);
+		MaterialDefault* mat_blue = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte/blue.png"), nullptr);
+		MaterialDefault* mat_purple = new MaterialDefault(TextureManager::GetInstance()->GetTexture("matte/purple.png"), nullptr);
 
 		for (int i = 0; i < 8; i++)
 		{

@@ -1,8 +1,8 @@
-#include <GL\gl3w.h>
-#include "Core\MaterialSkybox.h"
+#include <GL/gl3w.h>
+#include "Core/MaterialSkybox.h"
 #include "ShaderManager.h"
-#include "Core\Texture.h"
-#include "Draw\Shader.h"
+#include "Core/Texture.h"
+#include "Draw/Shader.h"
 #include "TextureManager.h"
 #include <string>
 

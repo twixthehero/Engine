@@ -1,10 +1,10 @@
-#include "Component\FreeLook.h"
+#include "Component/FreeLook.h"
 #include "Input.h"
 #include "EngineTime.h"
-#include "Core\GameObject.h"
-#include "Component\Transform.h"
-#include "Window\WindowManager.h"
-#include "Window\Window.h"
+#include "Core/GameObject.h"
+#include "Component/Transform.h"
+#include "Window/WindowManager.h"
+#include "Window/Window.h"
 
 namespace VoxEngine
 {

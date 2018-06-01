@@ -1,15 +1,15 @@
-#include "Draw\Shader.h"
+#include "Draw/Shader.h"
 #include <fstream>
 #include <iostream>
 #include "Utils.h"
-#include "Draw\RenderingEngine.h"
-#include <glm\glm.hpp>
-#include "Component\Transform.h"
-#include "Component\Camera.h"
-#include <glm\gtc\matrix_transform.hpp>
-#include <Core\GameObject.h>
-#include "Component\Light.h"
-#include "Draw\ShaderStruct.h"
+#include "Draw/RenderingEngine.h"
+#include <glm/glm.hpp>
+#include "Component/Transform.h"
+#include "Component/Camera.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <Core/GameObject.h>
+#include "Component/Light.h"
+#include "Draw/ShaderStruct.h"
 #include "Utils.h"
 #include "Logger.h"
 
@@ -70,7 +70,11 @@ namespace VoxEngine
 
 	std::string Shader::ReadText(std::string filename)
 	{
+#if defined _WIN32
 		std::ifstream file("shaders\\" + filename);
+#else
+		std::ifstream file("shaders/" + filename);
+#endif
 		std::string line;
 		std::string text;
 

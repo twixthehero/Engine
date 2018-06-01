@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include <GL\gl3w.h>
-#include <glm\glm.hpp>
+#include <GL/gl3w.h>
+#include <glm/glm.hpp>
 
 namespace VoxEngine
 {

@@ -1,4 +1,4 @@
-#include "Core\Component.h"
+#include "Core/Component.h"
 
 namespace VoxEngine
 {

@@ -6,7 +6,7 @@
 #include <functional>
 #include <locale>
 #include <cctype>
-#include <GL\gl3w.h>
+#include <GL/gl3w.h>
 
 namespace VoxEngine
 {

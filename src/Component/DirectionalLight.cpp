@@ -1,5 +1,5 @@
-#include "Component\DirectionalLight.h"
-#include "Draw\RenderingEngine.h"
+#include "Component/DirectionalLight.h"
+#include "Draw/RenderingEngine.h"
 
 namespace VoxEngine
 {

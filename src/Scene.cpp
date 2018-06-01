@@ -1,6 +1,6 @@
 #include "Scene.h"
-#include "Core\GameObject.h"
-#include "Draw\RenderingEngine.h"
+#include "Core/GameObject.h"
+#include "Draw/RenderingEngine.h"
 
 namespace VoxEngine
 {

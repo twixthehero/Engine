@@ -1,8 +1,8 @@
 #include "TextureManager.h"
 #include <FreeImage.h>
 #include <iostream>
-#include <GL\gl3w.h>
-#include <Core\Texture.h>
+#include <GL/gl3w.h>
+#include <Core/Texture.h>
 #include "Logger.h"
 #include "Utils.h"
 
@@ -59,7 +59,11 @@ namespace VoxEngine
 	//http://r3dux.org/2014/10/how-to-load-an-opengl-texture-using-the-freeimage-library-or-freeimageplus-technically/
 	bool TextureManager::LoadTexture(std::string name)
 	{
+#if defined _WIN32
 		std::string path = "textures\\" + name;
+#else
+		std::string path = "textures/" + name;
+#endif
 		const char* filename = path.c_str();
 
 		Logger::WriteLine("loading texture: " + path);
@@ -177,7 +181,11 @@ namespace VoxEngine
 
 		for (int i = 0; i < 6; i++)
 		{
+#if defined _WIN32
 			std::string path = "textures\\" + name + "\\" + names[i];
+#else
+			std::string path = "textures/" + name + "/" + names[i];
+#endif
 			const char* filename = path.c_str();
 
 			Logger::WriteLine("loading texture: " + path);

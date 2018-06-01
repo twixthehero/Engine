@@ -1,5 +1,5 @@
-#include "Core\Material.h"
-#include "Core\Texture.h"
+#include "Core/Material.h"
+#include "Core/Texture.h"
 
 namespace VoxEngine
 {

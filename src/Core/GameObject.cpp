@@ -1,5 +1,5 @@
-#include "Core\GameObject.h"
-#include "Component\Transform.h"
+#include "Core/GameObject.h"
+#include "Component/Transform.h"
 
 namespace VoxEngine
 {

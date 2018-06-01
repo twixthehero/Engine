@@ -1,6 +1,6 @@
-#include "Component\Oscillate.h"
-#include "Core\GameObject.h"
-#include "Component\Transform.h"
+#include "Component/Oscillate.h"
+#include "Core/GameObject.h"
+#include "Component/Transform.h"
 #include "EngineTime.h"
 #include <cmath>
 

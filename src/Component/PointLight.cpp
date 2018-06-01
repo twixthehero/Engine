@@ -1,5 +1,5 @@
-#include "Component\PointLight.h"
-#include "Draw\RenderingEngine.h"
+#include "Component/PointLight.h"
+#include "Draw/RenderingEngine.h"
 
 namespace VoxEngine
 {

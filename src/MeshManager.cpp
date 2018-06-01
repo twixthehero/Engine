@@ -2,9 +2,9 @@
 #include <iostream>
 #include <fstream>
 #include "Utils.h"
-#include <glm\glm.hpp>
-#include "Draw\Mesh.h"
-#include "Draw\Vertex.h"
+#include <glm/glm.hpp>
+#include "Draw/Mesh.h"
+#include "Draw/Vertex.h"
 #include "Logger.h"
 
 namespace VoxEngine
@@ -52,7 +52,11 @@ namespace VoxEngine
 
 	bool MeshManager::LoadMesh(std::string name)
 	{
+#if defined _WIN32
 		std::string path = "meshes\\" + name + ".obj";
+#else
+		std::string path = "meshes/" + name + ".obj";
+#endif
 		std::ifstream file(path);
 
 		if (!file)

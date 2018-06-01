@@ -1,6 +1,6 @@
 #pragma once
-#include "Core\Component.h"
-#include <GL\gl3w.h>
+#include "Core/Component.h"
+#include <GL/gl3w.h>
 
 namespace VoxEngine
 {

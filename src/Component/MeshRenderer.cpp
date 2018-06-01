@@ -1,12 +1,12 @@
-#include "Component\MeshRenderer.h"
-#include "Draw\Mesh.h"
-#include "Core\Material.h"
-#include "Core\GameObject.h"
-#include "Component\Transform.h"
-#include "Draw\Shader.h"
+#include "Component/MeshRenderer.h"
+#include "Draw/Mesh.h"
+#include "Core/Material.h"
+#include "Core/GameObject.h"
+#include "Component/Transform.h"
+#include "Draw/Shader.h"
 #include "ShaderManager.h"
-#include "Draw\Vertex.h"
-#include "Draw\RenderingEngine.h"
+#include "Draw/Vertex.h"
+#include "Draw/RenderingEngine.h"
 
 namespace VoxEngine
 {

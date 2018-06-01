@@ -78,7 +78,11 @@ namespace VoxEngine
 			time_t currentTime = time(0);
 			struct tm timeInfo;
 
+#if defined _WIN32
 			localtime_s(&timeInfo, &currentTime);
+#else
+			localtime(&currentTime);
+#endif
 
 			strftime(_timeBuffer, 80, "%d-%m-%Y_%I-%M-%S", &timeInfo);
 

@@ -1,5 +1,5 @@
-#include "Component\SpotLight.h"
-#include "Draw\RenderingEngine.h"
+#include "Component/SpotLight.h"
+#include "Draw/RenderingEngine.h"
 
 namespace VoxEngine
 {

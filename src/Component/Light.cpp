@@ -1,4 +1,4 @@
-#include "Component\Light.h"
+#include "Component/Light.h"
 
 namespace VoxEngine
 {

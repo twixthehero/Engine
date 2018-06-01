@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include <GL\gl3w.h>
+#include <GL/gl3w.h>
 
 namespace VoxEngine
 {

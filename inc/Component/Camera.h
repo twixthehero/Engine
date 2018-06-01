@@ -1,6 +1,6 @@
 #pragma once
-#include <glm\glm.hpp>
-#include "Core\Component.h"
+#include <glm/glm.hpp>
+#include "Core/Component.h"
 
 namespace VoxEngine
 {

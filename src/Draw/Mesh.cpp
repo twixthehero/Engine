@@ -1,6 +1,6 @@
-#include "Draw\Mesh.h"
-#include "Core\Material.h"
-#include "Draw\Vertex.h"
+#include "Draw/Mesh.h"
+#include "Core/Material.h"
+#include "Draw/Vertex.h"
 
 namespace VoxEngine
 {

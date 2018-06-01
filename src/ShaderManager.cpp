@@ -1,7 +1,7 @@
 #include "ShaderManager.h"
 #include "Logger.h"
-#include "Draw\Shader.h"
-#include <GL\gl3w.h>
+#include "Draw/Shader.h"
+#include <GL/gl3w.h>
 
 namespace VoxEngine
 {

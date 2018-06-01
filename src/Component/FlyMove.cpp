@@ -1,7 +1,7 @@
-#include "Component\FlyMove.h"
+#include "Component/FlyMove.h"
 #include "Input.h"
-#include "Core\GameObject.h"
-#include "Component\Transform.h"
+#include "Core/GameObject.h"
+#include "Component/Transform.h"
 #include "EngineTime.h"
 
 namespace VoxEngine

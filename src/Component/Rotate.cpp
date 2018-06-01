@@ -1,8 +1,8 @@
-#include "Component\Rotate.h"
+#include "Component/Rotate.h"
 #include "EngineTime.h"
-#include "Core\GameObject.h"
-#include "Component\Transform.h"
-#include <glm\glm.hpp>
+#include "Core/GameObject.h"
+#include "Component/Transform.h"
+#include <glm/glm.hpp>
 
 namespace VoxEngine
 {

@@ -1,6 +1,6 @@
 #pragma once
-#include "Component\Servant.h"
-#include <glm\glm.hpp>
+#include "Component/Servant.h"
+#include <glm/glm.hpp>
 
 namespace VoxEngine
 {
