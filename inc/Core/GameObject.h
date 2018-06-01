@@ -43,7 +43,7 @@ namespace VoxEngine
 		void AddChild(GameObject* child);
 		void RemoveChild(std::string name);
 
-		GameObject* _parent;
+		GameObject* _parent = nullptr;
 
 		std::vector<GameObject*> _children;
 		std::vector<Component*> _components;
