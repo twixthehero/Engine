@@ -1,7 +1,9 @@
 #pragma once
+#include <GL/gl3w.h>
 #include <vector>
 #include <glm/glm.hpp>
 #include <string>
+#include "nanogui/nanogui.h"
 
 namespace VoxEngine
 {
@@ -41,6 +43,7 @@ namespace VoxEngine
 		void AddSpotLight(SpotLight* light);
 		void RemoveSpotLight(SpotLight* light);
 
+		void Update();
 		void Render(GameObject* gameObject);
 
 		void SetCamera(Camera* camera);
@@ -50,6 +53,14 @@ namespace VoxEngine
 	private:
 		RenderingEngine();
 		~RenderingEngine();
+
+		void CursorPosCallbackEvent(GLFWwindow*, double x, double y);
+		void MouseButtonCallbackEvent(GLFWwindow*, int button, int action, int modifiers);
+		void KeyCallbackEvent(GLFWwindow*, int key, int scancode, int action, int mods);
+		void CharCallbackEvent(GLFWwindow*, unsigned int codepoint);
+		void DropCallbackEvent(GLFWwindow*, int count, const char** filenames);
+		void ScrollCallbackEvent(GLFWwindow*, double x, double y);
+		void ResizeCallbackEvent(GLFWwindow*, int width, int height);
 
 		std::string GetRenderingModeString(ERenderingMode mode);
 
@@ -95,5 +106,7 @@ namespace VoxEngine
 
 		std::vector<MeshRenderer*> _meshRenderers;
 		std::vector<glm::mat4> _modelMatrices;
+
+		nanogui::Screen* _screen;
 	};
 }

@@ -1,5 +1,4 @@
 #include "Draw/RenderingEngine.h"
-#include <GL/gl3w.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "ShaderManager.h"
 #include "Component/Light.h"
@@ -50,11 +49,65 @@ namespace VoxEngine
 		_ambientLight->color.b = 0.2f;
 		_ambientLight->intensity = 0.2f;
 
-		Logger::WriteLine("Rending mode: " + GetRenderingModeString(_renderingMode));
+		Logger::WriteLine("Rendering mode: " + GetRenderingModeString(_renderingMode));
+
+		_screen = new nanogui::Screen();
+		_screen->initialize(_window->GetWindow(), true);
+
+		// glfwSetCursorPosCallback(_window->GetWindow(), (GLFWcursorposfun)&VoxEngine::RenderingEngine::CursorPosCallbackEvent);
+		// glfwSetMouseButtonCallback(_window->GetWindow(), (GLFWmousebuttonfun)&VoxEngine::RenderingEngine::MouseButtonCallbackEvent);
+		// glfwSetKeyCallback(_window->GetWindow(), (GLFWkeyfun)&VoxEngine::RenderingEngine::KeyCallbackEvent);
+		// glfwSetCharCallback(_window->GetWindow(), (GLFWcharfun)&VoxEngine::RenderingEngine::CharCallbackEvent);
+		// glfwSetDropCallback(_window->GetWindow(), (GLFWdropfun)&VoxEngine::RenderingEngine::DropCallbackEvent);
+		// glfwSetScrollCallback(_window->GetWindow(), (GLFWscrollfun)&VoxEngine::RenderingEngine::ScrollCallbackEvent);
+		// glfwSetFramebufferSizeCallback(_window->GetWindow(), (GLFWframebuffersizefun)&VoxEngine::RenderingEngine::ResizeCallbackEvent);
+
+		nanogui::FormHelper* gui = new nanogui::FormHelper(_screen);
+		gui->addWindow(Eigen::Vector2i(10, 10), "Window title");
+
+		//_screen->setVisible(true);
+		//_screen->performLayout();
+	}
+
+	void RenderingEngine::CursorPosCallbackEvent(GLFWwindow*, double x, double y)
+	{
+		_screen->cursorPosCallbackEvent(x, y);
+	}
+
+	void RenderingEngine::MouseButtonCallbackEvent(GLFWwindow*, int button, int action, int modifiers)
+	{
+		_screen->mouseButtonCallbackEvent(button, action, modifiers);
+	}
+
+	void RenderingEngine::KeyCallbackEvent(GLFWwindow*, int key, int scancode, int action, int mods)
+	{
+		_screen->keyCallbackEvent(key, scancode, action, mods);
+	}
+
+	void RenderingEngine::CharCallbackEvent(GLFWwindow*, unsigned int codepoint)
+	{
+		_screen->charCallbackEvent(codepoint);
+	}
+
+	void RenderingEngine::DropCallbackEvent(GLFWwindow*, int count, const char** filenames)
+	{
+		_screen->dropCallbackEvent(count, filenames);
+	}
+
+	void RenderingEngine::ScrollCallbackEvent(GLFWwindow*, double x, double y)
+	{
+		_screen->scrollCallbackEvent(x, y);
+	}
+
+	void RenderingEngine::ResizeCallbackEvent(GLFWwindow*, int width, int height)
+	{
+		_screen->resizeCallbackEvent(width, height);
 	}
 
 	RenderingEngine::~RenderingEngine()
 	{
+		delete _screen;
+
 		delete _gbuffer;
 		delete _ambientLight;
 	}
@@ -188,6 +241,11 @@ namespace VoxEngine
 		}
 	}
 
+	void RenderingEngine::Update()
+	{
+		// _screen->performLayout();
+	}
+
 	void RenderingEngine::Render(GameObject* gameObject)
 	{
 		if (_camera != Camera::main)
@@ -205,6 +263,10 @@ namespace VoxEngine
 				Logger::WriteLine("Error! Unknown rendering mode: " + std::to_string(_renderingMode));
 				break;
 		}
+
+		//render ui
+		// _screen->drawContents();
+		// _screen->drawWidgets();
 	}
 
 	void RenderingEngine::Forward(GameObject* gameObject)
@@ -527,7 +589,8 @@ namespace VoxEngine
 		pointShader->SetUniform1f("ambientIntensity", _ambientLight->intensity);
 		pointShader->SetUniform3f("ambientColor", _ambientLight->color);
 		pointShader->SetUniform3f("eyeWorldPos", _camera->gameObject->transform->GetTransformedPosition());
-		pointShader->SetUniform1f("shininess", 32.0f);
+		//pointShader->SetUniform1f("shininess", 32.0f);
+		pointShader->SetUniform1f("shininess", 2.0f);
 
 		pointShader->SetUniform1i("positionMap", GBuffer::GBufferTextureType::Position);
 		pointShader->SetUniform1i("albedoMap", GBuffer::GBufferTextureType::Diffuse);

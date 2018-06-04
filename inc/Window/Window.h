@@ -24,6 +24,7 @@ namespace VoxEngine
 		int GetID();
 		int GetWidth();
 		int GetHeight();
+		GLFWwindow* GetWindow();
 
 		bool Create();
 		void Destroy();

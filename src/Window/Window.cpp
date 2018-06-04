@@ -47,6 +47,11 @@ namespace VoxEngine
 		return _height;
 	}
 
+	GLFWwindow* Window::GetWindow()
+	{
+		return _window;
+	}
+
 	bool Window::Create()
 	{
 		if (_window != nullptr)

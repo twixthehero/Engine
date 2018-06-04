@@ -1,7 +1,7 @@
 SRC_DIR:=src
 OBJ_DIR:=obj
 INCLUDES:=-Iinc/ -Ilib/include/
-LIBRARIES:=`pkg-config --static --libs glfw3` -lfreeimage
+LIBRARIES:=`pkg-config --static --libs glfw3` -lfreeimage -lnanogui
 OUTDIR:=build
 GAMEFILE:=game
 

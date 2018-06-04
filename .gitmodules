@@ -1,0 +1,6 @@
+[submodule "nanogui"]
+	path = nanogui
+	url = git@github.com:wjakob/nanogui.git
+[submodule "bullet3"]
+	path = bullet3
+	url = git@github.com:bulletphysics/bullet3.git
